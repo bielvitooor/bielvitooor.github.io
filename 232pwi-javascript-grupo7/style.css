@@ -1,0 +1,35 @@
+body{
+    border:0;
+    margin:0;
+    padding:0;
+    
+}
+#tracksContainer {
+    background-color: black;
+    padding: 0;
+    margin:0;
+}
+.track {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    background-color:#1db954;
+    margin-left: 10px;
+    margin-right: 50%;
+    border-radius: 30px;
+}
+
+.album-cover {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+}
+
+.title, .artist {
+    margin: 0;
+}
