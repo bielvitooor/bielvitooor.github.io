@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //console.log('Button clicked');
             var clientId = '6edeb07d24f54d92a171b85c858bfe09';
             //var clientSecret = ''
-            var redirectUri = encodeURIComponent('http://localhost/232pwi-javascript-grupo7/home.html');
+            var redirectUri = encodeURIComponent('https://bielvitooor.github.io/TOPFY/home.html');
             var scopes = encodeURIComponent('user-top-read user-read-private user-read-email user-read-recently-played user-top-read playlist-read-private');
 
             var url = 'https://accounts.spotify.com/authorize?client_id=' + clientId +
