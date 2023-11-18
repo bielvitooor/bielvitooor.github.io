@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //console.log('Button clicked');
             var clientId = '6edeb07d24f54d92a171b85c858bfe09';
             //var clientSecret = ''
-            var redirectUri = encodeURIComponent('https://bielvitooor.github.io/TOPFY/home.html');
+            var redirectUri = encodeURIComponent('http://localhost/232pwi-javascript-grupo7/home.html');
             var scopes = encodeURIComponent('user-top-read user-read-private user-read-email user-read-recently-played user-top-read playlist-read-private');
 
             var url = 'https://accounts.spotify.com/authorize?client_id=' + clientId +
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = url;
         });
     }
-});
+
 function getAccessToken() {
     var accessToken = null;
     var expires = null;
@@ -48,12 +48,13 @@ function getUserData() {
                 return response.json();
             })
             .then(function (data) {
-                //console.log(data);
-                document.getElementById('name').innerHTML = data.display_name;
-                //document.getElementById('picture').src = data.images[0].url;
+                document.getElementById('name').innerHTML = `<a href="${data.external_urls.spotify}" target="_blank">${data.display_name}</a>`;
+
             });
     }
+
 };
+
 function fetchWebApi(endpoint, method, body) {
     //para fins de teste do professor use o token fixo, comentando a linha abaixo
     let token = getAccessToken();
@@ -67,6 +68,7 @@ function fetchWebApi(endpoint, method, body) {
         .then(res => res.text())
         .then(text => JSON.parse(text));
 }
+
 
 function getTopTracks() {
     // Endpoint reference : https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
@@ -91,6 +93,8 @@ function displayTopTracks() {
         });
     });
 }
+//console.log(getTopTracksArr());
+
 
 function createTrackElement(track, trackNumber) {
     const trackDiv = document.createElement('div');
@@ -107,14 +111,39 @@ function createTrackElement(track, trackNumber) {
 
     const albumCover = document.createElement('img');
     albumCover.className = 'album-cover';
+    albumCover.src = track.album.images[0].url;
+
+    // Adicione um manipulador de eventos para redirecionar ao clicar na imagem
+    albumCover.addEventListener('click', function () {
+        window.open(track.external_urls.spotify, '_blank'); // Abre o link em uma nova guia
+    });
+
+    const playButton = document.createElement('button');
+    playButton.className = 'play-button';
+    playButton.textContent = '▶️ Play';
+    
+    // Adiciona um evento de clique para reproduzir a prévia ao clicar no botão
+    playButton.addEventListener('click', function () {
+        if (audio.paused) {
+            audio.play();
+            playButton.textContent = '⏸ Pause';
+        } else {
+            audio.pause();
+            playButton.textContent = '▶️ Play';
+        }
+    });
+    const audio = new Audio(track.preview_url);
+
+    // Adiciona um evento de clique para reproduzir a prévia ao clicar no botão
+    playButton.addEventListener('click', function () {
+        return track.preview_url, playButton; // Passa a referência do botão corretamente
+    });
 
     const removeTrack = document.createElement('button');
     removeTrack.className = 'remove-track';
     removeTrack.textContent = 'Remover';
 
     artist.textContent = track.artists.map(artist => artist.name).join(', ');
-    albumCover.src = track.album.images[0].url;
-
 
     const trackNumberElement = document.createElement('span');
     trackNumberElement.className = 'track-number';
@@ -125,6 +154,7 @@ function createTrackElement(track, trackNumber) {
     infoDiv.appendChild(title);
     infoDiv.appendChild(artist);
     trackDiv.appendChild(infoDiv);
+    trackDiv.appendChild(playButton);
     trackDiv.appendChild(removeTrack);
     removeTrack.addEventListener('click', () => {
         trackDiv.remove();
@@ -135,10 +165,10 @@ function createTrackElement(track, trackNumber) {
 if (window.location.href.indexOf('home.html') > -1) {
     getUserData();
     displayTopTracks();
-    /*window.location.hash = '';
+    window.location.hash = '';
     if (window.performance.getEntriesByType("navigation")[0].type === "reload") {
         window.location.href = 'index.html';
-    }*/
+    }
 }
-
+});
 
