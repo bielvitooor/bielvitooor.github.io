@@ -31,7 +31,6 @@ function getAccessToken() {
     return accessToken;
 }
 //para fins de teste do professor use o token fixo, descomentando a linha abaixo
-//let token="BQCoRW5eiCfccXiZmSUF1UZSAf4zi8w60NvkgtSEaYbRqNM1WbpaklENOH1tYcu2uboEMxqypCFNKX7ntLAL5Um4VxyijAAiXdyHAi9wQnP9qApCg6Mhvv-rTdcdOjA3EVk5M_E2UREzXgj2K6NzMB6ra2wDHbTtpMmwXmiBrsQ-0hSkB7t7ZqGzQt7wssnrXEQP6DgOdw5LEw3PTp7V5UbPB-AmBDHgyJkNAQ"
 function getUserData() {
     //para fins de teste do professor use o token fixo, comentando a linha abaixo
     let token = getAccessToken();
