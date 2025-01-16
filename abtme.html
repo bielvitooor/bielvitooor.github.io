@@ -1,19 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sobre Mim - Gabriel Brito</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<style>
-    body{
-        background-color: black;
-        color: white;
-    }
-</style>
 <body>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus assumenda reprehenderit repellendus exercitationem aut molestiae omnis? Consectetur enim maxime recusandae voluptatum delectus animi voluptates similique debitis voluptas, mollitia nihil pariatur.
-    
+    <header>
+         <h1><a  class="nodecoration" href="index.html">Gabriel Brito</a></h1>
+        <nav>
+            <a href="myprojects.html">Meus Projetos</a>
+            <a href="abtme.html">Sobre Mim</a>
+        </nav>
+    </header>
+
+    <div class="profile">
+        <img src="img/profile.png" alt="Gabriel Vitor Silva Brito">
+        <h2>Gabriel Vitor Silva Brito</h2>
+        <div class="social-icons">
+            <a href="#"><img src="img/LinkedIn_logo_initials 1.png" alt="LinkedIn"></a>
+            <a href="#"><img src="img/github-mark-white 1.png" alt="GitHub"></a>
+            <a href="#"><img src="img/281121690_1405565156561528_5410302815916975490_n 1.png" alt="Instagram"></a>
+        </div>
+    </div>
+
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="button close"></div>
+            <div class="button minimize"></div>
+            <div class="button maximize"></div>
+            <span class="terminal-title">Terminal - gabriel.sh</span>
+        </div>
+        <div class="terminal-body">
+            <p class="typing-line"><span class="highlight">echo</span> "Hello, World!"</p>
+            <p class="typing-line"># Sobre mim</p>
+            <p class="typing-line"><span class="highlight">cat</span> <<EOF</p>
+            <p class="typing-line">Sou Gabriel, um entusiasta apaixonado por tecnologia.</p>
+            <p class="typing-line">Tenho sólida experiência em programação, com foco em desenvolvimento Back-End e</p>
+            <p class="typing-line">gerenciamento de bancos de dados SQL e NoSQL.</p>
+            <p class="typing-line">Minha fascinação por infraestrutura e redes de computadores me levou a aprofundar</p>
+            <p class="typing-line">meus conhecimentos em cibersegurança. Estou sempre em busca de desafios que me</p>
+            <p class="typing-line">permitam unir desenvolvimento e segurança para criar soluções robustas e eficientes.</p>
+            <p class="typing-line"><span class="highlight">EOF</span></p>
+            <p class="typing-line"><span class="highlight">echo</span> "Buscando novas oportunidades para transformar código em inovação!"<span class="cursor">.</span></p>
+        </div>
+    </div>
+
+    <footer>
+        Developed by Gabriel Brito
+    </footer>
 </body>
 </html>

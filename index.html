@@ -1,48 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabriel Brito</title>
+    <title>Gabriel Brito - Portfólio</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <header>
+        <h1><a class="nodecoration" href="index.html">Gabriel Brito</a></h1>
         <nav>
-            <a class="logo" href="#">Gabriel Brito</a>
-            <div class="mobile-menu">
-                <div class="line1"></div>
-                <div class="line2"></div>
-                <div class="line3"></div>
-            </div>
-            <ul class="nav-list">
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Projetos</a></li>
-                <li><a href="#">Sobre mim</a></li>
-            </ul>
+            <a href="myprojects.html">Meus Projetos</a>
+            <a href="abtme.html">Sobre Mim</a>
         </nav>
     </header>
-    <main>
-        <div id="conteudo">
-            <div id=avatarhome>
-                <img src="img/avatarini.png">
-                <h1>HELLO WORLD!</h1>
-                <h2>BEM VINDO AO MEU PROJETO DE SITE</h2>
-            </div>
-        </div>
-    </main>
-    <script src="functions.js"></script>
-    <script src="mobile-navbar.js"></script>
-    <footer id="footer">
-        <div id="selo">
-            <img src="img/selo.png" >
-        </div>
-    </footer>
-</body>
 
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="button close"></div>
+            <div class="button minimize"></div>
+            <div class="button maximize"></div>
+            <span style="margin-left: 10px; color: #ccc;">Terminal - home.sh</span>
+        </div>
+        <div class="content" id="terminal-content">
+            <div class="line"><span class="highlight-echo">#!/bin/bash</span></div>
+            <div class="line"><span class="highlight-echo">echo</span> "==============================================="</div>
+            <div class="line"><span class="highlight-echo">echo</span> "🚀 Bem-vindo(a) ao universo das minhas criações!"</div>
+            <div class="line"><span class="highlight-echo">echo</span> "==============================================="</div>
+            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
+            <div class="line"><span class="highlight-echo">echo</span> "🔧 Compilando ideias..."</div>
+            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
+            <div class="line"><span class="highlight-echo">echo</span> "⚙️  Rodando soluções..."</div>
+            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
+            <div class="line"><span class="highlight-echo">echo</span> "🌐 Preparando ambiente para exploração..."</div>
+            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
+            <div class="line"><span class="highlight-echo">echo</span> ""</div>
+            <div class="line"><span class="highlight-echo">echo</span> "✨ Tudo pronto! O que você quer fazer?"</div>
+            <div class="line"><span class="highlight-echo">echo</span> ""</div>
+            <div class="line"><span class="highlight-echo">echo</span> "[1] Ver Projetos Incríveis"</div>
+            <div class="line"><span class="highlight-echo">echo</span> "[2] Entrar em Contato"</div>
+            <div class="line"><span class="highlight-echo">echo</span> "[3] Saber Mais Sobre Este Espaço"</div>
+            <div class="line"><span class="highlight-echo">echo</span> ""</div>
+            <div class="line"><span class="highlight-echo">read -p "👉 Digite o número da opção desejada: " option</div>
+            <div class="line"><span class="highlight-echo">case $option in</div>
+            <div class="line"><span class="highlight-echo">1) echo "🛠️  Carregando projetos... Pronto para se surpreender!" ;;</div>
+            <div class="line"><span class="highlight-echo">2) echo "📬 Conectando... Quem sabe não criamos algo juntos?" ;;</div>
+            <div class="line"><span class="highlight-echo">3) echo "💡 Aqui ideias viram código e soluções ganham vida!" ;;</div>
+            <div class="line"><span class="highlight-echo">*) echo "❌ Opa! Opção inválida. Tente de novo. :)" ;;</div>
+            <div class="line"><span class="highlight-echo">esac</div><span class="cursor">#</span>
+        </div>
+    </div>
+
+    <footer>
+        Developed by Gabriel Brito
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const lines = document.querySelectorAll('.line');
+            let delay = 0;
+
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    line.style.display = 'block';
+                }, delay);
+                delay += 0; // Tempo de digitação por linha (1s)
+            });
+        });
+    </script>
+</body>
 </html>
