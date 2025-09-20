@@ -3,70 +3,744 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabriel Brito - Portfólio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Gabriel Brito - Developer & Tech Enthusiast</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #0099ff;
+            --accent: #ff3366;
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient-hover: linear-gradient(135deg, var(--secondary), var(--accent));
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 153, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255, 51, 102, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideUp 1s ease-out;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            animation: slideUp 1s ease-out 0.2s both;
+        }
+
+        .hero-content .job-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            animation: slideUp 1s ease-out 0.4s both;
+        }
+
+        .hero-content .company {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            animation: slideUp 1s ease-out 0.6s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: slideUp 1s ease-out 0.8s both;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-hover);
+            transition: left 0.3s ease;
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        /* Terminal Section */
+        .terminal-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .terminal {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .terminal-header {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+
+        .terminal-title {
+            margin-left: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .terminal-body {
+            padding: 2rem;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: terminalType 0.5s ease-out forwards;
+        }
+
+        .terminal-line:nth-child(1) { animation-delay: 0.1s; }
+        .terminal-line:nth-child(2) { animation-delay: 0.3s; }
+        .terminal-line:nth-child(3) { animation-delay: 0.5s; }
+        .terminal-line:nth-child(4) { animation-delay: 0.7s; }
+        .terminal-line:nth-child(5) { animation-delay: 0.9s; }
+
+        .terminal-prompt {
+            color: var(--primary);
+        }
+
+        .terminal-command {
+            color: var(--secondary);
+        }
+
+        .terminal-output {
+            color: var(--text-secondary);
+        }
+
+        /* Skills Section */
+        .skills-section {
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .skill-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient);
+            transition: left 0.3s ease;
+        }
+
+        .skill-card:hover::before {
+            left: 0;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
+        }
+
+        .skill-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Projects Section */
+        .projects-section {
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .project-header {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .project-tech {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .project-body {
+            padding: 1.5rem;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .project-link {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-link:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+            border-color: var(--primary);
+        }
+
+        .contact-item a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item:hover a {
+            color: var(--primary);
+        }
+
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient);
+        }
+
+        .contact-icon img {
+            width: 28px;
+            height: 28px;
+            filter: brightness(0) invert(1);
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes terminalType {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                gap: 1.5rem;
+            }
+
+            .contact-item {
+                min-width: 120px;
+                padding: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1><a class="nodecoration" href="index.html">Gabriel Brito</a></h1>
-        <nav>
-            <a href="myprojects.html">Meus Projetos</a>
-            <a href="abtme.html">Sobre Mim</a>
-        </nav>
-    </header>
-
-    <div class="terminal">
-        <div class="terminal-header">
-            <div class="button close"></div>
-            <div class="button minimize"></div>
-            <div class="button maximize"></div>
-            <span style="margin-left: 10px; color: #ccc;">Terminal - home.sh</span>
+    <div class="animated-bg"></div>
+    
+    <nav>
+        <div class="logo">Gabriel Brito</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">Sobre</a>
+            <a href="#projects">Projetos</a>
+            <a href="#contact">Contato</a>
         </div>
-        <div class="content" id="terminal-content">
-            <div class="line"><span class="highlight-echo">#!/bin/bash</span></div>
-            <div class="line"><span class="highlight-echo">echo</span> "==============================================="</div>
-            <div class="line"><span class="highlight-echo">echo</span> "🚀 Bem-vindo(a) ao universo das minhas criações!"</div>
-            <div class="line"><span class="highlight-echo">echo</span> "==============================================="</div>
-            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
-            <div class="line"><span class="highlight-echo">echo</span> "🔧 Compilando ideias..."</div>
-            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
-            <div class="line"><span class="highlight-echo">echo</span> "⚙️  Rodando soluções..."</div>
-            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
-            <div class="line"><span class="highlight-echo">echo</span> "🌐 Preparando ambiente para exploração..."</div>
-            <div class="line"><span class="highlight-echo">sleep</span> 1</div>
-            <div class="line"><span class="highlight-echo">echo</span> ""</div>
-            <div class="line"><span class="highlight-echo">echo</span> "✨ Tudo pronto! O que você quer fazer?"</div>
-            <div class="line"><span class="highlight-echo">echo</span> ""</div>
-            <div class="line"><span class="highlight-echo">echo</span> "[1] Ver Projetos Incríveis"</div>
-            <div class="line"><span class="highlight-echo">echo</span> "[2] Entrar em Contato"</div>
-            <div class="line"><span class="highlight-echo">echo</span> "[3] Saber Mais Sobre Este Espaço"</div>
-            <div class="line"><span class="highlight-echo">echo</span> ""</div>
-            <div class="line"><span class="highlight-echo">read -p "👉 Digite o número da opção desejada: " option</div>
-            <div class="line"><span class="highlight-echo">case $option in</div>
-            <div class="line"><span class="highlight-echo">1) echo "🛠️  Carregando projetos... Pronto para se surpreender!" ;;</div>
-            <div class="line"><span class="highlight-echo">2) echo "📬 Conectando... Quem sabe não criamos algo juntos?" ;;</div>
-            <div class="line"><span class="highlight-echo">3) echo "💡 Aqui ideias viram código e soluções ganham vida!" ;;</div>
-            <div class="line"><span class="highlight-echo">*) echo "❌ Opa! Opção inválida. Tente de novo. :)" ;;</div>
-            <div class="line"><span class="highlight-echo">esac</div><span class="cursor">#</span>
-        </div>
-    </div>
+    </nav>
 
-    <footer>
-        Developed by Gabriel Brito
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Gabriel Brito</h1>
+            <div class="subtitle">Full Stack Developer & Cybersecurity Enthusiast</div>
+            <div class="job-title">Backend Specialist | Infrastructure & Networks</div>
+            <div class="company">🚀 Atualmente trabalhando na Orb Govtech</div>
+            <div class="cta-buttons">
+                <a href="#projects" class="btn">
+                    <span>Ver Projetos</span>
+                </a>
+                <a href="#contact" class="btn btn-outline">
+                    <span>Entre em Contato</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="terminal-section" id="about">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-button close"></div>
+                <div class="terminal-button minimize"></div>
+                <div class="terminal-button maximize"></div>
+                <div class="terminal-title">Terminal - sobre.sh</div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> 
+                    <span class="terminal-command">cat sobre-gabriel.md</span>
+                </div>
+                <div class="terminal-line terminal-output">
+                    # Gabriel Vitor Silva Brito<br>
+                    **Desenvolvedor Backend | Especialista em Cibersegurança**
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> 
+                    <span class="terminal-command">ls experiencia/</span>
+                </div>
+                <div class="terminal-line terminal-output">
+                    • **Orb Govtech** - Desenvolvedor Backend (Atual)<br>
+                    • **Infraestrutura & Redes** - Administração de sistemas<br>
+                    • **Cibersegurança** - Análise de vulnerabilidades<br>
+                    • **Bancos de Dados** - SQL & NoSQL Management
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> 
+                    <span class="terminal-command">echo "Desenvolvendo soluções robustas e seguras"</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="skills-section">
+        <div class="skills-grid">
+            <div class="skill-card">
+                <div class="skill-icon">💻</div>
+                <h3>Backend Development</h3>
+                <p>Especialista em desenvolvimento backend com Python, Node.js e Java. Experiência em APIs RESTful, microserviços e arquiteturas escaláveis.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">🛡️</div>
+                <h3>Cybersecurity</h3>
+                <p>Conhecimentos sólidos em segurança da informação, penetration testing, análise de vulnerabilidades e implementação de medidas de proteção.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">🗄️</div>
+                <h3>Database Management</h3>
+                <p>Gestão e otimização de bancos de dados SQL (PostgreSQL, MySQL) e NoSQL (MongoDB, Redis), incluindo design de esquemas e performance tuning.</p>
+            </div>
+            <div class="skill-card">
+                <div class="skill-icon">🌐</div>
+                <h3>Infrastructure & Networks</h3>
+                <p>Administração de infraestrutura, configuração de redes, servidores Linux e implementação de soluções em nuvem (AWS, Docker).</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="projects-section" id="projects">
+        <h2 class="section-title">Projetos em Destaque</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">Horta Click</div>
+                    <div class="project-tech">E-commerce • Agriculture • Full Stack</div>
+                </div>
+                <div class="project-body">
+                    <p>Plataforma de e-commerce dedicada à agricultura familiar, conectando produtores locais diretamente aos consumidores. Sistema completo com gestão de produtos, pedidos e pagamentos.</p>
+                    <div class="project-links">
+                        <a href="#" class="project-link">Ver Projeto</a>
+                        <a href="#" class="project-link">GitHub</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">TOPFY</div>
+                    <div class="project-tech">JavaScript • Spotify API • Web</div>
+                </div>
+                <div class="project-body">
+                    <p>Aplicação web que mostra suas top 10 músicas mais ouvidas dos últimos 30 dias no Spotify. Interface moderna e responsiva com integração completa da API do Spotify.</p>
+                    <div class="project-links">
+                        <a href="/TOPFY/index.html" class="project-link">Ver Demo</a>
+                        <a href="https://github.com/bielvitooor/bielvitooor.github.io/tree/main/TOPFY" class="project-link">GitHub</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">CryptoRun</div>
+                    <div class="project-tech">Flutter • Google Maps API • NoSQL</div>
+                </div>
+                <div class="project-body">
+                    <p>Aplicativo mobile gamificado que recompensa usuários com criptomoedas por atividades físicas. Integração com GPS para tracking de corridas e sistema de recompensas.</p>
+                    <div class="project-links">
+                        <a href="#" class="project-link">Em Breve</a>
+                        <a href="https://github.com/bielvitooor/cryptorun_app" class="project-link">GitHub</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-title">Lab Redes</div>
+                    <div class="project-tech">Vagrant • Linux • Network Admin</div>
+                </div>
+                <div class="project-body">
+                    <p>Projeto de laboratório de redes utilizando Vagrant para simular ambiente com 3 VMs. Configuração completa de rede, roteamento e serviços de infraestrutura.</p>
+                    <div class="project-links">
+                        <a href="https://github.com/bielvitooor/proj_lab_redes" class="project-link">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="contact-info">
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn">
+                </div>
+                <a href="https://www.linkedin.com/in/bielvitooor/" target="_blank">LinkedIn</a>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub">
+                </div>
+                <a href="https://github.com/bielvitooor" target="_blank">GitHub</a>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </div>
+                <a href="mailto:gabrielvitorsilvabrito@gmail.com">gabrielvitorsilvabrito@gmail.com</a>
+            </div>
+        </div>
+        <p>&copy; 2025 Gabriel Brito. Desenvolvido com foco em performance e segurança.</p>
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const lines = document.querySelectorAll('.line');
-            let delay = 0;
-
-            lines.forEach((line, index) => {
-                setTimeout(() => {
-                    line.style.display = 'block';
-                }, delay);
-                delay += 0; // Tempo de digitação por linha (1s)
+  
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
             });
         });
+
+      
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(10, 10, 10, 0.98)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 10, 0.95)';
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const background = document.querySelector('.animated-bg');
+            background.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+     
+        const terminalLines = document.querySelectorAll('.terminal-line');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        });
+
+        terminalLines.forEach(line => {
+            observer.observe(line);
+        });
+
+     
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) rotateY(5deg)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotateY(0deg)';
+            });
+        });
+
     </script>
 </body>
 </html>
