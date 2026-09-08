@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gabriel Brito — Dev Full Stack, IA & Automação</title>
+<title>Gabriel Brito — Dev Full Stack & AI Agent Builder</title>
 <meta name="description" content="Gabriel Vítor Silva Brito. Desenvolvedor full stack júnior na Zyria. Front-end, React Native, agentes de IA, automação e infraestrutura.">
 <meta name="author" content="Gabriel Vítor Silva Brito">
 <meta name="theme-color" content="#0A0B0D">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="Gabriel Brito — Dev Full Stack, IA & Automação">
-<meta property="og:description" content="Sou full stack: construo a interface, o agente de IA e a infra que segura os dois.">
+<meta property="og:title" content="Gabriel Brito — Dev Full Stack & AI Agent Builder">
+<meta property="og:description" content="Dev full stack e AI agent builder. Construo agentes de IA que rodam em produção e o produto inteiro em volta deles.">
 <meta property="og:image" content="https://bielvitooor.github.io/img/gabriel-avatar.jpg">
 <meta property="og:url" content="https://bielvitooor.github.io/">
 <meta name="twitter:card" content="summary_large_image">
@@ -192,6 +192,12 @@ header.nav.stuck{
 .hero-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:64px;align-items:center}
 
 
+.kicker{
+  display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:1.1rem;
+  font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;color:var(--fg-mid);
+}
+.kicker b{color:var(--acc);font-weight:500}
+.kicker s{width:4px;height:4px;border-radius:50%;background:var(--fg-dim);text-decoration:none;flex:0 0 auto}
 .hero h1{font-size:clamp(2.4rem,5.2vw,4.1rem);margin-bottom:1.3rem;font-weight:800}
 .hero h1 em{font-style:normal;color:var(--acc)}
 .hero-lede{font-size:1.1rem;color:var(--fg-mid);max-width:57ch;margin-bottom:2rem}
@@ -416,6 +422,11 @@ header.nav.stuck{
 }
 .contact h2{font-size:clamp(2rem,4.5vw,3.2rem);margin-bottom:1rem}
 .contact p{color:var(--fg-mid);max-width:54ch;margin:0 auto 2rem;font-size:1.05rem}
+.avail{
+  display:inline-flex;align-items:center;gap:.5rem;margin-bottom:1.8rem;padding:.35rem .85rem;
+  border:1px solid rgba(207,255,94,.28);border-radius:100px;background:var(--acc-dim);
+  font-size:.82rem;color:var(--acc);font-weight:500;
+}
 .contact-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.2rem}
 .socials{display:flex;gap:.6rem;justify-content:center}
 .soc{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:1.2rem;
@@ -544,7 +555,11 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <h1 data-i="hero.h1">Sou <em>full stack</em>: construo a <em>interface</em>, o <em>agente de IA</em> e a <em>infra</em> que segura os dois.</h1>
+        <p class="kicker" data-i="hero.kicker">
+          <b>Dev Full Stack</b> <s></s> <b>AI Agent Builder</b> <s></s> Zyria <s></s> Goiás, Brasil
+        </p>
+
+        <h1 data-i="hero.h1">Eu construo <em>agentes de IA</em> que fazem o trabalho, e o produto inteiro em volta deles.</h1>
 
         <p class="hero-lede" data-i="hero.lede">
           Sou <strong>Gabriel Vítor Silva Brito</strong>, desenvolvedor <strong>full stack</strong> júnior
@@ -797,7 +812,6 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
             <span><img class="ti" src="img/tech/typescript.svg" alt="" width="20" height="20" loading="lazy"> TypeScript</span>
             <span><img class="ti" src="img/tech/fastapi.svg" alt="" width="20" height="20" loading="lazy"> FastAPI</span>
             <span><img class="ti" src="img/tech/react.svg" alt="" width="20" height="20" loading="lazy"> React</span>
-            <span><i class="ri-git-commit-line"></i> 3 commits</span>
           </div>
           <div class="proj-links">
             <a class="plink" href="https://github.com/bielvitooor/codely-frontend" target="_blank" rel="noopener"><i class="ri-github-fill"></i> <span data-i="pr.repo">Repositório</span></a>
@@ -1196,15 +1210,18 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
   <div class="wrap">
     <div class="contact rv">
       <span class="eyebrow" style="justify-content:center" data-i="ct.eyebrow">Vamos construir</span>
-      <h2 data-i="ct.title">Tem uma ideia que precisa<br>de interface, IA e alguém que entregue?</h2>
+      <h2 data-i="ct.title">Precisa de alguém que construa<br>o agente <em style="font-style:normal;color:var(--acc)">e</em> o produto em volta dele?</h2>
       <p data-i="ct.p">
-        Produto do zero, redesenho de interface, agente de IA, app mobile ou aquela automação
-        que ninguém quer fazer. Me manda o contexto que eu te digo se dá, como e em quanto tempo.
+        Sou dev full stack e construo agentes de IA que rodam em produção, não em slide.
+        Se for vaga, me chama que eu te mando o currículo e converso sobre o time.
+        Se for projeto, me manda o contexto que eu digo se dá, como e em quanto tempo.
       </p>
+      <div class="avail"><span class="dotmark"></span><span data-i="ct.avail">Aberto a vagas full-time e a projetos pontuais</span></div>
       <div class="contact-actions">
-        <a href="mailto:gabrielvitorsilvabrito@gmail.com" class="btn btn-primary" data-i="ct.mail">
-          <i class="ri-mail-send-line"></i> Falar por e-mail
-        </a>
+        <a href="mailto:gabrielvitorsilvabrito@gmail.com?subject=Vaga%20-%20Dev%20Full%20Stack%20%2F%20IA"
+           class="btn btn-primary" data-i="ct.job"><i class="ri-briefcase-line"></i> Tenho uma vaga</a>
+        <a href="mailto:gabrielvitorsilvabrito@gmail.com?subject=Projeto%20-%20agente%20de%20IA%20%2F%20automacao"
+           class="btn btn-ghost" data-i="ct.proj"><i class="ri-lightbulb-flash-line"></i> Tenho um projeto</a>
         <button class="btn btn-ghost" id="copymail">
           <i class="ri-file-copy-line"></i> <span>gabrielvitorsilvabrito@gmail.com</span>
         </button>
@@ -1248,7 +1265,8 @@ var I18N = {
     'nav.activity':'Atividade','nav.about':'Sobre','nav.contact':'Contato',
     'cmd.open':'<i class="ri-search-line"></i> Ctrl K','cmd.ph':'Ir para...',
 
-    'hero.h1':'Sou <em>full stack</em>: construo a <em>interface</em>, o <em>agente de IA</em> e a <em>infra</em> que segura os dois.',
+    'hero.kicker':'<b>Dev Full Stack</b> <s></s> <b>AI Agent Builder</b> <s></s> Zyria <s></s> Goiás, Brasil',
+    'hero.h1':'Eu construo <em>agentes de IA</em> que fazem o trabalho, e o produto inteiro em volta deles.',
     'hero.lede':'Sou <strong>Gabriel Vítor Silva Brito</strong>, desenvolvedor <strong>full stack</strong> júnior na <strong>Zyria</strong>, onde o produto tem IA no núcleo. Trabalho a stack inteira: front-end web e <strong>React Native</strong>, backend, agentes e automações, Linux e containers embaixo. Pós-graduando em <strong>Inteligência Artificial</strong>.',
     'hero.cta1':'Ver projetos <i class="ri-arrow-right-down-line"></i>',
     'hero.cta2':'<i class="ri-file-text-line"></i> Currículo',
@@ -1342,9 +1360,9 @@ var I18N = {
     'v4.b':'Entrega que outros mantêm','v4.p':'Código documentado e ambiente reproduzível. Se só eu consigo rodar, eu não terminei.',
 
     'ct.eyebrow':'Vamos construir',
-    'ct.title':'Tem uma ideia que precisa<br>de interface, IA e alguém que entregue?',
-    'ct.p':'Produto do zero, redesenho de interface, agente de IA, app mobile ou aquela automação que ninguém quer fazer. Me manda o contexto que eu te digo se dá, como e em quanto tempo.',
-    'ct.mail':'<i class="ri-mail-send-line"></i> Falar por e-mail','ct.cv':'Currículo',
+    'ct.title':'Precisa de alguém que construa<br>o agente <em style="font-style:normal;color:var(--acc)">e</em> o produto em volta dele?',
+    'ct.p':'Sou dev full stack e construo agentes de IA que rodam em produção, não em slide. Se for vaga, me chama que eu te mando o currículo e converso sobre o time. Se for projeto, me manda o contexto que eu digo se dá, como e em quanto tempo.',
+    'ct.job':'<i class="ri-briefcase-line"></i> Tenho uma vaga','ct.proj':'<i class="ri-lightbulb-flash-line"></i> Tenho um projeto','ct.avail':'Aberto a vagas full-time e a projetos pontuais · PT, EN e FR em aprendizado','ct.cv':'Currículo',
     'ft.top':'Voltar ao topo <i class="ri-arrow-up-line"></i>'
   },
   en:{
@@ -1353,7 +1371,8 @@ var I18N = {
     'nav.activity':'Activity','nav.about':'About','nav.contact':'Contact',
     'cmd.open':'<i class="ri-search-line"></i> Ctrl K','cmd.ph':'Go to...',
 
-    'hero.h1':'I am <em>full stack</em>: I build the <em>interface</em>, the <em>AI agent</em> and the <em>infra</em> that holds both.',
+    'hero.kicker':'<b>Full Stack Developer</b> <s></s> <b>AI Agent Builder</b> <s></s> Zyria <s></s> Goiás, Brazil',
+    'hero.h1':'I build <em>AI agents</em> that do the work, and the whole product around them.',
     'hero.lede':'I am <strong>Gabriel Vítor Silva Brito</strong>, a junior <strong>full stack</strong> developer at <strong>Zyria</strong>, where AI sits at the core of the product. I work across the whole stack: web front-end and <strong>React Native</strong>, backend, agents and automation, Linux and containers underneath. Currently taking a postgraduate degree in <strong>Artificial Intelligence</strong>.',
     'hero.cta1':'View projects <i class="ri-arrow-right-down-line"></i>',
     'hero.cta2':'<i class="ri-file-text-line"></i> Résumé',
@@ -1447,9 +1466,9 @@ var I18N = {
     'v4.b':'Work others can maintain','v4.p':'Documented code and reproducible environments. If I am the only one who can run it, I am not done.',
 
     'ct.eyebrow':'Let us build',
-    'ct.title':'Got an idea that needs<br>interface, AI and someone who ships?',
-    'ct.p':'A product from scratch, an interface redesign, an AI agent, a mobile app or that automation nobody wants to touch. Send me the context and I will tell you if it is doable, how, and how long it takes.',
-    'ct.mail':'<i class="ri-mail-send-line"></i> Send an email','ct.cv':'Résumé',
+    'ct.title':'Need someone who builds the agent<br><em style="font-style:normal;color:var(--acc)">and</em> the product around it?',
+    'ct.p':'I am a full stack developer and I build AI agents that run in production, not on a slide. Hiring? Reach out and I will send my résumé and talk about the team. Got a project? Send me the context and I will tell you if it is doable, how, and how long it takes.',
+    'ct.job':'<i class="ri-briefcase-line"></i> I am hiring','ct.proj':'<i class="ri-lightbulb-flash-line"></i> I have a project','ct.avail':'Open to full-time roles and one-off projects · PT, EN and FR in progress','ct.cv':'Résumé',
     'ft.top':'Back to top <i class="ri-arrow-up-line"></i>'
   }
 };
@@ -1478,8 +1497,8 @@ function applyLang(){
     b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
   });
   document.title = (lang === 'pt')
-    ? 'Gabriel Brito — Dev Full Stack, IA & Automação'
-    : 'Gabriel Brito — Full Stack Dev, AI & Automation';
+    ? 'Gabriel Brito — Dev Full Stack & AI Agent Builder'
+    : 'Gabriel Brito — Full Stack Dev & AI Agent Builder';
   buildCmd();
   refreshDynamic();
 }
