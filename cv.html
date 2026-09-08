@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Currículo — Gabriel Vítor Silva Brito</title>
-<meta name="description" content="Currículo de Gabriel Vítor Silva Brito — desenvolvedor full stack, IA e agentes, automação de processos e infraestrutura de redes.">
+<meta name="description" content="Currículo de Gabriel Vítor Silva Brito. Desenvolvedor full stack júnior. IA, machine learning, automação, React Native e infraestrutura.">
 <meta name="robots" content="index,follow">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230A0B0D'/%3E%3Cg transform='translate(-1 0)'%3E%3Ccircle cx='20' cy='20' r='11' fill='none' stroke='%23F2F3F5' stroke-width='4' stroke-linecap='round' stroke-dasharray='51.8 17.3' stroke-dashoffset='-8.6'/%3E%3Cpath d='M20.5 20H30' stroke='%23F2F3F5' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='33.5' cy='20' r='3.5' fill='%23CFFF5E'/%3E%3C/g%3E%3C/svg%3E">
@@ -15,58 +15,45 @@
 
 <style>
 :root{
-  --ink:#111317;
-  --ink-2:#3F454F;
-  --ink-3:#6B7280;
-  --line:#E3E6EA;
-  --paper:#FFFFFF;
-  --shell:#EDEFF2;
-  --acc:#CFFF5E;
-  --acc-ink:#5B7000;
+  --ink:#111317;--ink-2:#3F454F;--ink-3:#6B7280;
+  --line:#E3E6EA;--paper:#FFFFFF;--shell:#EDEFF2;
+  --acc:#CFFF5E;--acc-ink:#5B7000;
   --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
   --font-body:'Inter','Segoe UI',system-ui,sans-serif;
   --font-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:var(--shell);color:var(--ink);font-family:var(--font-body);
-  font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
-  padding:32px 16px 80px;
-}
+body{background:var(--shell);color:var(--ink);font-family:var(--font-body);
+  font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;padding:32px 16px 80px}
 a{color:inherit}
 h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.15}
+:focus-visible{outline:2px solid var(--acc-ink);outline-offset:2px}
 
-/* toolbar */
-.bar{
-  max-width:840px;margin:0 auto 20px;display:flex;gap:.6rem;justify-content:space-between;
-  align-items:center;flex-wrap:wrap;
-}
-.bar-actions{display:flex;gap:.5rem;flex-wrap:wrap}
-.b{
-  display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.05rem;border-radius:100px;
+.bar{max-width:840px;margin:0 auto 20px;display:flex;gap:.6rem;justify-content:space-between;
+  align-items:center;flex-wrap:wrap}
+.bar-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.b{display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.05rem;border-radius:100px;
   font-size:.86rem;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);
-  cursor:pointer;transition:all .2s ease;text-decoration:none;
-}
+  cursor:pointer;transition:all .2s ease;text-decoration:none}
 .b:hover{border-color:var(--ink);transform:translateY(-1px)}
 .b.solid{background:var(--ink);color:#fff;border-color:var(--ink)}
 .b.solid:hover{background:#000}
 .b svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:100px;padding:2px;gap:2px;background:#fff}
+.lang button{font-family:var(--font-mono);font-size:.72rem;padding:.34rem .6rem;border-radius:100px;
+  border:none;background:none;color:var(--ink-3);cursor:pointer;transition:all .2s}
+.lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
 
-/* paper */
-.paper{
-  max-width:840px;margin:0 auto;background:var(--paper);border-radius:6px;
+.paper{max-width:840px;margin:0 auto;background:var(--paper);border-radius:6px;
   box-shadow:0 24px 60px -24px rgba(17,19,23,.28), 0 0 0 1px rgba(17,19,23,.05);
-  padding:52px 56px 48px;
-}
+  padding:52px 56px 48px}
 
-/* header */
 .hd{display:flex;gap:28px;align-items:flex-start;padding-bottom:26px;border-bottom:2px solid var(--ink)}
-.hd img{width:104px;height:104px;border-radius:8px;object-fit:cover;object-position:center 22%;flex:0 0 auto;
-  border:1px solid var(--line)}
+.hd img{width:104px;height:104px;border-radius:8px;object-fit:cover;object-position:center 22%;
+  flex:0 0 auto;border:1px solid var(--line)}
 .hd-main{flex:1;min-width:0}
 .hd h1{font-size:2.15rem;font-weight:800;margin-bottom:.15rem}
-.role{font-family:var(--font-mono);font-size:.82rem;color:var(--acc-ink);font-weight:500;
-  margin-bottom:.7rem;letter-spacing:.01em}
+.role{font-family:var(--font-mono);font-size:.8rem;color:var(--acc-ink);font-weight:500;margin-bottom:.7rem}
 .role mark{background:var(--acc);color:var(--ink);padding:.1rem .3rem;border-radius:3px}
 .hd p.pitch{color:var(--ink-2);font-size:.93rem;max-width:56ch}
 .contacts{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;margin-top:.9rem;font-size:.83rem;color:var(--ink-2)}
@@ -75,13 +62,10 @@ h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.15}
 .contacts a:hover{color:var(--ink);text-decoration:underline}
 .ci{width:13px;height:13px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
 
-/* sections */
 section{margin-top:30px;break-inside:avoid}
-h2{
-  font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-3);
-  font-family:var(--font-mono);font-weight:500;margin-bottom:14px;
-  padding-bottom:7px;border-bottom:1px solid var(--line);
-}
+h2{font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-3);
+  font-family:var(--font-mono);font-weight:500;margin-bottom:14px;padding-bottom:7px;
+  border-bottom:1px solid var(--line)}
 
 .item{margin-bottom:18px;break-inside:avoid}
 .item:last-child{margin-bottom:0}
@@ -95,20 +79,17 @@ h2{
 .item li b{color:var(--ink);font-weight:600}
 .item p{color:var(--ink-2);font-size:.89rem}
 
-/* skills */
 .skills{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px}
 .srow{display:flex;gap:.6rem;align-items:baseline;padding:.3rem 0;border-bottom:1px dotted var(--line)}
-.srow b{flex:0 0 118px;font-size:.8rem;font-weight:600;color:var(--ink)}
+.srow b{flex:0 0 122px;font-size:.8rem;font-weight:600;color:var(--ink)}
 .srow span{font-size:.83rem;color:var(--ink-2)}
 
-/* highlights row */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .metric{padding:11px 14px;border-right:1px solid var(--line)}
 .metric:last-child{border-right:none}
 .metric b{display:block;font-family:var(--font-display);font-size:1.3rem;font-weight:800;line-height:1.1}
 .metric span{font-size:.72rem;color:var(--ink-3)}
 
-/* projects */
 .projs{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px}
 .pj{break-inside:avoid}
 .pj b{font-family:var(--font-display);font-size:.98rem;font-weight:600;display:block}
@@ -117,9 +98,9 @@ h2{
 .pj a{font-size:.76rem;color:var(--ink-3);font-family:var(--font-mono);text-decoration:none}
 .pj a:hover{color:var(--ink)}
 
-.foot{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);
-  display:flex;justify-content:space-between;font-family:var(--font-mono);
-  font-size:.7rem;color:var(--ink-3);flex-wrap:wrap;gap:.5rem}
+.foot{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);display:flex;
+  justify-content:space-between;font-family:var(--font-mono);font-size:.7rem;color:var(--ink-3);
+  flex-wrap:wrap;gap:.5rem}
 
 @media (max-width:680px){
   body{padding:18px 10px 60px}
@@ -132,19 +113,18 @@ h2{
   .metric:nth-child(1),.metric:nth-child(2){border-bottom:1px solid var(--line)}
 }
 
-/* ---------- PRINT ---------- */
 @page{size:A4;margin:12mm 13mm}
 @media print{
-  body{background:#fff;padding:0;font-size:9.7pt;line-height:1.38}
+  body{background:#fff;padding:0;font-size:9.3pt;line-height:1.33}
   .bar{display:none!important}
   .paper{box-shadow:none;max-width:none;padding:0;border-radius:0}
   a{text-decoration:none;color:var(--ink)}
-  section{margin-top:13px}
+  section{margin-top:11px}
   h2{margin-bottom:7px;font-size:7.6pt;padding-bottom:5px}
-  .item{margin-bottom:9px}
+  .item{margin-bottom:7px}
   .item ul{margin-top:.2rem}
   .item li{margin-bottom:.1rem}
-  .hd{gap:22px;padding-bottom:18px}
+  .hd{gap:20px;padding-bottom:15px}
   .hd img{width:84px;height:84px}
   .hd h1{font-size:1.95rem}
   .metrics{border-color:#CCC}
@@ -162,12 +142,16 @@ h2{
 <div class="bar">
   <a class="b" href="index.html">
     <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    Voltar ao portfólio
+    <span data-i="back">Voltar ao portfólio</span>
   </a>
   <div class="bar-actions">
+    <div class="lang" id="langsw" role="group" aria-label="Idioma / Language">
+      <button data-lang="pt" aria-pressed="true">PT</button>
+      <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
     <button class="b solid" onclick="window.print()">
       <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
-      Imprimir / Salvar PDF
+      <span data-i="print">Imprimir / Salvar PDF</span>
     </button>
   </div>
 </div>
@@ -175,14 +159,14 @@ h2{
 <main class="paper">
 
   <header class="hd">
-    <img src="img/gabriel-avatar.jpg" alt="Gabriel Vítor Silva Brito" width="520" height="520">
+    <img src="img/gabriel-avatar.jpg" alt="Gabriel Vítor Silva Brito" width="560" height="560">
     <div class="hd-main">
       <h1>Gabriel Vítor Silva Brito</h1>
-      <div class="role">Desenvolvedor Full Stack · <mark>IA &amp; Agentes</mark> · <mark>Automação</mark> · <mark>Infra de Redes</mark></div>
-      <p class="pitch">
-        Desenvolvedor com atuação em govtech, focado em transformar processos manuais em
-        sistemas autônomos. Trabalho tanto na camada de produto (backend, frontend, banco)
-        quanto na base que sustenta tudo — Linux, containers e redes.
+      <div class="role" data-i="role">Dev Full Stack Júnior · <mark>IA &amp; Machine Learning</mark> · <mark>Automação</mark> · <mark>React Native</mark></div>
+      <p class="pitch" data-i="pitch">
+        Desenvolvedor full stack com foco em inteligência artificial, machine learning e automação
+        de processos, atuando em produto com IA no núcleo. Trabalho do backend e dos agentes até o
+        front-end web, o app em React Native e a infraestrutura que sustenta a aplicação.
       </p>
       <div class="contacts">
         <span><svg class="ci" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m4 6 8 6 8-6"/></svg>
@@ -200,151 +184,263 @@ h2{
   </header>
 
   <section>
-    <h2>Em números</h2>
+    <h2 data-i="s.metrics">Em números</h2>
     <div class="metrics">
-      <div class="metric"><b>2.834</b><span>contribuições no GitHub</span></div>
-      <div class="metric"><b>1.332</b><span>contribuições em 2026</span></div>
-      <div class="metric"><b>30</b><span>repositórios públicos</span></div>
-      <div class="metric"><b>5 anos</b><span>escrevendo código</span></div>
+      <div class="metric"><b>2.834</b><span data-i="m1">contribuições no GitHub</span></div>
+      <div class="metric"><b>1.332</b><span data-i="m2">contribuições em 2026</span></div>
+      <div class="metric"><b>30</b><span data-i="m3">repositórios públicos</span></div>
+      <div class="metric"><b data-i="m4b">5 anos</b><span data-i="m4">escrevendo código</span></div>
     </div>
   </section>
 
   <section>
-    <h2>Experiência profissional</h2>
+    <h2 data-i="s.xp">Experiência profissional</h2>
 
     <div class="item">
       <div class="item-hd">
-        <b>Desenvolvedor Full Stack</b>
-        <time>atual</time>
+        <b data-i="x1.role">Desenvolvedor Full Stack Júnior</b>
+        <time data-i="x1.when">nov/2025 até hoje</time>
+      </div>
+      <div class="org">Zyria</div>
+      <ul>
+        <li data-i="x1.b1">Desenvolvimento full stack em produto com <b>IA no núcleo</b>.</li>
+        <li data-i="x1.b2"><b>Front-end</b>: construção de interface, componentes reutilizáveis e melhorias de usabilidade.</li>
+        <li data-i="x1.b3">Integração com <b>LLMs e agentes</b>, conectando modelo, ferramentas e interface.</li>
+        <li data-i="x1.b4">Aplicativos em <b>React Native</b>, do desenvolvimento até a publicação na App Store e na Play Store.</li>
+        <li data-i="x1.b5">Stack: React, TypeScript, React Native, Python, integração com LLMs.</li>
+      </ul>
+    </div>
+
+    <div class="item">
+      <div class="item-hd">
+        <b data-i="x2.role">Estágio em Desenvolvimento</b>
+        <time data-i="x2.when">ago a nov/2025</time>
       </div>
       <div class="org">Orb Govtech</div>
       <ul>
-        <li>Desenvolvimento de <b>soluções digitais para o setor público</b>, atuando do backend à interface.</li>
-        <li>Aplicação de <b>IA e agentes</b> em fluxos internos — apoio à análise, geração e triagem de informação.</li>
-        <li><b>Automação de processos</b> operacionais antes executados manualmente, reduzindo retrabalho e tempo de ciclo.</li>
-        <li>Suporte a <b>infraestrutura, ambientes containerizados e deploy</b> das aplicações.</li>
-        <li>Stack: PHP, Vue/Nuxt, Python, MySQL, Docker, Linux.</li>
+        <li data-i="x2.b1">Soluções digitais para o <b>setor público</b>, atuando do backend à interface.</li>
+        <li data-i="x2.b2"><b>Automação de processos</b> operacionais que antes eram executados manualmente.</li>
+        <li data-i="x2.b3">Apoio a <b>infraestrutura, ambientes containerizados e deploy</b> das aplicações.</li>
+        <li data-i="x2.b4">Stack: PHP, Vue/Nuxt, MySQL, Docker, Linux.</li>
       </ul>
     </div>
 
     <div class="item">
       <div class="item-hd">
-        <b>Desenvolvedor de Automações — projetos autônomos</b>
-        <time>contínuo</time>
+        <b data-i="x3.role">Desenvolvedor de Automações (projetos autônomos)</b>
+        <time data-i="x3.when">contínuo</time>
       </div>
-      <div class="org">Freelance / sob demanda</div>
+      <div class="org" data-i="x3.org">Freelance / sob demanda</div>
       <ul>
-        <li>Levantamento de processo junto a quem executa, mapeando gargalos reais antes de escrever código.</li>
-        <li>Entrega de <b>integrações entre sistemas, rotinas agendadas, extração e tratamento de dados, bots e disparos</b>.</li>
-        <li>Uso de LLMs e agentes quando agregam resultado — e de scripts simples quando são a resposta certa.</li>
-        <li>Entrega documentada e com ambiente reproduzível, sem dependência do desenvolvedor.</li>
+        <li data-i="x3.b1">Levantamento de processo junto a quem executa, mapeando gargalos reais antes de escrever código.</li>
+        <li data-i="x3.b2">Entrega de integrações entre sistemas, rotinas agendadas, extração e tratamento de dados, bots e disparos.</li>
+        <li data-i="x3.b3">Uso de LLMs e agentes quando agregam resultado, e de scripts simples quando são a resposta certa.</li>
+        <li data-i="x3.b4">Entrega documentada e com ambiente reproduzível, sem dependência do desenvolvedor.</li>
       </ul>
     </div>
 
     <div class="item">
       <div class="item-hd">
-        <b>Monitor de Desenvolvimento Web</b>
+        <b data-i="x4.role">Monitor de Desenvolvimento Web</b>
         <time>2023</time>
       </div>
-      <div class="org">IF Goiano — Campus Ceres</div>
+      <div class="org" data-i="x4.org">IF Goiano — Campus Ceres</div>
       <ul>
-        <li>Apoio a alunos em programação web, revisão de código e resolução de dúvidas práticas.</li>
+        <li data-i="x4.b1">Apoio a alunos em programação web, revisão de código e resolução de dúvidas práticas.</li>
       </ul>
     </div>
   </section>
 
   <section>
-    <h2>Competências técnicas</h2>
+    <h2 data-i="s.skills">Competências técnicas</h2>
     <div class="skills">
-      <div class="srow"><b>IA &amp; Agentes</b><span>LLMs, agentes autônomos, tool calling, RAG, prompt engineering, Ollama</span></div>
-      <div class="srow"><b>Backend</b><span>PHP (CodeIgniter 4), Python (FastAPI), Node/JS, APIs REST</span></div>
-      <div class="srow"><b>Frontend</b><span>Vue.js, Nuxt, TypeScript, React, Tailwind CSS, HTML/CSS</span></div>
-      <div class="srow"><b>Dados</b><span>MySQL, modelagem relacional, NoSQL, ETL, scraping</span></div>
-      <div class="srow"><b>Infra &amp; DevOps</b><span>Linux, Docker, Vagrant, Shell script, Git, CI/CD</span></div>
-      <div class="srow"><b>Redes &amp; Segurança</b><span>iptables, NAT, roteamento, firewall, hardening, Apache</span></div>
-      <div class="srow"><b>Automação</b><span>Cron, webhooks, integrações, RPA leve, bots</span></div>
-      <div class="srow"><b>Fundamentos</b><span>POO, MVC, Java, C, estruturas de dados, versionamento</span></div>
+      <div class="srow"><b data-i="k1b">IA &amp; Agentes</b><span data-i="k1">LLMs, agentes autônomos, tool calling, RAG, prompt engineering, Ollama</span></div>
+      <div class="srow"><b data-i="k2b">Machine Learning</b><span data-i="k2">Fundamentos, tratamento de dados, avaliação de modelos, inferência em produção</span></div>
+      <div class="srow"><b data-i="k3b">Automação</b><span data-i="k3">Integrações, webhooks, rotinas agendadas, ETL, scraping, bots</span></div>
+      <div class="srow"><b data-i="k4b">Front-end</b><span data-i="k4">React, Vue.js, Nuxt, TypeScript, Tailwind CSS, HTML/CSS</span></div>
+      <div class="srow"><b data-i="k5b">Backend</b><span data-i="k5">Python (FastAPI), PHP (CodeIgniter 4), Node/JS, APIs REST</span></div>
+      <div class="srow"><b data-i="k6b">Mobile</b><span data-i="k6">React Native, build e assinatura, publicação na App Store e Play Store</span></div>
+      <div class="srow"><b data-i="k7b">Infra &amp; DevOps</b><span data-i="k7">Linux, Docker, Vagrant, Shell script, Git, CI/CD</span></div>
+      <div class="srow"><b data-i="k8b">Redes &amp; Segurança</b><span data-i="k8">iptables, NAT, roteamento, firewall, hardening, Apache</span></div>
     </div>
   </section>
 
   <section>
-    <h2>Projetos selecionados</h2>
+    <h2 data-i="s.projects">Projetos selecionados</h2>
     <div class="projs">
       <div class="pj">
         <b>Codely.ia Superagent</b>
         <div class="tech">FastAPI · Ollama · React · TypeScript</div>
-        <p>Superagente de IA com arquitetura desacoplada: toda a lógica de inferência no backend Python, frontend como interface pura.</p>
+        <p data-i="p1">Superagente de IA com arquitetura desacoplada: toda a lógica de inferência no backend Python, frontend como interface pura.</p>
         <a href="https://github.com/bielvitooor/codely-frontend" target="_blank" rel="noopener">github.com/bielvitooor/codely-frontend</a>
       </div>
       <div class="pj">
-        <b>HortaClick — TCC</b>
-        <div class="tech">HTML · Tailwind · Gestão cooperativa</div>
-        <p>Plataforma que conecta agricultura familiar ao consumidor final, cobrindo oferta, pedido e fluxo de entrega.</p>
+        <b data-i="p2b">HortaClick (TCC)</b>
+        <div class="tech" data-i="p2t">HTML · Tailwind · Gestão cooperativa</div>
+        <p data-i="p2">Plataforma que conecta agricultura familiar ao consumidor final, cobrindo oferta, pedido e fluxo de entrega.</p>
         <a href="https://github.com/bielvitooor/hortaclick" target="_blank" rel="noopener">github.com/bielvitooor/hortaclick</a>
       </div>
       <div class="pj">
         <b>SysDelivery</b>
         <div class="tech">CodeIgniter 4 · MySQL · Docker (LAMP)</div>
-        <p>Sistema de gerenciamento de entregas em MVC, com ambiente inteiro containerizado.</p>
+        <p data-i="p3">Sistema de gerenciamento de entregas em MVC, com ambiente inteiro containerizado.</p>
         <a href="https://github.com/bielvitooor/Sys-Delivery" target="_blank" rel="noopener">github.com/bielvitooor/Sys-Delivery</a>
       </div>
       <div class="pj">
         <b>PV Project</b>
         <div class="tech">PHP · MySQL · 39 commits</div>
-        <p>Sistema de gestão para o Posto de Vendas do IF Goiano — Campus Ceres.</p>
+        <p data-i="p4">Sistema de gestão para o Posto de Vendas do IF Goiano, Campus Ceres.</p>
         <a href="https://github.com/bielvitooor/pv-project" target="_blank" rel="noopener">github.com/bielvitooor/pv-project</a>
       </div>
       <div class="pj">
-        <b>Lab de Redes com Vagrant</b>
+        <b data-i="p5b">Lab de Redes com Vagrant</b>
         <div class="tech">Vagrant · Ubuntu Server · Apache</div>
-        <p>Três VMs provisionadas do zero: servidor web, banco de dados e gateway, com rede privada e IPs estáticos.</p>
+        <p data-i="p5">Três VMs provisionadas do zero: servidor web, banco de dados e gateway, com rede privada e IPs estáticos.</p>
         <a href="https://github.com/bielvitooor/proj_lab_redes" target="_blank" rel="noopener">github.com/bielvitooor/proj_lab_redes</a>
       </div>
       <div class="pj">
-        <b>Firewall &amp; Políticas de Rede</b>
+        <b data-i="p6b">Firewall e Políticas de Rede</b>
         <div class="tech">iptables · Shell · Docker</div>
-        <p>Política padrão DROP, NAT com MASQUERADE, rate limit de ICMP e filtragem de conteúdo com logging.</p>
+        <p data-i="p6">Política padrão DROP, NAT com MASQUERADE, rate limit de ICMP e filtragem de conteúdo com logging.</p>
         <a href="https://github.com/bielvitooor/firewall-redes" target="_blank" rel="noopener">github.com/bielvitooor/firewall-redes</a>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>Formação acadêmica</h2>
+    <h2 data-i="s.edu">Formação acadêmica</h2>
     <div class="item">
       <div class="item-hd">
-        <b>Bacharelado em Sistemas de Informação</b>
-        <time>em conclusão</time>
+        <b data-i="e1b">Pós-graduação em Inteligência Artificial</b>
+        <time data-i="e1t">conclusão prevista out/2026</time>
       </div>
-      <div class="org">Instituto Federal Goiano — Campus Ceres</div>
-      <p>TCC: <b>HortaClick</b> — plataforma de gestão cooperativa para agricultura familiar.</p>
+      <div class="org" data-i="e1o">Especialização em andamento</div>
     </div>
     <div class="item">
       <div class="item-hd">
-        <b>Técnico em Informática para Internet</b>
-        <time>—</time>
+        <b data-i="e2b">Bacharelado em Sistemas de Informação</b>
+        <time data-i="e2t">graduação</time>
       </div>
-      <div class="org">Formação técnica</div>
-      <p>Base em desenvolvimento web, redes e fundamentos de programação.</p>
+      <div class="org">Instituto Federal Goiano — Campus Ceres</div>
+      <p data-i="e2">TCC: <b>HortaClick</b>, plataforma de gestão cooperativa para agricultura familiar.</p>
+    </div>
+    <div class="item">
+      <div class="item-hd">
+        <b data-i="e3b">Técnico em Informática para Internet</b>
+        <time data-i="e3t">formação técnica</time>
+      </div>
+      <p data-i="e3">Base em desenvolvimento web, redes e fundamentos de programação.</p>
     </div>
   </section>
 
   <section>
-    <h2>Idiomas &amp; extras</h2>
+    <h2 data-i="s.extra">Idiomas e informações adicionais</h2>
     <div class="skills">
-      <div class="srow"><b>Português</b><span>nativo</span></div>
-      <div class="srow"><b>Inglês</b><span>leitura técnica e documentação</span></div>
-      <div class="srow"><b>Interesses</b><span>IA aplicada, sistemas autônomos, tecnologia pública</span></div>
-      <div class="srow"><b>Disponibilidade</b><span>projetos, automações sob demanda e oportunidades full-time</span></div>
+      <div class="srow"><b data-i="l1b">Português</b><span data-i="l1">nativo</span></div>
+      <div class="srow"><b data-i="l2b">Inglês</b><span data-i="l2">leitura técnica e documentação</span></div>
+      <div class="srow"><b data-i="l3b">Interesses</b><span data-i="l3">IA aplicada, machine learning, sistemas autônomos</span></div>
+      <div class="srow"><b data-i="l4b">Disponibilidade</b><span data-i="l4">projetos, automações sob demanda e oportunidades full-time</span></div>
     </div>
   </section>
 
   <div class="foot">
-    <span>Gabriel Vítor Silva Brito · Currículo</span>
+    <span data-i="foot">Gabriel Vítor Silva Brito · Currículo</span>
     <span>bielvitooor.github.io</span>
   </div>
 
 </main>
 
+<script>
+(function(){
+'use strict';
+var EN = {
+  'back':'Back to portfolio','print':'Print / Save PDF',
+  'role':'Junior Full Stack Developer · <mark>AI &amp; Machine Learning</mark> · <mark>Automation</mark> · <mark>React Native</mark>',
+  'pitch':'Full stack developer focused on artificial intelligence, machine learning and process automation, working on a product with AI at its core. I cover everything from backend and agents to the web front-end, the React Native app and the infrastructure that keeps it running.',
+  's.metrics':'By the numbers',
+  'm1':'GitHub contributions','m2':'contributions in 2026','m3':'public repositories',
+  'm4b':'5 years','m4':'writing code',
+  's.xp':'Professional experience',
+  'x1.role':'Junior Full Stack Developer','x1.when':'Nov 2025 to present',
+  'x1.b1':'Full stack development on a product with <b>AI at its core</b>.',
+  'x1.b2':'<b>Front-end</b>: building the interface, reusable components and usability improvements.',
+  'x1.b3':'Integration with <b>LLMs and agents</b>, wiring model, tools and interface together.',
+  'x1.b4':'<b>React Native</b> apps, from development through to publishing on the App Store and Play Store.',
+  'x1.b5':'Stack: React, TypeScript, React Native, Python, LLM integration.',
+  'x2.role':'Development Intern','x2.when':'Aug to Nov 2025',
+  'x2.b1':'Digital solutions for the <b>public sector</b>, working from backend to interface.',
+  'x2.b2':'<b>Process automation</b> for operations previously carried out by hand.',
+  'x2.b3':'Support for <b>infrastructure, containerized environments and deployment</b>.',
+  'x2.b4':'Stack: PHP, Vue/Nuxt, MySQL, Docker, Linux.',
+  'x3.role':'Automation Developer (independent projects)','x3.when':'ongoing','x3.org':'Freelance / on demand',
+  'x3.b1':'Process discovery alongside the people who run it, mapping real bottlenecks before writing code.',
+  'x3.b2':'Delivery of system integrations, scheduled jobs, data extraction and processing, bots and notifications.',
+  'x3.b3':'LLMs and agents where they add value, and plain scripts where those are the right answer.',
+  'x3.b4':'Documented delivery with reproducible environments, with no dependency on the developer.',
+  'x4.role':'Web Development Teaching Assistant','x4.org':'IF Goiano — Ceres Campus',
+  'x4.b1':'Supporting students in web programming, code review and hands-on troubleshooting.',
+  's.skills':'Technical skills',
+  'k1b':'AI &amp; Agents','k1':'LLMs, autonomous agents, tool calling, RAG, prompt engineering, Ollama',
+  'k2b':'Machine Learning','k2':'Fundamentals, data preparation, model evaluation, inference in production',
+  'k3b':'Automation','k3':'Integrations, webhooks, scheduled jobs, ETL, scraping, bots',
+  'k4b':'Front-end','k4':'React, Vue.js, Nuxt, TypeScript, Tailwind CSS, HTML/CSS',
+  'k5b':'Backend','k5':'Python (FastAPI), PHP (CodeIgniter 4), Node/JS, REST APIs',
+  'k6b':'Mobile','k6':'React Native, build and signing, App Store and Play Store publishing',
+  'k7b':'Infra &amp; DevOps','k7':'Linux, Docker, Vagrant, shell scripting, Git, CI/CD',
+  'k8b':'Networks &amp; Security','k8':'iptables, NAT, routing, firewall, hardening, Apache',
+  's.projects':'Selected projects',
+  'p1':'An AI superagent with a decoupled architecture: all inference logic in the Python backend, frontend as a pure interface.',
+  'p2b':'HortaClick (final project)','p2t':'HTML · Tailwind · Cooperative management',
+  'p2':'A platform connecting family farming to end consumers, covering offers, orders and the delivery flow.',
+  'p3':'A delivery management system in MVC, with the whole environment containerized.',
+  'p4':'A management system for the campus store at IF Goiano, Ceres.',
+  'p5b':'Network Lab with Vagrant',
+  'p5':'Three VMs provisioned from scratch: web server, database and gateway, with a private network and static IPs.',
+  'p6b':'Firewall and Network Policies',
+  'p6':'Default DROP policy, NAT with MASQUERADE, ICMP rate limiting and content filtering with logging.',
+  's.edu':'Education',
+  'e1b':'Postgraduate degree in Artificial Intelligence','e1t':'expected Oct 2026','e1o':'Specialization in progress',
+  'e2b':'BSc in Information Systems','e2t':'undergraduate',
+  'e2':'Final project: <b>HortaClick</b>, a cooperative management platform for family farming.',
+  'e3b':'Technician in Internet Computing','e3t':'technical degree',
+  'e3':'Foundation in web development, networks and programming fundamentals.',
+  's.extra':'Languages and additional information',
+  'l1b':'Portuguese','l1':'native','l2b':'English','l2':'technical reading and documentation',
+  'l3b':'Interests','l3':'applied AI, machine learning, autonomous systems',
+  'l4b':'Availability','l4':'projects, automation on demand and full-time opportunities',
+  'foot':'Gabriel Vítor Silva Brito · Résumé'
+};
+var PT = {};
+document.querySelectorAll('[data-i]').forEach(function(el){ PT[el.dataset.i] = el.innerHTML; });
+
+var lang = 'pt';
+try{
+  var s = localStorage.getItem('gb-lang');
+  lang = s || ((navigator.language||'pt').toLowerCase().indexOf('pt')===0 ? 'pt' : 'en');
+}catch(e){}
+
+function apply(){
+  var d = (lang === 'en') ? EN : PT;
+  document.documentElement.lang = (lang === 'pt' ? 'pt-BR' : 'en');
+  document.querySelectorAll('[data-i]').forEach(function(el){
+    var v = d[el.dataset.i]; if(v != null) el.innerHTML = v;
+  });
+  document.querySelectorAll('#langsw button').forEach(function(b){
+    b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
+  });
+  document.title = (lang === 'pt')
+    ? 'Currículo — Gabriel Vítor Silva Brito'
+    : 'Résumé — Gabriel Vítor Silva Brito';
+}
+document.getElementById('langsw').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-lang]');
+  if(!b || b.dataset.lang === lang) return;
+  lang = b.dataset.lang;
+  try{ localStorage.setItem('gb-lang', lang); }catch(err){}
+  apply();
+});
+apply();
+})();
+</script>
 </body>
 </html>
