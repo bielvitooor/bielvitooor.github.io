@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Currículo — Gabriel Vítor Silva Brito</title>
+<meta name="description" content="Currículo de Gabriel Vítor Silva Brito — desenvolvedor full stack, IA e agentes, automação de processos e infraestrutura de redes.">
+<meta name="robots" content="index,follow">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230A0B0D'/%3E%3Cg transform='translate(-1 0)'%3E%3Ccircle cx='20' cy='20' r='11' fill='none' stroke='%23F2F3F5' stroke-width='4' stroke-linecap='round' stroke-dasharray='51.8 17.3' stroke-dashoffset='-8.6'/%3E%3Cpath d='M20.5 20H30' stroke='%23F2F3F5' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='33.5' cy='20' r='3.5' fill='%23CFFF5E'/%3E%3C/g%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#111317;
+  --ink-2:#3F454F;
+  --ink-3:#6B7280;
+  --line:#E3E6EA;
+  --paper:#FFFFFF;
+  --shell:#EDEFF2;
+  --acc:#CFFF5E;
+  --acc-ink:#5B7000;
+  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-body:'Inter','Segoe UI',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--shell);color:var(--ink);font-family:var(--font-body);
+  font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  padding:32px 16px 80px;
+}
+a{color:inherit}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.15}
+
+/* toolbar */
+.bar{
+  max-width:840px;margin:0 auto 20px;display:flex;gap:.6rem;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;
+}
+.bar-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.b{
+  display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.05rem;border-radius:100px;
+  font-size:.86rem;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);
+  cursor:pointer;transition:all .2s ease;text-decoration:none;
+}
+.b:hover{border-color:var(--ink);transform:translateY(-1px)}
+.b.solid{background:var(--ink);color:#fff;border-color:var(--ink)}
+.b.solid:hover{background:#000}
+.b svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* paper */
+.paper{
+  max-width:840px;margin:0 auto;background:var(--paper);border-radius:6px;
+  box-shadow:0 24px 60px -24px rgba(17,19,23,.28), 0 0 0 1px rgba(17,19,23,.05);
+  padding:52px 56px 48px;
+}
+
+/* header */
+.hd{display:flex;gap:28px;align-items:flex-start;padding-bottom:26px;border-bottom:2px solid var(--ink)}
+.hd img{width:104px;height:104px;border-radius:8px;object-fit:cover;object-position:center 22%;flex:0 0 auto;
+  border:1px solid var(--line)}
+.hd-main{flex:1;min-width:0}
+.hd h1{font-size:2.15rem;font-weight:800;margin-bottom:.15rem}
+.role{font-family:var(--font-mono);font-size:.82rem;color:var(--acc-ink);font-weight:500;
+  margin-bottom:.7rem;letter-spacing:.01em}
+.role mark{background:var(--acc);color:var(--ink);padding:.1rem .3rem;border-radius:3px}
+.hd p.pitch{color:var(--ink-2);font-size:.93rem;max-width:56ch}
+.contacts{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;margin-top:.9rem;font-size:.83rem;color:var(--ink-2)}
+.contacts span{display:inline-flex;align-items:center;gap:.35rem}
+.contacts a{text-decoration:none}
+.contacts a:hover{color:var(--ink);text-decoration:underline}
+.ci{width:13px;height:13px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+
+/* sections */
+section{margin-top:30px;break-inside:avoid}
+h2{
+  font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-3);
+  font-family:var(--font-mono);font-weight:500;margin-bottom:14px;
+  padding-bottom:7px;border-bottom:1px solid var(--line);
+}
+
+.item{margin-bottom:18px;break-inside:avoid}
+.item:last-child{margin-bottom:0}
+.item-hd{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.25rem}
+.item-hd b{font-family:var(--font-display);font-size:1.06rem;font-weight:600}
+.item-hd time{font-family:var(--font-mono);font-size:.75rem;color:var(--ink-3);white-space:nowrap}
+.item .org{font-size:.85rem;color:var(--acc-ink);font-weight:600;margin-bottom:.4rem}
+.item ul{list-style:none;margin-top:.35rem}
+.item li{position:relative;padding-left:15px;color:var(--ink-2);font-size:.89rem;margin-bottom:.22rem}
+.item li::before{content:'';position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--ink-3)}
+.item li b{color:var(--ink);font-weight:600}
+.item p{color:var(--ink-2);font-size:.89rem}
+
+/* skills */
+.skills{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px}
+.srow{display:flex;gap:.6rem;align-items:baseline;padding:.3rem 0;border-bottom:1px dotted var(--line)}
+.srow b{flex:0 0 118px;font-size:.8rem;font-weight:600;color:var(--ink)}
+.srow span{font-size:.83rem;color:var(--ink-2)}
+
+/* highlights row */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.metric{padding:11px 14px;border-right:1px solid var(--line)}
+.metric:last-child{border-right:none}
+.metric b{display:block;font-family:var(--font-display);font-size:1.3rem;font-weight:800;line-height:1.1}
+.metric span{font-size:.72rem;color:var(--ink-3)}
+
+/* projects */
+.projs{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px}
+.pj{break-inside:avoid}
+.pj b{font-family:var(--font-display);font-size:.98rem;font-weight:600;display:block}
+.pj .tech{font-family:var(--font-mono);font-size:.7rem;color:var(--acc-ink);margin:.1rem 0 .25rem}
+.pj p{font-size:.85rem;color:var(--ink-2)}
+.pj a{font-size:.76rem;color:var(--ink-3);font-family:var(--font-mono);text-decoration:none}
+.pj a:hover{color:var(--ink)}
+
+.foot{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;font-family:var(--font-mono);
+  font-size:.7rem;color:var(--ink-3);flex-wrap:wrap;gap:.5rem}
+
+@media (max-width:680px){
+  body{padding:18px 10px 60px}
+  .paper{padding:30px 22px}
+  .hd{flex-direction:column;gap:18px}
+  .hd img{width:88px;height:88px}
+  .skills,.projs{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .metric:nth-child(2){border-right:none}
+  .metric:nth-child(1),.metric:nth-child(2){border-bottom:1px solid var(--line)}
+}
+
+/* ---------- PRINT ---------- */
+@page{size:A4;margin:12mm 13mm}
+@media print{
+  body{background:#fff;padding:0;font-size:9.7pt;line-height:1.38}
+  .bar{display:none!important}
+  .paper{box-shadow:none;max-width:none;padding:0;border-radius:0}
+  a{text-decoration:none;color:var(--ink)}
+  section{margin-top:13px}
+  h2{margin-bottom:7px;font-size:7.6pt;padding-bottom:5px}
+  .item{margin-bottom:9px}
+  .item ul{margin-top:.2rem}
+  .item li{margin-bottom:.1rem}
+  .hd{gap:22px;padding-bottom:18px}
+  .hd img{width:84px;height:84px}
+  .hd h1{font-size:1.95rem}
+  .metrics{border-color:#CCC}
+  .metric{padding:6px 9px}
+  .metric b{font-size:1.15rem}
+  .projs{gap:10px 24px}
+  .srow{padding:.2rem 0}
+  .foot{margin-top:20px;padding-top:9px}
+  .hd,.item,.pj,.metrics,section{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="b" href="index.html">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Voltar ao portfólio
+  </a>
+  <div class="bar-actions">
+    <button class="b solid" onclick="window.print()">
+      <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+      Imprimir / Salvar PDF
+    </button>
+  </div>
+</div>
+
+<main class="paper">
+
+  <header class="hd">
+    <img src="img/gabriel-avatar.jpg" alt="Gabriel Vítor Silva Brito" width="520" height="520">
+    <div class="hd-main">
+      <h1>Gabriel Vítor Silva Brito</h1>
+      <div class="role">Desenvolvedor Full Stack · <mark>IA &amp; Agentes</mark> · <mark>Automação</mark> · <mark>Infra de Redes</mark></div>
+      <p class="pitch">
+        Desenvolvedor com atuação em govtech, focado em transformar processos manuais em
+        sistemas autônomos. Trabalho tanto na camada de produto (backend, frontend, banco)
+        quanto na base que sustenta tudo — Linux, containers e redes.
+      </p>
+      <div class="contacts">
+        <span><svg class="ci" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m4 6 8 6 8-6"/></svg>
+          <a href="mailto:gabrielvitorsilvabrito@gmail.com">gabrielvitorsilvabrito@gmail.com</a></span>
+        <span><svg class="ci" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7A5.2 5.2 0 0 0 20 5.8a4.8 4.8 0 0 0-.1-3.6s-1.1-.3-3.7 1.4a12.7 12.7 0 0 0-6.8 0C6.8 1.9 5.7 2.2 5.7 2.2A4.8 4.8 0 0 0 5.6 5.8 5.2 5.2 0 0 0 4 9.8c0 5.2 3.2 6.4 6.2 6.7a3.4 3.4 0 0 0-.9 2.6V23"/></svg>
+          <a href="https://github.com/bielvitooor" target="_blank" rel="noopener">github.com/bielvitooor</a></span>
+        <span><svg class="ci" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><path d="M2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          <a href="https://www.linkedin.com/in/bielvitooor/" target="_blank" rel="noopener">in/bielvitooor</a></span>
+        <span><svg class="ci" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Goiás · Brasil</span>
+        <span><svg class="ci" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
+          <a href="https://bielvitooor.github.io" target="_blank" rel="noopener">bielvitooor.github.io</a></span>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Em números</h2>
+    <div class="metrics">
+      <div class="metric"><b>2.834</b><span>contribuições no GitHub</span></div>
+      <div class="metric"><b>1.332</b><span>contribuições em 2026</span></div>
+      <div class="metric"><b>30</b><span>repositórios públicos</span></div>
+      <div class="metric"><b>5 anos</b><span>escrevendo código</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Experiência profissional</h2>
+
+    <div class="item">
+      <div class="item-hd">
+        <b>Desenvolvedor Full Stack</b>
+        <time>atual</time>
+      </div>
+      <div class="org">Orb Govtech</div>
+      <ul>
+        <li>Desenvolvimento de <b>soluções digitais para o setor público</b>, atuando do backend à interface.</li>
+        <li>Aplicação de <b>IA e agentes</b> em fluxos internos — apoio à análise, geração e triagem de informação.</li>
+        <li><b>Automação de processos</b> operacionais antes executados manualmente, reduzindo retrabalho e tempo de ciclo.</li>
+        <li>Suporte a <b>infraestrutura, ambientes containerizados e deploy</b> das aplicações.</li>
+        <li>Stack: PHP, Vue/Nuxt, Python, MySQL, Docker, Linux.</li>
+      </ul>
+    </div>
+
+    <div class="item">
+      <div class="item-hd">
+        <b>Desenvolvedor de Automações — projetos autônomos</b>
+        <time>contínuo</time>
+      </div>
+      <div class="org">Freelance / sob demanda</div>
+      <ul>
+        <li>Levantamento de processo junto a quem executa, mapeando gargalos reais antes de escrever código.</li>
+        <li>Entrega de <b>integrações entre sistemas, rotinas agendadas, extração e tratamento de dados, bots e disparos</b>.</li>
+        <li>Uso de LLMs e agentes quando agregam resultado — e de scripts simples quando são a resposta certa.</li>
+        <li>Entrega documentada e com ambiente reproduzível, sem dependência do desenvolvedor.</li>
+      </ul>
+    </div>
+
+    <div class="item">
+      <div class="item-hd">
+        <b>Monitor de Desenvolvimento Web</b>
+        <time>2023</time>
+      </div>
+      <div class="org">IF Goiano — Campus Ceres</div>
+      <ul>
+        <li>Apoio a alunos em programação web, revisão de código e resolução de dúvidas práticas.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Competências técnicas</h2>
+    <div class="skills">
+      <div class="srow"><b>IA &amp; Agentes</b><span>LLMs, agentes autônomos, tool calling, RAG, prompt engineering, Ollama</span></div>
+      <div class="srow"><b>Backend</b><span>PHP (CodeIgniter 4), Python (FastAPI), Node/JS, APIs REST</span></div>
+      <div class="srow"><b>Frontend</b><span>Vue.js, Nuxt, TypeScript, React, Tailwind CSS, HTML/CSS</span></div>
+      <div class="srow"><b>Dados</b><span>MySQL, modelagem relacional, NoSQL, ETL, scraping</span></div>
+      <div class="srow"><b>Infra &amp; DevOps</b><span>Linux, Docker, Vagrant, Shell script, Git, CI/CD</span></div>
+      <div class="srow"><b>Redes &amp; Segurança</b><span>iptables, NAT, roteamento, firewall, hardening, Apache</span></div>
+      <div class="srow"><b>Automação</b><span>Cron, webhooks, integrações, RPA leve, bots</span></div>
+      <div class="srow"><b>Fundamentos</b><span>POO, MVC, Java, C, estruturas de dados, versionamento</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Projetos selecionados</h2>
+    <div class="projs">
+      <div class="pj">
+        <b>Codely.ia Superagent</b>
+        <div class="tech">FastAPI · Ollama · React · TypeScript</div>
+        <p>Superagente de IA com arquitetura desacoplada: toda a lógica de inferência no backend Python, frontend como interface pura.</p>
+        <a href="https://github.com/bielvitooor/codely-frontend" target="_blank" rel="noopener">github.com/bielvitooor/codely-frontend</a>
+      </div>
+      <div class="pj">
+        <b>HortaClick — TCC</b>
+        <div class="tech">HTML · Tailwind · Gestão cooperativa</div>
+        <p>Plataforma que conecta agricultura familiar ao consumidor final, cobrindo oferta, pedido e fluxo de entrega.</p>
+        <a href="https://github.com/bielvitooor/hortaclick" target="_blank" rel="noopener">github.com/bielvitooor/hortaclick</a>
+      </div>
+      <div class="pj">
+        <b>SysDelivery</b>
+        <div class="tech">CodeIgniter 4 · MySQL · Docker (LAMP)</div>
+        <p>Sistema de gerenciamento de entregas em MVC, com ambiente inteiro containerizado.</p>
+        <a href="https://github.com/bielvitooor/Sys-Delivery" target="_blank" rel="noopener">github.com/bielvitooor/Sys-Delivery</a>
+      </div>
+      <div class="pj">
+        <b>PV Project</b>
+        <div class="tech">PHP · MySQL · 39 commits</div>
+        <p>Sistema de gestão para o Posto de Vendas do IF Goiano — Campus Ceres.</p>
+        <a href="https://github.com/bielvitooor/pv-project" target="_blank" rel="noopener">github.com/bielvitooor/pv-project</a>
+      </div>
+      <div class="pj">
+        <b>Lab de Redes com Vagrant</b>
+        <div class="tech">Vagrant · Ubuntu Server · Apache</div>
+        <p>Três VMs provisionadas do zero: servidor web, banco de dados e gateway, com rede privada e IPs estáticos.</p>
+        <a href="https://github.com/bielvitooor/proj_lab_redes" target="_blank" rel="noopener">github.com/bielvitooor/proj_lab_redes</a>
+      </div>
+      <div class="pj">
+        <b>Firewall &amp; Políticas de Rede</b>
+        <div class="tech">iptables · Shell · Docker</div>
+        <p>Política padrão DROP, NAT com MASQUERADE, rate limit de ICMP e filtragem de conteúdo com logging.</p>
+        <a href="https://github.com/bielvitooor/firewall-redes" target="_blank" rel="noopener">github.com/bielvitooor/firewall-redes</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Formação acadêmica</h2>
+    <div class="item">
+      <div class="item-hd">
+        <b>Bacharelado em Sistemas de Informação</b>
+        <time>em conclusão</time>
+      </div>
+      <div class="org">Instituto Federal Goiano — Campus Ceres</div>
+      <p>TCC: <b>HortaClick</b> — plataforma de gestão cooperativa para agricultura familiar.</p>
+    </div>
+    <div class="item">
+      <div class="item-hd">
+        <b>Técnico em Informática para Internet</b>
+        <time>—</time>
+      </div>
+      <div class="org">Formação técnica</div>
+      <p>Base em desenvolvimento web, redes e fundamentos de programação.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Idiomas &amp; extras</h2>
+    <div class="skills">
+      <div class="srow"><b>Português</b><span>nativo</span></div>
+      <div class="srow"><b>Inglês</b><span>leitura técnica e documentação</span></div>
+      <div class="srow"><b>Interesses</b><span>IA aplicada, sistemas autônomos, tecnologia pública</span></div>
+      <div class="srow"><b>Disponibilidade</b><span>projetos, automações sob demanda e oportunidades full-time</span></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>Gabriel Vítor Silva Brito · Currículo</span>
+    <span>bielvitooor.github.io</span>
+  </div>
+
+</main>
+
+</body>
+</html>
