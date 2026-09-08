@@ -263,58 +263,6 @@ header.nav.stuck{
 .pillar p{color:var(--fg-mid);font-size:.95rem;margin-bottom:1.3rem}
 
 /* ============================================================
-   6. DESIGN SYSTEM AO VIVO
-   ============================================================ */
-.ds-grid{display:grid;grid-template-columns:1.05fr 1fr 1.15fr;gap:20px;align-items:stretch}
-.ds{padding:1.7rem}
-.ds h3{font-size:1.05rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.55rem}
-.ds h3 i{color:var(--acc);font-size:1.1rem}
-
-.swatches{display:flex;flex-direction:column;gap:.55rem}
-.sw{display:flex;align-items:center;gap:.75rem}
-.sw-box{width:34px;height:34px;border-radius:9px;border:1px solid var(--line-strong);flex:0 0 auto}
-.sw-meta{min-width:0;flex:1}
-.sw-meta b{display:block;font-size:.83rem;font-weight:600;line-height:1.3}
-.sw-meta span{font-family:var(--font-mono);font-size:.7rem;color:var(--fg-dim)}
-.sw-ratio{font-family:var(--font-mono);font-size:.68rem;color:var(--acc);
-  border:1px solid var(--line);border-radius:100px;padding:.12rem .45rem;white-space:nowrap}
-
-.type-row{padding:.5rem 0;border-bottom:1px solid var(--line)}
-.type-row:last-child{border-bottom:none}
-.type-row small{font-family:var(--font-mono);font-size:.66rem;color:var(--fg-dim);display:block;margin-bottom:.1rem}
-.t-display{font-family:var(--font-display);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1.1}
-.t-head{font-family:var(--font-display);font-size:1.1rem;font-weight:700;letter-spacing:-.02em}
-.t-body{font-size:.92rem;color:var(--fg-mid)}
-.t-mono{font-family:var(--font-mono);font-size:.8rem;color:var(--fg-mid)}
-
-.comp-set{display:flex;flex-direction:column;gap:1rem}
-.comp-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-.comp-label{font-family:var(--font-mono);font-size:.66rem;color:var(--fg-dim);
-  letter-spacing:.1em;text-transform:uppercase;width:100%}
-.demo-input{
-  background:var(--bg-elev-2);border:1px solid var(--line);border-radius:10px;
-  padding:.55rem .8rem;color:var(--fg);font-size:.85rem;width:100%;outline:none;
-  transition:border-color .2s;font-family:var(--font-body);
-}
-.demo-input:focus{border-color:var(--acc)}
-.demo-toggle{
-  width:44px;height:25px;border-radius:100px;background:var(--bg-elev-2);border:1px solid var(--line);
-  position:relative;transition:background .25s var(--ease),border-color .25s;flex:0 0 auto;
-}
-.demo-toggle::after{
-  content:'';position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;
-  background:var(--fg-dim);transition:transform .25s var(--ease),background .25s;
-}
-.demo-toggle[aria-pressed="true"]{background:var(--acc-dim);border-color:var(--acc)}
-.demo-toggle[aria-pressed="true"]::after{transform:translateX(19px);background:var(--acc)}
-
-.a11y{margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.a11y-item{padding:1.3rem 1.4rem}
-.a11y-item i{color:var(--acc);font-size:1.25rem;display:block;margin-bottom:.7rem}
-.a11y-item b{display:block;font-family:var(--font-display);font-size:.98rem;margin-bottom:.25rem;letter-spacing:-.01em}
-.a11y-item p{font-size:.84rem;color:var(--fg-mid)}
-
-/* ============================================================
    7. EXPERIÊNCIA
    ============================================================ */
 .xp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -506,10 +454,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
 .rv.in{opacity:1;transform:none}
 
 @media (max-width:1100px){
-  .ds-grid{grid-template-columns:1fr 1fr}
-  .ds-grid .ds:last-child{grid-column:span 2}
   .xp-grid{grid-template-columns:1fr}
-  .a11y{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:1024px){
   .hero-grid{grid-template-columns:1fr 320px;gap:40px}
@@ -526,8 +471,6 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
   .hero-grid{grid-template-columns:1fr;gap:40px}
   .portrait{max-width:320px;margin:0 auto}
   .pillars,.about-grid{grid-template-columns:1fr}
-  .ds-grid{grid-template-columns:1fr}
-  .ds-grid .ds:last-child{grid-column:span 1}
   .stats{grid-template-columns:repeat(2,1fr)}
   .sec{padding:64px 0}
 }
@@ -535,7 +478,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
   .proj-grid{grid-template-columns:1fr}
   .proj.feat{grid-column:span 1;flex-direction:column;padding:1.6rem}
   .feat-visual{flex:0 0 auto;min-height:150px}
-  .values,.a11y{grid-template-columns:1fr}
+  .values{grid-template-columns:1fr}
   .contact{padding:2.5rem 1.5rem}
   .wrap{padding:0 18px}
   .hero h1{font-size:2.2rem}
@@ -567,7 +510,6 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
     </a>
     <nav class="nav-links" id="navlinks">
       <a href="#foco" data-i="nav.focus">Foco</a>
-      <a href="#front" data-i="nav.design">Front-end</a>
       <a href="#trabalho" data-i="nav.xp">Experiência</a>
       <a href="#projetos" data-i="nav.projects">Projetos</a>
       <a href="#atividade" data-i="nav.activity">Atividade</a>
@@ -590,7 +532,6 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
 
 <div class="mobile-menu" id="mobilemenu">
   <a href="#foco" data-i="nav.focus">Foco</a>
-  <a href="#front" data-i="nav.design">Front-end</a>
   <a href="#trabalho" data-i="nav.xp">Experiência</a>
   <a href="#projetos" data-i="nav.projects">Projetos</a>
   <a href="#atividade" data-i="nav.activity">Atividade</a>
@@ -683,18 +624,18 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
       <article class="card pillar rv">
         <div class="pillar-top">
           <div class="pillar-icon"><i class="ri-layout-4-line"></i></div>
-          <h3 data-i="p1.h">Front-end &amp; Interface</h3>
+          <h3 data-i="p1.h">Full Stack Web</h3>
           <span class="pillar-n">02</span>
         </div>
         <p data-i="p1.p">
-          Interface é onde o produto encosta na pessoa, e eu levo isso a sério: componentes
-          reutilizáveis, design tokens, estados bem resolvidos, responsivo de verdade e acessibilidade.
-          Pego o layout no Figma e entrego em código sem perder nada no caminho.
+          Aplicação web inteira, da tabela do banco até o botão na tela. Backend em Laravel,
+          FastAPI ou Go, API bem definida no meio e front em React ou Vue consumindo isso.
+          Componentes reutilizáveis, responsivo de verdade e sem gambiarra pra juntar as pontas.
         </p>
         <div class="chips">
+          <span class="chip">Laravel</span><span class="chip">PHP</span><span class="chip">Go</span>
           <span class="chip">React</span><span class="chip">Vue / Nuxt</span><span class="chip">TypeScript</span>
-          <span class="chip">Tailwind</span><span class="chip">Figma</span><span class="chip">Design System</span>
-          <span class="chip">WCAG / A11y</span>
+          <span class="chip">Node.js</span><span class="chip">MySQL</span><span class="chip">Tailwind</span>
         </div>
       </article>
 
@@ -727,121 +668,11 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
           roteamento, regras de firewall e deploy de aplicação containerizada.
         </p>
         <div class="chips">
-          <span class="chip">Python</span><span class="chip">Shell</span><span class="chip">APIs / Webhooks</span>
-          <span class="chip">Docker</span><span class="chip">Linux</span><span class="chip">iptables</span>
-          <span class="chip">CI/CD</span>
+          <span class="chip">Python</span><span class="chip">Go</span><span class="chip">Shell</span>
+          <span class="chip">APIs / Webhooks</span><span class="chip">Docker</span><span class="chip">Linux</span>
+          <span class="chip">iptables</span><span class="chip">CI/CD</span>
         </div>
       </article>
-    </div>
-  </div>
-</section>
-
-<!-- ================= DESIGN SYSTEM AO VIVO ================= -->
-<section class="sec" id="front">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <span class="eyebrow" data-i="ds.eyebrow">Front-end na unha</span>
-      <h2 class="sec-title" data-i="ds.title">Este site é o portfólio<br>e a amostra do código.</h2>
-      <p class="sec-sub" data-i="ds.sub">
-        Não sou designer, sou dev. Mas front-end bem feito é parte do trabalho, então esta página
-        foi escrita na mão: sem framework, sem template. Tudo abaixo é o CSS real que ela usa,
-        rodando ao vivo.
-      </p>
-    </div>
-
-    <div class="ds-grid">
-      <div class="card ds rv">
-        <h3><i class="ri-palette-line"></i> <span data-i="ds.color">Tokens de cor</span></h3>
-        <div class="swatches">
-          <div class="sw">
-            <span class="sw-box" style="background:#0A0B0D"></span>
-            <span class="sw-meta"><b data-i="ds.c1">Base</b><span>--bg · #0A0B0D</span></span>
-          </div>
-          <div class="sw">
-            <span class="sw-box" style="background:#F2F3F5"></span>
-            <span class="sw-meta"><b data-i="ds.c2">Texto principal</b><span>--fg · #F2F3F5</span></span>
-            <span class="sw-ratio">18.4:1 AAA</span>
-          </div>
-          <div class="sw">
-            <span class="sw-box" style="background:#A8AEB8"></span>
-            <span class="sw-meta"><b data-i="ds.c3">Texto secundário</b><span>--fg-mid · #A8AEB8</span></span>
-            <span class="sw-ratio">8.9:1 AAA</span>
-          </div>
-          <div class="sw">
-            <span class="sw-box" style="background:#CFFF5E"></span>
-            <span class="sw-meta"><b data-i="ds.c4">Acento</b><span>--acc · #CFFF5E</span></span>
-            <span class="sw-ratio">15.9:1 AAA</span>
-          </div>
-          <div class="sw">
-            <span class="sw-box" style="background:#8B7CFF"></span>
-            <span class="sw-meta"><b data-i="ds.c5">Secundário</b><span>--violet · #8B7CFF</span></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card ds rv">
-        <h3><i class="ri-font-size-2"></i> <span data-i="ds.type">Escala tipográfica</span></h3>
-        <div class="type-row">
-          <small>Bricolage Grotesque · 800 · -3%</small>
-          <div class="t-display" data-i="ds.t1">Display</div>
-        </div>
-        <div class="type-row">
-          <small>Bricolage Grotesque · 700 · -2%</small>
-          <div class="t-head" data-i="ds.t2">Título de seção</div>
-        </div>
-        <div class="type-row">
-          <small>Inter · 400 · 1.65</small>
-          <div class="t-body" data-i="ds.t3">Corpo de texto, medido em 60 a 70 caracteres por linha.</div>
-        </div>
-        <div class="type-row">
-          <small>JetBrains Mono · 400</small>
-          <div class="t-mono">--radius: 16px; --acc: #CFFF5E;</div>
-        </div>
-      </div>
-
-      <div class="card ds rv">
-        <h3><i class="ri-shapes-line"></i> <span data-i="ds.comp">Componentes e estados</span></h3>
-        <div class="comp-set">
-          <div class="comp-row">
-            <span class="comp-label" data-i="ds.l1">Botões</span>
-            <span class="btn btn-primary" style="padding:.5rem 1rem;font-size:.82rem;min-height:auto" data-i="ds.b1">Primário</span>
-            <span class="btn btn-ghost" style="padding:.5rem 1rem;font-size:.82rem;min-height:auto" data-i="ds.b2">Secundário</span>
-            <span class="btn btn-ghost" style="padding:.5rem 1rem;font-size:.82rem;min-height:auto;opacity:.4" data-i="ds.b3">Desabilitado</span>
-          </div>
-          <div class="comp-row">
-            <span class="comp-label" data-i="ds.l2">Campo (clique para ver o foco)</span>
-            <input class="demo-input" type="text" data-i-ph="ds.ph" placeholder="seu@email.com" aria-label="Campo de exemplo">
-          </div>
-          <div class="comp-row">
-            <span class="comp-label" data-i="ds.l3">Toggle e tags</span>
-            <button class="demo-toggle" id="demotoggle" aria-pressed="true" aria-label="Toggle de exemplo"></button>
-            <span class="chip">chip</span><span class="chip">tag</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="a11y">
-      <div class="card a11y-item rv">
-        <i class="ri-keyboard-line"></i>
-        <b data-i="a11y.1h">Navegável no teclado</b>
-        <p data-i="a11y.1p">Foco visível em tudo, ordem de tabulação correta e um atalho para pular direto ao conteúdo.</p>
-      </div>
-      <div class="card a11y-item rv">
-        <i class="ri-contrast-2-line"></i>
-        <b data-i="a11y.2h">Contraste AAA</b>
-        <p data-i="a11y.2p">Todos os pares de texto e fundo passam de 7:1. Medido, não chutado.</p>
-      </div>
-      <div class="card a11y-item rv">
-        <i class="ri-pulse-line"></i>
-        <b data-i="a11y.3h">Respeita reduced-motion</b>
-        <p data-i="a11y.3p">Quem tem animação desativada no sistema recebe a página inteira sem movimento.</p>
-      </div>
-      <div class="card a11y-item rv">
-        <i class="ri-code-box-line"></i>
-        <b data-i="a11y.4h">HTML semântico</b>
-        <p data-i="a11y.4p">header, nav, section, article e aria onde faz falta. Sem div para tudo.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -876,7 +707,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
         <div class="xp-foot">
           <span class="chips">
             <span class="chip">React</span><span class="chip">TypeScript</span><span class="chip">React Native</span>
-            <span class="chip">Python</span><span class="chip">LLM</span>
+            <span class="chip">Python</span><span class="chip">Go</span><span class="chip">LLM</span>
           </span>
         </div>
       </article>
@@ -897,8 +728,8 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
         </ul>
         <div class="xp-foot">
           <span class="chips">
-            <span class="chip">PHP</span><span class="chip">Vue / Nuxt</span><span class="chip">MySQL</span>
-            <span class="chip">Docker</span><span class="chip">Linux</span>
+            <span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">Vue / Nuxt</span>
+            <span class="chip">MySQL</span><span class="chip">Docker</span><span class="chip">Linux</span>
           </span>
         </div>
       </article>
@@ -1413,7 +1244,7 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
 var I18N = {
   pt:{
     'skip':'Pular para os projetos',
-    'nav.focus':'Foco','nav.design':'Front-end','nav.xp':'Experiência','nav.projects':'Projetos',
+    'nav.focus':'Foco','nav.xp':'Experiência','nav.projects':'Projetos',
     'nav.activity':'Atividade','nav.about':'Sobre','nav.contact':'Contato',
     'cmd.open':'<i class="ri-search-line"></i> Ctrl K','cmd.ph':'Ir para...',
 
@@ -1427,8 +1258,8 @@ var I18N = {
     'focus.eyebrow':'No que eu foco',
     'focus.title':'Da tela ao servidor,<br>eu cuido do caminho inteiro.',
     'focus.sub':'Meu foco é IA, machine learning e automação. E como sou full stack, eu levo isso até o fim: modelo, backend, interface e a infra que segura tudo de pé.',
-    'p1.h':'Front-end &amp; Interface',
-    'p1.p':'Interface é onde o produto encosta na pessoa, e eu levo isso a sério: componentes reutilizáveis, design tokens, estados bem resolvidos, responsivo de verdade e acessibilidade. Pego o layout no Figma e entrego em código sem perder nada no caminho.',
+    'p1.h':'Full Stack Web',
+    'p1.p':'Aplicação web inteira, da tabela do banco até o botão na tela. Backend em Laravel, FastAPI ou Go, API bem definida no meio e front em React ou Vue consumindo isso. Componentes reutilizáveis, responsivo de verdade e sem gambiarra pra juntar as pontas.',
     'p2.h':'IA, ML &amp; Agentes',
     'p2.p':'Agentes autônomos e copilotos que fazem trabalho de verdade: orquestração de LLMs, tool calling, memória e contexto, RAG sobre base própria e arquitetura desacoplada entre inferência e interface. É também o tema da minha pós-graduação.',
     'p3.h':'Mobile &amp; Publicação',
@@ -1436,23 +1267,6 @@ var I18N = {
     'p4.h':'Automação &amp; Infra',
     'p4.p':'Processo que hoje é planilha, print e copy-paste vira fluxo automatizado. E a base que sustenta: ambientes reproduzíveis com Docker, servidores Linux, roteamento, regras de firewall e deploy de aplicação containerizada.',
 
-    'ds.eyebrow':'Front-end na unha',
-    'ds.title':'Este site é o portfólio<br>e a amostra do código.',
-    'ds.sub':'Não sou designer, sou dev. Mas front-end bem feito é parte do trabalho, então esta página foi escrita na mão: sem framework, sem template. Tudo abaixo é o CSS real que ela usa, rodando ao vivo.',
-    'ds.color':'Tokens de cor','ds.type':'Escala tipográfica','ds.comp':'Componentes e estados',
-    'ds.c1':'Base','ds.c2':'Texto principal','ds.c3':'Texto secundário','ds.c4':'Acento','ds.c5':'Secundário',
-    'ds.t1':'Display','ds.t2':'Título de seção',
-    'ds.t3':'Corpo de texto, medido em 60 a 70 caracteres por linha.',
-    'ds.l1':'Botões','ds.l2':'Campo (clique para ver o foco)','ds.l3':'Toggle e tags',
-    'ds.b1':'Primário','ds.b2':'Secundário','ds.b3':'Desabilitado','ds.ph':'seu@email.com',
-    'a11y.1h':'Navegável no teclado',
-    'a11y.1p':'Foco visível em tudo, ordem de tabulação correta e um atalho para pular direto ao conteúdo.',
-    'a11y.2h':'Contraste AAA',
-    'a11y.2p':'Todos os pares de texto e fundo passam de 7:1. Medido, não chutado.',
-    'a11y.3h':'Respeita reduced-motion',
-    'a11y.3p':'Quem tem animação desativada no sistema recebe a página inteira sem movimento.',
-    'a11y.4h':'HTML semântico',
-    'a11y.4p':'header, nav, section, article e aria onde faz falta. Sem div para tudo.',
 
     'xp.eyebrow':'Onde eu aplico isso','xp.title':'Experiência',
     'xp.sub':'Boa parte do que eu construo com IA e mobile vive em repositórios privados de empresa e cliente. O que dá pra contar, está aqui.',
@@ -1535,7 +1349,7 @@ var I18N = {
   },
   en:{
     'skip':'Skip to projects',
-    'nav.focus':'Focus','nav.design':'Front-end','nav.xp':'Experience','nav.projects':'Projects',
+    'nav.focus':'Focus','nav.xp':'Experience','nav.projects':'Projects',
     'nav.activity':'Activity','nav.about':'About','nav.contact':'Contact',
     'cmd.open':'<i class="ri-search-line"></i> Ctrl K','cmd.ph':'Go to...',
 
@@ -1549,8 +1363,8 @@ var I18N = {
     'focus.eyebrow':'What I focus on',
     'focus.title':'From the screen to the server,<br>I cover the whole path.',
     'focus.sub':'My focus is AI, machine learning and automation. And since I am full stack, I take it all the way: model, backend, interface and the infra holding it all up.',
-    'p1.h':'Front-end &amp; Interface',
-    'p1.p':'The interface is where the product touches a person, and I take that seriously: reusable components, design tokens, properly handled states, real responsiveness and accessibility. I take the Figma layout and ship it in code without losing anything on the way.',
+    'p1.h':'Full Stack Web',
+    'p1.p':'The whole web application, from the database table to the button on screen. Backend in Laravel, FastAPI or Go, a well defined API in the middle and a React or Vue front consuming it. Reusable components, real responsiveness and no glue hacks to join the ends.',
     'p2.h':'AI, ML &amp; Agents',
     'p2.p':'Autonomous agents and copilots that do real work: LLM orchestration, tool calling, memory and context, RAG over your own data, and an architecture that keeps inference decoupled from interface. It is also the subject of my postgraduate degree.',
     'p3.h':'Mobile &amp; Shipping',
@@ -1558,23 +1372,6 @@ var I18N = {
     'p4.h':'Automation &amp; Infra',
     'p4.p':'A process that today is a spreadsheet, a screenshot and copy-paste becomes an automated flow. Plus the base that holds it up: reproducible Docker environments, Linux servers, routing, firewall rules and containerized deploys.',
 
-    'ds.eyebrow':'Front-end from scratch',
-    'ds.title':'This site is the portfolio<br>and the code sample.',
-    'ds.sub':'I am not a designer, I am a developer. But solid front-end is part of the job, so this page was written by hand: no framework, no template. Everything below is the real CSS it runs on, live.',
-    'ds.color':'Color tokens','ds.type':'Type scale','ds.comp':'Components and states',
-    'ds.c1':'Base','ds.c2':'Primary text','ds.c3':'Secondary text','ds.c4':'Accent','ds.c5':'Secondary',
-    'ds.t1':'Display','ds.t2':'Section heading',
-    'ds.t3':'Body copy, measured at 60 to 70 characters per line.',
-    'ds.l1':'Buttons','ds.l2':'Field (click to see focus)','ds.l3':'Toggle and tags',
-    'ds.b1':'Primary','ds.b2':'Secondary','ds.b3':'Disabled','ds.ph':'you@email.com',
-    'a11y.1h':'Keyboard navigable',
-    'a11y.1p':'Visible focus on everything, a correct tab order and a shortcut to skip straight to the content.',
-    'a11y.2h':'AAA contrast',
-    'a11y.2p':'Every text-on-background pair clears 7:1. Measured, not guessed.',
-    'a11y.3h':'Respects reduced-motion',
-    'a11y.3p':'Anyone with animation turned off at the OS level gets the whole page without movement.',
-    'a11y.4h':'Semantic HTML',
-    'a11y.4p':'header, nav, section, article and aria where it matters. Not a div for everything.',
 
     'xp.eyebrow':'Where I apply it','xp.title':'Experience',
     'xp.sub':'Most of what I build with AI and mobile lives in private company and client repositories. What I can share is here.',
@@ -1700,9 +1497,10 @@ document.getElementById('langsw').addEventListener('click', function(e){
    ============================================================ */
 var STACK = [
   ['react','React'],['react','React Native'],['typescript','TypeScript'],['javascript','JavaScript'],
-  ['vuejs','Vue.js'],['nuxtjs','Nuxt'],['tailwindcss','Tailwind'],['figma','Figma'],
+  ['vuejs','Vue.js'],['nuxtjs','Nuxt'],['tailwindcss','Tailwind'],
   ['html5','HTML5'],['css3','CSS3'],['python','Python'],['fastapi','FastAPI'],
-  ['php','PHP'],['codeigniter','CodeIgniter'],['mysql','MySQL'],['nodejs','Node.js'],
+  ['go','Go'],['php','PHP'],['laravel','Laravel'],['codeigniter','CodeIgniter'],
+  ['mysql','MySQL'],['nodejs','Node.js'],
   ['docker','Docker'],['linux','Linux'],['bash','Shell'],['git','Git'],
   ['vagrant','Vagrant'],['android','Android'],['apple','iOS']
 ];
@@ -1762,11 +1560,6 @@ document.addEventListener('pointermove', function(e){
   c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
   c.style.setProperty('--my', (e.clientY - r.top) + 'px');
 }, {passive:true});
-
-var dt = document.getElementById('demotoggle');
-dt.addEventListener('click', function(){
-  dt.setAttribute('aria-pressed', dt.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-});
 
 /* ============================================================
    FILTROS
@@ -1952,7 +1745,6 @@ function buildCmd(){
   CMDS = [
     ['ri-home-4-line', lang==='pt'?'Início':'Home', '#inicio','nav'],
     ['ri-focus-3-line', t('nav.focus'), '#foco','nav'],
-    ['ri-palette-line', t('nav.design'), '#front','nav'],
     ['ri-briefcase-line', t('nav.xp'), '#trabalho','nav'],
     ['ri-folder-3-line', t('nav.projects'), '#projetos','nav'],
     ['ri-bar-chart-2-line', t('nav.activity'), '#atividade','nav'],

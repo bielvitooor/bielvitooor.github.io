@@ -115,7 +115,7 @@ h2{font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;color:var(--in
 
 @page{size:A4;margin:12mm 13mm}
 @media print{
-  body{background:#fff;padding:0;font-size:9.3pt;line-height:1.33}
+  body{background:#fff;padding:0;font-size:8.9pt;line-height:1.3}
   .bar{display:none!important}
   .paper{box-shadow:none;max-width:none;padding:0;border-radius:0}
   a{text-decoration:none;color:var(--ink)}
@@ -130,7 +130,9 @@ h2{font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;color:var(--in
   .metrics{border-color:#CCC}
   .metric{padding:6px 9px}
   .metric b{font-size:1.15rem}
-  .projs{gap:10px 24px}
+  .projs{gap:8px 22px}
+  .skills{gap:2px 24px}
+  .srow b{flex:0 0 108px}
   .srow{padding:.2rem 0}
   .foot{margin-top:20px;padding-top:9px}
   .hd,.item,.pj,.metrics,section{break-inside:avoid;page-break-inside:avoid}
@@ -255,12 +257,12 @@ h2{font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;color:var(--in
     <h2 data-i="s.skills">Competências técnicas</h2>
     <div class="skills">
       <div class="srow"><b data-i="k1b">IA &amp; Agentes</b><span data-i="k1">LLMs, agentes autônomos, tool calling, RAG, prompt engineering, Ollama</span></div>
-      <div class="srow"><b data-i="k2b">Machine Learning</b><span data-i="k2">Fundamentos, tratamento de dados, avaliação de modelos, inferência em produção</span></div>
-      <div class="srow"><b data-i="k3b">Automação</b><span data-i="k3">Integrações, webhooks, rotinas agendadas, ETL, scraping, bots</span></div>
+      <div class="srow"><b data-i="k2b">Machine Learning</b><span data-i="k2">Fundamentos, Python, tratamento de dados, avaliação de modelos, inferência em produção</span></div>
+      <div class="srow"><b data-i="k3b">Automação</b><span data-i="k3">Python, Go, Shell, integrações, webhooks, rotinas agendadas, ETL, bots</span></div>
       <div class="srow"><b data-i="k4b">Front-end</b><span data-i="k4">React, Vue.js, Nuxt, TypeScript, Tailwind CSS, HTML/CSS</span></div>
-      <div class="srow"><b data-i="k5b">Backend</b><span data-i="k5">Python (FastAPI), PHP (CodeIgniter 4), Node/JS, APIs REST</span></div>
+      <div class="srow"><b data-i="k5b">Backend</b><span data-i="k5">Python (FastAPI), PHP (Laravel, CodeIgniter 4), Go, Node/JS, APIs REST</span></div>
       <div class="srow"><b data-i="k6b">Mobile</b><span data-i="k6">React Native, build e assinatura, publicação na App Store e Play Store</span></div>
-      <div class="srow"><b data-i="k7b">Infra &amp; DevOps</b><span data-i="k7">Linux, Docker, Vagrant, Shell script, Git, CI/CD</span></div>
+      <div class="srow"><b data-i="k7b">Infra &amp; DevOps</b><span data-i="k7">Linux, Docker, Vagrant, Shell script, Git, CI/CD, MySQL</span></div>
       <div class="srow"><b data-i="k8b">Redes &amp; Segurança</b><span data-i="k8">iptables, NAT, roteamento, firewall, hardening, Apache</span></div>
     </div>
   </section>
@@ -381,12 +383,12 @@ var EN = {
   'x4.b1':'Supporting students in web programming, code review and hands-on troubleshooting.',
   's.skills':'Technical skills',
   'k1b':'AI &amp; Agents','k1':'LLMs, autonomous agents, tool calling, RAG, prompt engineering, Ollama',
-  'k2b':'Machine Learning','k2':'Fundamentals, data preparation, model evaluation, inference in production',
-  'k3b':'Automation','k3':'Integrations, webhooks, scheduled jobs, ETL, scraping, bots',
+  'k2b':'Machine Learning','k2':'Fundamentals, Python, data preparation, model evaluation, inference in production',
+  'k3b':'Automation','k3':'Python, Go, Shell, integrations, webhooks, scheduled jobs, ETL, bots',
   'k4b':'Front-end','k4':'React, Vue.js, Nuxt, TypeScript, Tailwind CSS, HTML/CSS',
-  'k5b':'Backend','k5':'Python (FastAPI), PHP (CodeIgniter 4), Node/JS, REST APIs',
+  'k5b':'Backend','k5':'Python (FastAPI), PHP (Laravel, CodeIgniter 4), Go, Node/JS, REST APIs',
   'k6b':'Mobile','k6':'React Native, build and signing, App Store and Play Store publishing',
-  'k7b':'Infra &amp; DevOps','k7':'Linux, Docker, Vagrant, shell scripting, Git, CI/CD',
+  'k7b':'Infra &amp; DevOps','k7':'Linux, Docker, Vagrant, shell scripting, Git, CI/CD, MySQL',
   'k8b':'Networks &amp; Security','k8':'iptables, NAT, routing, firewall, hardening, Apache',
   's.projects':'Selected projects',
   'p1':'An AI superagent with a decoupled architecture: all inference logic in the Python backend, frontend as a pure interface.',
