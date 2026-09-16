@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>O código que muda tudo · Gabriel Brito · MDC 10 anos</title>
+<meta name="description" content="Palestra de Gabriel Vítor Silva Brito nos 10 anos do Meninas Digitais do Cerrado e no Ada Lovelace Day.">
+<meta name="theme-color" content="#0A0B0D">
+<meta property="og:type" content="website">
+<meta property="og:title" content="O código que muda tudo">
+<meta property="og:description" content="Palestra de Gabriel Brito · Meninas Digitais do Cerrado 10 anos · Ada Lovelace Day">
+<meta property="og:image" content="https://bielvitooor.github.io/apresentacao/mdc-10-anos-o-codigo-que-muda-tudo/foto-gabriel.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230A0B0D'/%3E%3Cg transform='translate(-1 0)'%3E%3Ccircle cx='20' cy='20' r='11' fill='none' stroke='%23F2F3F5' stroke-width='4' stroke-linecap='round' stroke-dasharray='51.8 17.3' stroke-dashoffset='-8.6'/%3E%3Cpath d='M20.5 20H30' stroke='%23F2F3F5' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='33.5' cy='20' r='3.5' fill='%23CFFF5E'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!--
+  ============================================================
+  COMO APRESENTAR
+  ============================================================
+  →  ↓  espaço  PageDown  Enter ... avança (passador de slide funciona)
+  ←  ↑  PageUp  Backspace ........ volta
+  Home / End ...................... primeiro / último slide
+  F ............................... tela cheia
+  P ............................... abre a VISÃO DO APRESENTADOR
+                                    (roteiro, próximo slide e cronômetro)
+  N ............................... mostra o roteiro por cima (pra ensaiar)
+  B ............................... tela preta (pra plateia olhar pra você)
+  ? ............................... atalhos
+
+  Com dois monitores: abra o deck no projetor e aperte P. A janela do
+  apresentador fica no notebook e as duas andam juntas.
+
+  Pra trocar o nome da empresa em todos os slides, mude data-company
+  na tag <body> logo abaixo.
+  ============================================================
+-->
+
+<style>
+:root{
+  --bg:#0A0B0D;--bg-2:#101217;--bg-3:#15181E;
+  --line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.18);
+  --fg:#F2F3F5;--fg-2:#A8AEB8;--fg-3:#6B7280;
+  --acc:#CFFF5E;--acc-dim:rgba(207,255,94,.13);
+  --violet:#8B7CFF;--violet-dim:rgba(139,124,255,.14);
+  --red:#FF6B6B;--red-dim:rgba(255,107,107,.12);
+  --green:#5EE08A;--green-dim:rgba(94,224,138,.12);
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Inter','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg)}
+body{color:var(--fg);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow:hidden;
+  line-height:1.5}
+img{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--acc);color:var(--bg)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
+
+/* ---------- fundo ---------- */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60vmax 45vmax at 8% 0%,rgba(207,255,94,.09),transparent 60%),
+    radial-gradient(60vmax 50vmax at 100% 100%,rgba(139,124,255,.12),transparent 62%)}
+.bg::after{content:'';position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(to right,rgba(255,255,255,.03) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 45%,#000 30%,transparent 90%);
+          mask-image:radial-gradient(ellipse 90% 80% at 50% 45%,#000 30%,transparent 90%)}
+.gutter{position:fixed;top:0;bottom:0;left:0;width:52px;z-index:1;pointer-events:none;
+  border-right:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--fg-3);
+  padding-top:18px;text-align:right;padding-right:12px;line-height:26px;overflow:hidden;opacity:.55}
+
+/* ---------- deck ---------- */
+.deck{position:fixed;inset:0;z-index:2}
+.slide{
+  --s:1;--a:1;--fs-kick:clamp(.78rem,calc(1.65vmin * var(--s) * var(--a)),calc(1.2rem * var(--s)));--fs-h1:clamp(2.5rem,calc(8.4vmin * var(--s) * var(--a)),calc(8rem * var(--s)));--fs-h2:clamp(1.85rem,calc(5.4vmin * var(--s) * var(--a)),calc(5rem * var(--s)));--fs-h3:clamp(1.15rem,calc(2.7vmin * var(--s) * var(--a)),calc(2.1rem * var(--s)));--fs-lede:clamp(1.05rem,calc(2.6vmin * var(--s) * var(--a)),calc(2rem * var(--s)));--fs-card:clamp(.95rem,calc(1.95vmin * var(--s) * var(--a)),calc(1.4rem * var(--s)));--fs-code:clamp(.9rem,calc(2.1vmin * var(--s) * var(--a)),calc(1.6rem * var(--s)));--fs-mega:clamp(4.5rem,calc(24vmin * var(--s) * var(--a)),calc(22rem * var(--s)));
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:clamp(52px,8vh,104px) clamp(20px,6.5vw,128px) clamp(86px,12vh,128px) clamp(20px,8vw,150px);
+  opacity:0;visibility:hidden;transform:translateY(18px);
+  transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s linear .55s;
+  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.slide::-webkit-scrollbar{display:none}
+.slide.on{opacity:1;visibility:visible;transform:none;
+  transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s}
+.inner{width:100%;max-width:1560px;margin:auto 0}
+.center{text-align:center}
+.center .kick{justify-content:center}
+
+.kick{display:flex;align-items:center;gap:.7em;flex-wrap:wrap;font-family:var(--mono);
+  font-size:var(--fs-kick);color:var(--acc);letter-spacing:.02em;margin-bottom:clamp(14px,2.4vh,30px)}
+.kick .v{color:var(--violet)}
+.kick .sep{width:.35em;height:.35em;border-radius:50%;background:var(--fg-3);flex:0 0 auto}
+h1,h2,h3{font-family:var(--display);letter-spacing:-.03em;line-height:1.02;font-weight:800}
+h1{font-size:var(--fs-h1)}
+h2{font-size:var(--fs-h2);margin-bottom:clamp(14px,2.6vh,34px);max-width:22ch}
+.center h2{margin-left:auto;margin-right:auto}
+h3{font-size:var(--fs-h3);font-weight:800;letter-spacing:-.02em;line-height:1.12}
+em{font-style:normal;color:var(--acc)}
+em.v{color:var(--violet)}
+.lede{font-size:var(--fs-lede);color:var(--fg-2);max-width:48ch;line-height:1.42}
+.center .lede{margin-left:auto;margin-right:auto}
+.lede b{color:var(--fg);font-weight:600}
+.mono{font-family:var(--mono)}
+
+/* fragmentos: aparecem um por vez */
+.f{opacity:0;transform:translateY(14px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.f.on{opacity:1;transform:none}
+body.reveal .f{opacity:1;transform:none}
+
+/* ---------- 01 capa ---------- */
+.cover h1{max-width:12ch;margin:0 auto clamp(18px,3vh,36px)}
+.caret{display:inline-block;width:.07em;height:.82em;background:var(--acc);margin-left:.06em;
+  vertical-align:-.06em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.byline{display:inline-flex;align-items:center;gap:14px;margin-top:clamp(22px,4.5vh,56px);
+  padding:8px 18px 8px 8px;border:1px solid var(--line-2);border-radius:100px;background:rgba(255,255,255,.03)}
+.byline img{width:clamp(38px,calc(5.6vmin * var(--s) * var(--a)),calc(58px * var(--s)));height:clamp(38px,calc(5.6vmin * var(--s) * var(--a)),calc(58px * var(--s)));border-radius:50%;object-fit:cover;
+  object-position:center 20%}
+.byline b{display:block;font-family:var(--display);font-size:clamp(.95rem,calc(2vmin * var(--s) * var(--a)),calc(1.4rem * var(--s)));letter-spacing:-.01em;text-align:left}
+.byline span{display:block;font-family:var(--mono);font-size:clamp(.72rem,calc(1.45vmin * var(--s) * var(--a)),calc(1rem * var(--s)));color:var(--fg-2);text-align:left}
+
+/* ---------- 02 quem sou eu ---------- */
+.split{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:clamp(22px,5vw,88px);align-items:center}
+.photo{position:relative;justify-self:center;width:100%;max-width:min(460px,44vh)}
+.photo .frame{border-radius:28px;overflow:hidden;aspect-ratio:4/5;border:1px solid var(--line-2);
+  box-shadow:0 40px 90px -40px rgba(207,255,94,.35)}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:center 18%}
+.photo::before{content:'';position:absolute;inset:-14px -14px 14px 14px;border-radius:30px;
+  border:2px solid var(--acc);opacity:.55;z-index:-1}
+.photo .tag{position:absolute;left:14px;bottom:14px;right:14px;padding:10px 14px;border-radius:14px;
+  background:rgba(10,11,13,.72);backdrop-filter:blur(8px);border:1px solid var(--line-2);
+  font-family:var(--mono);font-size:clamp(.7rem,calc(1.45vmin * var(--s) * var(--a)),calc(.95rem * var(--s)));color:var(--fg-2)}
+.photo .tag b{color:var(--acc);font-weight:500}
+.who h2{max-width:none;margin-bottom:.35em}
+.role{font-family:var(--mono);font-size:clamp(.85rem,calc(2vmin * var(--s) * var(--a)),calc(1.35rem * var(--s)));color:var(--fg-2);margin-bottom:clamp(16px,3vh,34px)}
+.role b{color:var(--acc);font-weight:500}
+.cv{list-style:none;display:grid;gap:clamp(8px,1.35vh,14px)}
+.cv li{display:grid;grid-template-columns:auto 1fr;gap:clamp(10px,1.4vw,20px);align-items:baseline;
+  padding-bottom:clamp(8px,1.35vh,14px);border-bottom:1px dashed var(--line)}
+.cv li:last-child{border-bottom:0}
+.cv .k{min-width:11.5ch;white-space:nowrap;font-family:var(--mono);font-size:clamp(.72rem,calc(1.55vmin * var(--s) * var(--a)),calc(1.05rem * var(--s)));color:var(--acc);letter-spacing:.02em}
+.cv .k::before{content:'> ';color:var(--fg-3)}
+.cv .val{font-size:var(--fs-card);color:var(--fg);line-height:1.35}
+.cv .val small{display:block;color:var(--fg-2);font-size:.82em;margin-top:.1em}
+
+/* ---------- 03 pergunta ---------- */
+.ask h2{font-size:clamp(2.1rem,calc(6.6vmin * var(--s) * var(--a)),calc(6.2rem * var(--s)));max-width:17ch}
+.hand{display:inline-block;margin-top:clamp(10px,2vh,24px);padding:.55em 1.1em;border-radius:100px;
+  background:var(--acc);color:var(--bg);font-weight:700;font-size:clamp(1rem,calc(2.4vmin * var(--s) * var(--a)),calc(1.8rem * var(--s)));font-family:var(--display)}
+
+/* ---------- 04 ada ---------- */
+.mega{font-family:var(--display);font-weight:800;font-size:var(--fs-mega);line-height:.82;letter-spacing:-.06em;
+  color:transparent;-webkit-text-stroke:2px var(--violet);opacity:.95}
+.ada{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(18px,4vw,72px);align-items:center}
+.ada h2{max-width:18ch}
+.pull{margin-top:clamp(16px,3vh,36px);padding:clamp(12px,2vh,22px) clamp(16px,2vw,28px);border-left:3px solid var(--acc);
+  background:var(--acc-dim);border-radius:0 14px 14px 0;font-family:var(--display);font-weight:600;
+  font-size:clamp(1.05rem,calc(2.6vmin * var(--s) * var(--a)),calc(1.9rem * var(--s)));letter-spacing:-.01em;max-width:40ch;line-height:1.3}
+
+/* ---------- 05/06 historia ---------- */
+.story h2{font-size:clamp(2.3rem,calc(7.4vmin * var(--s) * var(--a)),calc(7rem * var(--s)));max-width:14ch}
+.place{display:inline-flex;align-items:center;gap:.6em;margin-top:clamp(8px,1.6vh,20px);font-family:var(--mono);
+  font-size:clamp(1rem,calc(2.5vmin * var(--s) * var(--a)),calc(1.9rem * var(--s)));color:var(--fg-2);padding:.5em 1em;border:1px solid var(--line-2);border-radius:100px}
+.place i{width:.62em;height:.62em;border-radius:50%;background:var(--acc);box-shadow:0 0 0 .3em var(--acc-dim)}
+
+.code{background:var(--bg-2);border:1px solid var(--line-2);border-radius:18px;overflow:hidden;
+  font-family:var(--mono);font-size:var(--fs-code);max-width:min(900px,100%);text-align:left}
+.code .top{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);
+  font-size:.62em;color:var(--fg-3)}
+.code .top i{width:10px;height:10px;border-radius:50%;background:var(--bg-3);border:1px solid var(--line-2)}
+.code .top span{margin-left:8px}
+.code pre{padding:clamp(14px,2.4vh,28px) clamp(16px,2vw,30px);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.tk-k{color:var(--violet)}.tk-s{color:var(--acc)}.tk-c{color:var(--fg-3);font-style:italic}.tk-p{color:var(--fg-2)}
+
+/* ---------- 07 diff ---------- */
+.diff{display:grid;gap:clamp(10px,1.8vh,20px);margin-top:clamp(10px,2vh,24px);max-width:900px}
+.diff div{font-family:var(--mono);font-size:clamp(1.5rem,calc(5vmin * var(--s) * var(--a)),calc(4.4rem * var(--s)));font-weight:600;letter-spacing:-.02em;
+  padding:.28em .6em;border-radius:14px;border-left:6px solid}
+.diff .m{color:var(--red);background:var(--red-dim);border-color:var(--red)}
+.diff .p{color:var(--green);background:var(--green-dim);border-color:var(--green)}
+.diff .m.on{animation:strike .6s .5s var(--ease) forwards}
+@keyframes strike{to{text-decoration:line-through;text-decoration-thickness:.07em;opacity:.6}}
+
+/* ---------- 08 linha do tempo ---------- */
+.tl{list-style:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin-top:clamp(18px,4vh,48px);position:relative}
+.tl::before{content:'';position:absolute;left:0;right:0;top:11px;height:2px;
+  background:linear-gradient(90deg,var(--violet),var(--acc))}
+.tl li{position:relative;padding:34px clamp(6px,1vw,16px) 0 0}
+.tl li::before{content:'';position:absolute;top:2px;left:0;width:20px;height:20px;border-radius:50%;
+  background:var(--bg);border:3px solid var(--violet)}
+.tl li.now::before{background:var(--acc);border-color:var(--acc);box-shadow:0 0 0 7px var(--acc-dim)}
+.tl .y{font-family:var(--mono);font-size:clamp(.7rem,calc(1.5vmin * var(--s) * var(--a)),calc(1rem * var(--s)));color:var(--fg-3);display:block;margin-bottom:.3em}
+.tl b{display:block;font-family:var(--display);font-size:clamp(.98rem,calc(2.15vmin * var(--s) * var(--a)),calc(1.55rem * var(--s)));line-height:1.15;letter-spacing:-.01em}
+.tl small{display:block;color:var(--fg-2);font-size:clamp(.8rem,calc(1.6vmin * var(--s) * var(--a)),calc(1.08rem * var(--s)));margin-top:.35em;line-height:1.35}
+
+/* ---------- cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.6vw,24px);margin-top:clamp(8px,1.6vh,20px)}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid var(--line-2);
+  border-radius:20px;padding:clamp(16px,2.4vh,30px) clamp(16px,1.8vw,28px)}
+.card .n{font-family:var(--mono);font-size:clamp(.72rem,calc(1.5vmin * var(--s) * var(--a)),calc(1rem * var(--s)));color:var(--acc);margin-bottom:.7em;display:block}
+.card h3{margin-bottom:.4em}
+.card p{color:var(--fg-2);font-size:var(--fs-card);line-height:1.4}
+.cards.six .card{padding:clamp(14px,2vh,24px) clamp(14px,1.6vw,24px)}
+.cards.six h3{font-size:clamp(1.05rem,calc(2.35vmin * var(--s) * var(--a)),calc(1.75rem * var(--s)))}
+
+/* ---------- 11 requirements ---------- */
+.req{max-width:min(1320px,100%)}
+.req pre{white-space:normal;display:grid;gap:.55em;line-height:1.35}
+.req .row{flex-wrap:nowrap}
+.req .row{display:flex;gap:.7em;align-items:baseline;flex-wrap:wrap}
+.req .row .pk{color:var(--fg);min-width:12.5ch}
+.req .row .ok{color:var(--acc)}
+
+/* ---------- 12 ia ---------- */
+.big-statement{font-family:var(--display);font-weight:800;letter-spacing:-.035em;line-height:1.02;
+  font-size:clamp(2rem,calc(6.2vmin * var(--s) * var(--a)),calc(6rem * var(--s)));max-width:18ch;margin-bottom:clamp(18px,3.6vh,44px)}
+
+/* ---------- 13 framework ---------- */
+.pipe{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.6vw,24px);margin-top:clamp(6px,1.4vh,18px)}
+.step{border:1px solid var(--line-2);border-radius:20px;overflow:hidden;background:var(--bg-2);display:flex;flex-direction:column}
+.step .hd{padding:clamp(14px,2.2vh,26px) clamp(16px,1.8vw,26px);border-bottom:1px solid var(--line)}
+.step .fn{font-family:var(--mono);font-size:clamp(1rem,calc(2.5vmin * var(--s) * var(--a)),calc(1.85rem * var(--s)));color:var(--acc);font-weight:600}
+.step .q{margin-top:.4em;font-family:var(--display);font-weight:700;font-size:clamp(1.05rem,calc(2.4vmin * var(--s) * var(--a)),calc(1.8rem * var(--s)));
+  letter-spacing:-.015em;line-height:1.15}
+.step .ex{padding:clamp(12px,2vh,22px) clamp(16px,1.8vw,26px);background:var(--violet-dim);flex:1;
+  color:var(--fg);font-size:var(--fs-card);line-height:1.4}
+.step .ex .lbl{display:block;font-family:var(--mono);font-size:.72em;color:var(--violet);margin-bottom:.35em;letter-spacing:.04em}
+
+/* ---------- 15 return ---------- */
+.ret h2{font-size:clamp(2.2rem,calc(7vmin * var(--s) * var(--a)),calc(6.6rem * var(--s)));max-width:15ch}
+.ret .line{margin-top:clamp(18px,4vh,46px);font-family:var(--mono);font-size:clamp(1.6rem,calc(5.2vmin * var(--s) * var(--a)),calc(4.6rem * var(--s)));font-weight:600;color:var(--acc)}
+.ret .line .kw{color:var(--violet)}
+
+/* ---------- 16 obrigado ---------- */
+.thanks{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(22px,5vw,80px);align-items:center}
+.thanks h1{font-size:clamp(3rem,calc(11vmin * var(--s) * var(--a)),calc(10rem * var(--s)));margin-bottom:.12em}
+.links{list-style:none;display:grid;gap:clamp(8px,1.4vh,14px);margin-top:clamp(16px,3.4vh,40px)}
+.links li{display:flex;align-items:baseline;gap:.9em;font-size:var(--fs-card)}
+.links .k{font-family:var(--mono);color:var(--acc);font-size:.8em;min-width:6.5em}
+.links a{text-decoration:none;border-bottom:1px solid var(--line-2)}
+.links a:hover{color:var(--acc);border-color:var(--acc)}
+.qr{justify-self:center;width:100%;max-width:min(380px,46vh);text-align:center}
+.qr .box{background:#fff;border-radius:24px;padding:clamp(12px,2vh,22px);box-shadow:0 30px 80px -30px rgba(207,255,94,.4)}
+.qr .box img{width:100%;aspect-ratio:1;image-rendering:pixelated}
+.qr p{margin-top:14px;font-family:var(--mono);font-size:clamp(.8rem,calc(1.7vmin * var(--s) * var(--a)),calc(1.15rem * var(--s)));color:var(--fg-2)}
+.qr p b{color:var(--acc);font-weight:500}
+
+/* ---------- barra inferior ---------- */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:12px clamp(14px,2vw,28px) max(12px,env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,rgba(10,11,13,.94),rgba(10,11,13,0));transition:opacity .35s}
+.bar.dim{opacity:.18}
+.bar:hover{opacity:1}
+.tab{display:inline-flex;align-items:center;gap:.55em;font-family:var(--mono);font-size:12px;color:var(--fg-2);
+  border:1px solid var(--line);border-radius:8px;padding:5px 10px;background:var(--bg-2);white-space:nowrap}
+.tab i{width:7px;height:7px;border-radius:50%;background:var(--acc)}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:1;min-width:0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--line-2);transition:all .25s var(--ease)}
+.dot.on{background:var(--acc);width:22px;border-radius:10px}
+.dot.done{background:rgba(207,255,94,.4)}
+.ctrl{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;color:var(--fg-2)}
+.ctrl button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;
+  background:var(--bg-2);transition:all .2s}
+.ctrl button:hover{border-color:var(--acc);color:var(--acc)}
+.ctrl svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.count{min-width:4.2em;text-align:center}
+.more{position:fixed;left:50%;bottom:66px;transform:translateX(-50%);z-index:21;font-family:var(--mono);
+  font-size:12px;color:var(--acc);padding:5px 12px;border-radius:100px;background:rgba(10,11,13,.88);
+  border:1px solid rgba(207,255,94,.35);opacity:0;pointer-events:none;transition:opacity .3s}
+.more.on{opacity:1}
+.progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--violet),var(--acc));z-index:30;
+  width:0;transition:width .45s var(--ease)}
+
+/* ---------- camadas ---------- */
+.blackout{position:fixed;inset:0;background:#000;z-index:60;opacity:0;pointer-events:none;transition:opacity .35s}
+.blackout.on{opacity:1;pointer-events:auto}
+.notes{display:none}
+.notes-pane{position:fixed;left:50%;bottom:74px;transform:translateX(-50%);z-index:40;width:min(900px,94vw);
+  max-height:42vh;overflow:auto;background:rgba(16,18,23,.97);border:1px solid var(--line-2);border-radius:16px;
+  padding:18px 22px;font-size:15px;line-height:1.6;color:var(--fg-2);display:none;box-shadow:0 30px 80px -20px #000}
+.notes-pane.on{display:block}
+.notes-pane h4{font-family:var(--mono);font-size:12px;color:var(--acc);font-weight:500;margin-bottom:8px;letter-spacing:.04em}
+.notes-pane b{color:var(--fg)}
+.help{position:fixed;inset:0;z-index:70;background:rgba(6,7,9,.86);display:none;place-items:center;padding:20px}
+.help.on{display:grid}
+.help .box{background:var(--bg-2);border:1px solid var(--line-2);border-radius:20px;padding:26px 30px;width:min(520px,100%)}
+.help h4{font-family:var(--display);font-size:22px;margin-bottom:14px}
+.help dl{display:grid;grid-template-columns:auto 1fr;gap:9px 18px;font-size:15px;color:var(--fg-2)}
+.help dt{font-family:var(--mono);color:var(--acc);font-size:13px;white-space:nowrap}
+
+/* ---------- visao do apresentador ---------- */
+.pv{display:none}
+body.presenter{overflow:auto}
+body.presenter .deck,body.presenter .bar,body.presenter .progress,body.presenter .gutter,body.presenter .bg{display:none}
+body.presenter .pv{display:grid;min-height:100vh;grid-template-columns:minmax(0,1.5fr) minmax(300px,.9fr);
+  grid-template-rows:auto 1fr;gap:16px;padding:18px}
+.pv header{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--bg-2);border:1px solid var(--line-2);border-radius:16px;padding:12px 16px}
+.pv .clock{font-family:var(--mono);font-size:clamp(28px,4.4vw,44px);font-weight:600;letter-spacing:-.02em}
+.pv .delta{font-family:var(--mono);font-size:14px;padding:5px 10px;border-radius:100px;border:1px solid var(--line-2)}
+.pv .delta.ok{color:var(--green);border-color:rgba(94,224,138,.4)}
+.pv .delta.late{color:var(--red);border-color:rgba(255,107,107,.45)}
+.pv .meta{font-family:var(--mono);font-size:13px;color:var(--fg-2)}
+.pv .sp{flex:1}
+.pv .btn{font-family:var(--mono);font-size:13px;padding:9px 14px;border-radius:10px;border:1px solid var(--line-2);background:var(--bg-3)}
+.pv .btn:hover{border-color:var(--acc);color:var(--acc)}
+.pv .btn.big{padding:14px 22px;font-size:16px}
+.pv .btn.pri{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600}
+.pv .main,.pv .side{background:var(--bg-2);border:1px solid var(--line-2);border-radius:16px;padding:20px 22px;min-width:0}
+.pv .now{font-family:var(--mono);font-size:13px;color:var(--acc);margin-bottom:6px}
+.pv .title{font-family:var(--display);font-weight:800;font-size:clamp(24px,3vw,38px);letter-spacing:-.02em;line-height:1.1;margin-bottom:6px}
+.pv .frag{font-family:var(--mono);font-size:13px;color:var(--fg-2);margin-bottom:16px}
+.pv .body{font-size:clamp(17px,1.6vw,21px);line-height:1.62;color:var(--fg)}
+.pv .body p{margin-bottom:.8em}
+.pv .body b{color:var(--acc);font-weight:600}
+.pv .side h5{font-family:var(--mono);font-size:12px;color:var(--fg-3);font-weight:500;letter-spacing:.06em;margin:0 0 8px}
+.pv .next{font-family:var(--display);font-weight:700;font-size:22px;margin-bottom:18px;line-height:1.2}
+.pv .plan{list-style:none;display:grid;gap:2px;font-family:var(--mono);font-size:13px}
+.pv .plan li{display:flex;justify-content:space-between;gap:10px;padding:6px 8px;border-radius:8px;color:var(--fg-2);cursor:pointer}
+.pv .plan li:hover{background:var(--bg-3)}
+.pv .plan li.cur{background:var(--acc-dim);color:var(--acc)}
+.pv .plan li.past{color:var(--fg-3)}
+.pv .nav{display:flex;gap:10px;margin-top:18px}
+
+/* ---------- responsivo ---------- */
+@media (max-aspect-ratio:1.45){ .slide{--a:.88} }
+@media (max-width:1100px){
+  .tl{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:26px}
+  .tl::before{display:none}
+}
+@media (max-width:900px){
+  .slide{--s:1!important;--a:1!important}
+  .gutter{display:none}
+  .slide{padding:64px 22px 104px;align-items:flex-start}
+  .split,.thanks,.ada{grid-template-columns:1fr}
+  .photo{max-width:260px}
+  .cards,.pipe{grid-template-columns:1fr}
+  .cards.six{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tl{grid-template-columns:1fr;row-gap:0;padding-left:30px}
+  .tl::before{display:block;left:9px;right:auto;top:6px;bottom:6px;width:2px;height:auto;
+    background:linear-gradient(180deg,var(--violet),var(--acc))}
+  .tl li{padding:0 0 18px 0}
+  .tl li::before{left:-30px;top:3px}
+  .mega{font-size:clamp(5rem,28vw,9rem)}
+  .dots{display:none}
+  body.presenter .pv{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .cards.six{grid-template-columns:1fr}
+  .cv li{grid-template-columns:1fr;gap:2px}
+  .req .row{flex-wrap:wrap}
+  .tab{display:none}
+  .bar{justify-content:center}
+}
+@media (max-height:620px) and (min-width:901px){
+  .slide{padding-top:44px;padding-bottom:88px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .f{opacity:1;transform:none}
+}
+@media print{
+  body{overflow:visible}
+  .bar,.progress,.gutter,.bg,.notes-pane,.help,.blackout{display:none!important}
+  .deck{position:static}
+  .slide{position:relative;inset:auto;opacity:1;visibility:visible;transform:none;min-height:100vh;
+    page-break-after:always;overflow:visible}
+  .f{opacity:1;transform:none}
+}
+</style>
+</head>
+<body data-company="Zyria">
+
+<div class="bg"></div>
+<div class="gutter" id="gutter" aria-hidden="true"></div>
+<div class="progress" id="progress"></div>
+
+<main class="deck" id="deck">
+
+<!-- ================================================================= 01 -->
+<section class="slide" style="--s:1.75" data-file="01_capa.ts" data-title="Capa" data-min="0.5">
+  <div class="inner center cover">
+    <p class="kick"><span>// meninas digitais do cerrado · 10 anos</span><span class="sep"></span><span class="v">ada lovelace day · 1ª edição</span></p>
+    <h1><span id="typed" data-text="O código que muda tudo">O código que muda tudo</span><span class="caret"></span></h1>
+    <p class="lede">Uma história sobre decisões, becos sem saída e as linhas que viraram o jogo.</p>
+    <div class="byline">
+      <img src="foto-gabriel.jpg" alt="">
+      <div><b>Gabriel Vítor Silva Brito</b><span>Dev Full Stack &amp; AI Agent Builder</span></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Entre, respire e deixe a capa no ar por uns <b>5 segundos</b> antes de falar.</p>
+    <p>Comece agradecendo: <b>"Primeiro, parabéns ao Meninas Digitais do Cerrado pelos 10 anos."</b> Isso ganha a sala antes de você falar de você.</p>
+    <p>Transição: "Antes de contar essa história, deixa eu me apresentar rapidinho."</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 02 -->
+<section class="slide" style="--s:1.45" data-file="02_quem-sou-eu.ts" data-title="Quem sou eu" data-min="1.5">
+  <div class="inner split">
+    <div class="photo">
+      <div class="frame"><img src="foto-gabriel.jpg" alt="Gabriel Vítor Silva Brito"></div>
+      <div class="tag"><b>@bielvitooor</b> · Goiás, Brasil</div>
+    </div>
+    <div class="who">
+      <p class="kick">// quem sou eu</p>
+      <h2>Gabriel Vítor<br>Silva Brito</h2>
+      <p class="role"><b>Dev Full Stack</b> &amp; <b>AI Agent Builder</b> · <span class="company">Zyria</span></p>
+      <ul class="cv">
+        <li><span class="k">estudando</span><span class="val">Pós-graduação em Inteligência Artificial</span></li>
+        <li><span class="k">formação</span><span class="val">Sistemas de Informação · IF Goiano Ceres</span></li>
+        <li><span class="k">comecei</span><span class="val">Técnico em Informática para Internet</span></li>
+        <li><span class="k">já fui</span><span class="val">Monitor de Dev Web e estagiário na Orb Govtech</span></li>
+        <li><span class="k">no github</span><span class="val">2.800+ contribuições</span></li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">
+    <p><b>Não leia a lista.</b> Ela está ali pra plateia, não pra você. No máximo 1 minuto.</p>
+    <p>Uma frase resolve: <b>"Hoje eu construo agentes de IA. Mas eu comecei exatamente onde vocês estão agora: no técnico."</b></p>
+    <p>Se você fez o técnico aqui no IF Goiano Campus Ceres, diga isso com todas as letras. É a conexão mais forte da palestra inteira.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 03 -->
+<section class="slide" style="--s:1.3" data-file="03_antes-de-comecar.ts" data-title="Levanta a mão" data-min="1">
+  <div class="inner center ask">
+    <p class="kick">// antes de começar</p>
+    <h2>Quem aqui já pensou em <em>desistir</em> de alguma coisa que está fazendo agora?</h2>
+    <span class="hand f">levanta a mão ✋</span>
+    <p class="lede f" style="margin-top:clamp(18px,3.6vh,40px)">Essa palestra é sobre os momentos em que eu quase apaguei essa linha. E o que aconteceu quando eu não apaguei.</p>
+  </div>
+  <aside class="notes">
+    <p>Faça a pergunta e <b>espere de verdade</b>. Conte 5 segundos em silêncio. É desconfortável e é pra ser.</p>
+    <p><b>Levante a sua mão também.</b> Adolescente só se expõe se você se expuser primeiro.</p>
+    <p>Aperte <b>→</b> pra mostrar "levanta a mão". Comente o que viu: "É, quase todo mundo. Eu também."</p>
+    <p>Dica: aperte <b>B</b> pra apagar a tela se quiser que todo mundo olhe pra você nessa hora.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 04 -->
+<section class="slide" style="--s:1.25" data-file="04_ada-lovelace.ts" data-title="Ada Lovelace" data-min="1.5">
+  <div class="inner ada">
+    <div class="mega" aria-hidden="true">1843</div>
+    <div>
+      <p class="kick">// hoje é <span class="v">ada lovelace day</span></p>
+      <h2>O primeiro código que mudou tudo foi escrito por <em class="v">uma mulher</em>.</h2>
+      <p class="lede">Ada Lovelace escreveu um algoritmo pra uma máquina que nem existia ainda. Mais de <b>180 anos</b> depois, a gente continua escrevendo em cima do que ela imaginou.</p>
+      <p class="pull f">Nenhuma linha de código muda tudo sozinha. Mas alguém precisa escrever a primeira.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Esse slide existe porque o evento é o <b>Ada Lovelace Day</b> e o <b>Meninas Digitais</b>. Não passe correndo.</p>
+    <p>Fato seguro pra falar: em <b>1843</b>, Ada Lovelace publicou notas sobre a Máquina Analítica de Charles Babbage com um algoritmo pra calcular os números de Bernoulli. É considerado o primeiro programa de computador da história. A máquina nunca foi terminada.</p>
+    <p>Ponte: <b>"Então se alguém aqui acha que tecnologia não é lugar pra ela, a própria história discorda."</b></p>
+  </aside>
+</section>
+
+<!-- ================================================================= 05 -->
+<section class="slide" style="--s:1.75" data-file="05_de-onde-eu-vim.ts" data-title="De onde eu vim" data-min="2">
+  <div class="inner story">
+    <p class="kick">// de onde eu vim</p>
+    <h2>Antes de qualquer <em>linha de código</em>.</h2>
+    <span class="place"><i></i>interior de Goiás</span>
+  </div>
+  <aside class="notes">
+    <p><b>ROTEIRO · só você pode contar.</b> A tela fica limpa de propósito: aqui quem fala é você.</p>
+    <p>De onde você veio? Cidade, contexto, família.</p>
+    <p>O que te aproximou (ou afastou) da tecnologia no começo?</p>
+    <p><b>Uma lembrança concreta vale mais que um resumo.</b> O primeiro computador, a lan house, o celular emprestado, o professor que te notou. Uma cena, com detalhe.</p>
+    <p>Máximo 2 minutos.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 06 -->
+<section class="slide" style="--s:1.75" data-file="06_primeira-escolha.ts" data-title="Por que o técnico?" data-min="1.5">
+  <div class="inner story">
+    <p class="kick">// a primeira escolha</p>
+    <h2>Por que o <em>técnico</em>?</h2>
+    <div class="code f" style="margin-top:clamp(10px,2vh,24px)">
+      <div class="top"><i></i><i></i><i></i><span>escolha.ts</span></div>
+<pre><span class="tk-k">if</span> <span class="tk-p">(</span>escolha <span class="tk-p">===</span> <span class="tk-s">"técnico"</span><span class="tk-p">) {</span>
+  <span class="tk-c">// a decisão que parecia pequena</span>
+<span class="tk-p">}</span></pre>
+    </div>
+  </div>
+  <aside class="notes">
+    <p><b>ROTEIRO · só você pode contar.</b></p>
+    <p>Por que você escolheu o técnico? O que pesou: algo prático, a família, curiosidade, medo?</p>
+    <p>Aperte <b>→</b> pra mostrar o código quando for dizer que a decisão parecia pequena na época.</p>
+    <p>Eles estão tomando essa mesma decisão agora, ou acabaram de tomar. Fale com isso em mente.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 07 -->
+<section class="slide" style="--s:1.6" data-file="07_quase-desisti.diff" data-title="O quase-desisti" data-min="2.5">
+  <div class="inner story">
+    <p class="kick">// o momento em que quase apaguei tudo</p>
+    <h2>O quase-desisti.</h2>
+    <div class="diff">
+      <div class="m f">- quase desisti</div>
+      <div class="p f">+ continuei</div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p><b>ROTEIRO · o coração da palestra.</b></p>
+    <p>Qual foi o momento mais difícil da trajetória? O que <b>especificamente</b> te fez continuar?</p>
+    <p>Primeiro <b>→</b>: aparece "- quase desisti" e se risca sozinho. Conte o momento difícil.</p>
+    <p>Segundo <b>→</b>: aparece "+ continuei". Conte o motivo.</p>
+    <p>Adolescente conecta com <b>vulnerabilidade real</b>, não com história de superação perfeita. Pode ser uma matéria que você reprovou, uma fase em que achou que não era pra você, uma dúvida de dinheiro. Não precisa ter final bonito, só precisa ser verdade.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 08 -->
+<section class="slide" style="--s:1.75" data-file="08_refactor.ts" data-title="Do técnico até aqui" data-min="1.5">
+  <div class="inner">
+    <p class="kick">// refactor()</p>
+    <h2>Do técnico <em>até aqui</em>.</h2>
+    <ol class="tl">
+      <li class="f"><span class="y">início</span><b>Técnico em Informática para Internet</b><small>onde tudo começou</small></li>
+      <li class="f"><span class="y">graduação</span><b>Sistemas de Informação</b><small>IF Goiano · Ceres</small></li>
+      <li class="f"><span class="y">2023</span><b>Monitoria de Dev Web</b><small>ensinar pra aprender</small></li>
+      <li class="f"><span class="y">2025</span><b>Estágio na Orb Govtech</b><small>primeiro produto real</small></li>
+      <li class="f now"><span class="y">hoje</span><b>Dev Full Stack &amp; AI Agent Builder</b><small><span class="company">Zyria</span></small></li>
+      <li class="f now"><span class="y">2026</span><b>Pós em Inteligência Artificial</b><small>conclusão em outubro</small></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>Cada <b>→</b> acende um passo da linha do tempo. Não precisa comentar todos.</p>
+    <p><b>ROTEIRO:</b> o que te fez dar o salto do técnico pra graduação? Teve medo? Alguém te incentivou ou foi por conta própria?</p>
+    <p>Mensagem central: <b>não foi um salto só, foram vários passos pequenos</b>. Nenhum deles parecia enorme na hora.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 09 -->
+<section class="slide" style="--s:1.6" data-file="09_tecnico.ts" data-title="Técnico não é meio caminho" data-min="1.5">
+  <div class="inner">
+    <p class="kick">// o técnico não é "meio caminho"</p>
+    <h2>O técnico é <em>plataforma de lançamento</em>.</h2>
+    <div class="cards">
+      <div class="card f"><span class="n">01</span><h3>Você já está dentro do jogo</h3><p>Sair do ensino médio com formação técnica é algo que muita gente só consegue anos depois.</p></div>
+      <div class="card f"><span class="n">02</span><h3>As portas existem agora</h3><p>Estágio, extensão, pesquisa, olimpíada. Várias só abrem enquanto você é aluno.</p></div>
+      <div class="card f"><span class="n">03</span><h3>Portfólio pesa mais que diploma</h3><p>Comece a construir agora. Não depois da faculdade.</p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Aqui a palestra vira da <b>sua história</b> pra <b>vida deles</b>. Marque essa virada com a voz.</p>
+    <p>Frase de efeito pra abrir: <b>"Técnico não é o plano B da faculdade. É uma vantagem que quase ninguém sabe que tem."</b></p>
+    <p>Um <b>→</b> por card.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 10 -->
+<section class="slide" style="--s:1.45" data-file="10_oportunidades.ts" data-title="Portas abertas hoje" data-min="2">
+  <div class="inner">
+    <p class="kick">// oportunidades.filter(jaExistem)</p>
+    <h2>Portas que estão <em>abertas pra você hoje</em>.</h2>
+    <div class="cards six">
+      <div class="card f"><h3>Monitoria</h3><p>Explicar pros colegas é o jeito mais rápido de aprender de verdade.</p></div>
+      <div class="card f"><h3>Iniciação científica</h3><p>Existe bolsa de pesquisa pra estudante do ensino médio.</p></div>
+      <div class="card f"><h3>Extensão</h3><p>Resolver problema de gente real, com orientação.</p></div>
+      <div class="card f"><h3>Olimpíadas e hackathons</h3><p>OBI, maratonas e desafios de programação.</p></div>
+      <div class="card f"><h3>Estágio</h3><p>O primeiro contato com produto, prazo e usuário de verdade.</p></div>
+      <div class="card f"><h3>Meninas Digitais</h3><p>Uma comunidade inteira que existe pra abrir porta. Use.</p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Pergunte antes de revelar: <b>"Quem aqui já participou de algum projeto fora da sala de aula?"</b></p>
+    <p>Conte o que você fez: a <b>monitoria de Desenvolvimento Web em 2023</b> é real e é um ótimo exemplo.</p>
+    <p>Se souber, diga onde procurar essas oportunidades dentro do campus (coordenação, editais, professores). Informação prática vale ouro pra eles.</p>
+    <p>OBI é a Olimpíada Brasileira de Informática. A iniciação científica pra ensino médio existe via programas de bolsa como o PIBIC-EM.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 11 -->
+<section class="slide" style="--s:1.4" data-file="11_requirements.txt" data-title="O que o mercado cobra" data-min="2">
+  <div class="inner">
+    <p class="kick">// requirements.txt do mercado</p>
+    <h2>O que o mercado <em>cobra hoje</em>.</h2>
+    <div class="code req">
+      <div class="top"><i></i><i></i><i></i><span>requirements.txt</span></div>
+<pre><span class="row f"><span class="pk">programar</span><span class="tk-c"># pré-requisito, não diferencial</span></span>
+<span class="row f"><span class="pk">resolver_problema</span><span class="tk-c"># o que realmente separa as pessoas</span></span>
+<span class="row f"><span class="pk">comunicacao</span><span class="tk-c"># explicar pra quem não é dev</span></span>
+<span class="row f"><span class="pk">aprender_rapido</span><span class="tk-c"># vale mais que saber tudo</span></span>
+<span class="row f"><span class="pk ok">usar_ia_bem</span><span class="tk-c"># novo, e já é obrigatório</span></span></pre>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Cada <b>→</b> instala uma dependência.</p>
+    <p>O ponto mais importante é o segundo: <b>ninguém é contratado por escrever código bonito, e sim por resolver o problema de alguém</b>.</p>
+    <p>Sobre comunicação, fale do seu dia a dia: explicar uma solução pra alguém que não é técnico é parte real do seu trabalho.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 12 -->
+<section class="slide" style="--s:1.6" data-file="12_ia.ts" data-title="O boom da IA" data-min="2">
+  <div class="inner">
+    <p class="kick">// import ia from "todo lugar"</p>
+    <p class="big-statement">A IA não tirou a sua vaga. Ela <em>mudou qual é a vaga</em>.</p>
+    <div class="cards">
+      <div class="card f"><span class="n">mercado novo</span><h3>Quem sabe colocar IA em produto real</h3><p>Não basta usar o chat. Tem que integrar, testar e fazer funcionar pra alguém.</p></div>
+      <div class="card f"><span class="n">agentes</span><h3>Não é ficção científica</h3><p>Agente de IA que executa tarefa de verdade é o que eu construo no dia a dia.</p></div>
+      <div class="card f"><span class="n">vocês</span><h3>Estão começando na hora certa</h3><p>Estudar IA no técnico é largar antes de muita gente que já está no mercado.</p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Esse é o slide que mais conversa com a turma do <b>técnico em IA</b>. Olhe pra eles.</p>
+    <p>Leia a frase grande em voz alta e <b>pause</b> antes de apertar →.</p>
+    <p>No card "agentes", dê um exemplo concreto e simples do que um agente faz no seu trabalho, sem jargão. Algo como: "em vez de alguém copiar dado de um lugar pro outro o dia inteiro, o agente faz isso e avisa quando algo está estranho".</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 13 -->
+<section class="slide" style="--s:1.45" data-file="13_framework.ts" data-title="Diagnosticar, arquitetar, vender" data-min="3.5">
+  <div class="inner">
+    <p class="kick">// como pensar uma solução · exemplo: a fila da cantina</p>
+    <h2>Diagnosticar. Arquitetar. <em>Vender</em>.</h2>
+    <div class="pipe">
+      <div class="step f">
+        <div class="hd"><span class="fn">diagnosticar()</span><p class="q">Qual é a dor de verdade?</p></div>
+        <div class="ex f"><span class="lbl">NA CANTINA</span>A fila não demora porque o atendimento é lento. Demora porque todo mundo pede e paga no mesmo minuto.</div>
+      </div>
+      <div class="step f">
+        <div class="hd"><span class="fn">arquitetar()</span><p class="q">Qual é o jeito mais simples que resolve?</p></div>
+        <div class="ex f"><span class="lbl">NA CANTINA</span>Pedido pelo celular antes do intervalo. Pra testar a ideia, um formulário e uma planilha já bastam.</div>
+      </div>
+      <div class="step f">
+        <div class="hd"><span class="fn">vender()</span><p class="q">Consigo explicar em 30 segundos?</p></div>
+        <div class="ex f"><span class="lbl">NA CANTINA</span>"Você come antes de o intervalo acabar." Ninguém liga pra planilha. Todo mundo liga pro lanche.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>É o slide mais "aula". <b>Faça ser interativo.</b></p>
+    <p>A ordem das revelações é: passo 1, exemplo 1, passo 2, exemplo 2, passo 3, exemplo 3.</p>
+    <p>Antes de mostrar cada exemplo, <b>pergunte pra plateia</b>: "por que vocês acham que a fila demora?" Deixe responderem.</p>
+    <p>Troca poderosa: você fez o <b>PV Project</b>, o sistema do Posto de Vendas do IF Goiano Ceres. Se quiser, conte como aplicou isso lá. Exemplo real seu, no campus deles, vale mais que qualquer exemplo inventado.</p>
+    <p>Mensagem: <b>simples vence genial</b>. A melhor arquitetura é a que outra pessoa consegue entender.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 14 -->
+<section class="slide" style="--s:1.45" data-file="14_proximos-imports.ts" data-title="Onde estudar" data-min="2">
+  <div class="inner">
+    <p class="kick">// próximos imports</p>
+    <h2>Onde estudar <em>a partir de amanhã</em>.</h2>
+    <div class="cards six">
+      <div class="card f"><span class="n">base</span><h3>CS50 · Harvard</h3><p>Fundamentos de computação, de graça.</p></div>
+      <div class="card f"><span class="n">dados e ML</span><h3>Kaggle Learn</h3><p>Python, dados e machine learning em cursos curtos.</p></div>
+      <div class="card f"><span class="n">IA</span><h3>Hugging Face</h3><p>Curso gratuito sobre modelos de linguagem e IA.</p></div>
+      <div class="card f"><span class="n">ferramentas</span><h3>GitHub Student Pack</h3><p>Ferramentas pagas liberadas pra estudante.</p></div>
+      <div class="card f"><span class="n">fonte</span><h3>Documentação oficial</h3><p>Mais confiável que vídeo solto de 10 minutos.</p></div>
+      <div class="card f"><span class="n">prática</span><h3>Construa em público</h3><p>Projeto no GitHub funciona como currículo.</p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p><b>Confira e troque</b> pelos que você realmente usa e recomenda. Todos esses são gratuitos e confiáveis, mas indicação sua pesa mais.</p>
+    <p>Fale do "construa em público" com seu exemplo: suas <b>2.800+ contribuições no GitHub</b> e o portfólio em bielvitooor.github.io.</p>
+    <p>Dica: o GitHub Student Pack exige comprovar vínculo de estudante.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 15 -->
+<section class="slide" style="--s:1.75" data-file="15_return.ts" data-title="return você" data-min="1">
+  <div class="inner center ret">
+    <p class="kick">// return</p>
+    <h2>O código que muda tudo <em>não está na tela</em>.</h2>
+    <p class="lede">É o que você decide escrever na sua própria história.</p>
+    <p class="line f"><span class="kw">return</span> você;</p>
+  </div>
+  <aside class="notes">
+    <p>Desacelere. Fale mais baixo e mais devagar aqui.</p>
+    <p>Aperte <b>→</b> e deixe o "return você;" aparecer em silêncio. Espere 2 segundos antes de ir pro último slide.</p>
+  </aside>
+</section>
+
+<!-- ================================================================= 16 -->
+<section class="slide" style="--s:1.75" data-file="16_obrigado.md" data-title="Obrigado" data-min="0.5">
+  <div class="inner thanks">
+    <div>
+      <p class="kick">// fim da execução</p>
+      <h1>Obrigado!</h1>
+      <p class="lede">Perguntas? Pode chamar depois também.</p>
+      <ul class="links">
+        <li><span class="k">portfólio</span><a href="https://bielvitooor.github.io" target="_blank" rel="noopener">bielvitooor.github.io</a></li>
+        <li><span class="k">github</span><a href="https://github.com/bielvitooor" target="_blank" rel="noopener">github.com/bielvitooor</a></li>
+        <li><span class="k">linkedin</span><a href="https://www.linkedin.com/in/bielvitooor/" target="_blank" rel="noopener">in/bielvitooor</a></li>
+        <li><span class="k">e-mail</span><a href="mailto:gabrielvitorsilvabrito@gmail.com">gabrielvitorsilvabrito@gmail.com</a></li>
+      </ul>
+    </div>
+    <div class="qr">
+      <div class="box"><img src="qr-portfolio.svg" alt="QR code para bielvitooor.github.io"></div>
+      <p>aponta a câmera · <b>bielvitooor.github.io</b></p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Deixe o QR code no ar enquanto responde perguntas. Muita gente vai fotografar.</p>
+    <p>Se sobrar tempo, pergunta que sempre funciona com esse público: <b>"Qual é a coisa que vocês mais queriam saber e ninguém fala na sala de aula?"</b></p>
+  </aside>
+</section>
+
+</main>
+
+<!-- barra inferior -->
+<nav class="bar" id="bar" aria-label="Navegação dos slides">
+  <span class="tab"><i></i><span id="tabname">01_capa.ts</span></span>
+  <div class="dots" id="dots"></div>
+  <div class="ctrl">
+    <button id="prev" aria-label="Slide anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <span class="count" id="count">1 / 16</span>
+    <button id="next" aria-label="Próximo slide"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    <button id="fs" aria-label="Tela cheia"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+    <button id="helpbtn" aria-label="Atalhos">?</button>
+  </div>
+</nav>
+
+<div class="more" id="more" aria-hidden="true">↓ role pra ver mais</div>
+<div class="blackout" id="blackout"></div>
+<div class="notes-pane" id="notespane"><h4 id="notestitle">ROTEIRO</h4><div id="notesbody"></div></div>
+<div class="help" id="help">
+  <div class="box">
+    <h4>Atalhos</h4>
+    <dl>
+      <dt>→ espaço PgDn</dt><dd>avançar (funciona com passador)</dd>
+      <dt>← PgUp</dt><dd>voltar</dd>
+      <dt>Home / End</dt><dd>primeiro / último slide</dd>
+      <dt>F</dt><dd>tela cheia</dd>
+      <dt>P</dt><dd>abrir visão do apresentador</dd>
+      <dt>N</dt><dd>mostrar roteiro por cima</dd>
+      <dt>B</dt><dd>tela preta</dd>
+      <dt>? / Esc</dt><dd>abrir / fechar esta ajuda</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- visão do apresentador (aberta com P, em outra janela) -->
+<div class="pv" id="pv">
+  <header>
+    <span class="clock" id="pvclock">00:00</span>
+    <span class="delta ok" id="pvdelta">no tempo</span>
+    <span class="meta" id="pvplan">plano: 27 min</span>
+    <span class="sp"></span>
+    <button class="btn" id="pvtimer">▶ iniciar</button>
+    <button class="btn" id="pvreset">zerar</button>
+  </header>
+  <section class="main">
+    <p class="now" id="pvnow">slide 1 / 16</p>
+    <p class="title" id="pvtitle">Capa</p>
+    <p class="frag" id="pvfrag"></p>
+    <div class="body" id="pvnotes"></div>
+    <div class="nav">
+      <button class="btn big" id="pvprev">← voltar</button>
+      <button class="btn big pri" id="pvnext">avançar →</button>
+    </div>
+  </section>
+  <aside class="side">
+    <h5>PRÓXIMO</h5>
+    <p class="next" id="pvnext2">Quem sou eu</p>
+    <h5>ROTEIRO DE TEMPO</h5>
+    <ul class="plan" id="pvplanlist"></ul>
+  </aside>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var body = document.body;
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+var total = slides.length;
+var idx = 0, frag = 0;
+/* horario da ultima mudanca: a acao mais recente vence quando mensagens se cruzam */
+var lastTs = 0;
+var isPresenter = new URLSearchParams(location.search).has('presenter');
+if(new URLSearchParams(location.search).has('reveal')) body.classList.add('reveal');
+
+/* nome da empresa num lugar só */
+var company = body.getAttribute('data-company') || '';
+document.querySelectorAll('.company').forEach(function(el){ el.textContent = company; });
+
+function frags(i){ return slides[i].querySelectorAll('.f'); }
+function title(i){ return slides[i].getAttribute('data-title') || ('Slide ' + (i+1)); }
+function minutes(i){ return parseFloat(slides[i].getAttribute('data-min') || '1'); }
+var planTotal = slides.reduce(function(a,_,i){ return a + minutes(i); }, 0);
+
+/* ---------- sincronizacao entre deck e apresentador ---------- */
+var chan = null;
+try{ chan = new BroadcastChannel('mdc-10-anos-deck'); }catch(e){}
+function send(msg){
+  if(chan){ chan.postMessage(msg); }
+  else{ try{ localStorage.setItem('mdc-deck-msg', JSON.stringify(Object.assign({t:Date.now()}, msg))); }catch(e){} }
+}
+function onMsg(m){
+  if(!m) return;
+  if(m.type === 'state' && (m.ts || 0) >= lastTs && (m.idx !== idx || m.frag !== frag)) render(m.idx, m.frag, true, m.ts || 0);
+  if(m.type === 'next') next();
+  if(m.type === 'prev') prev();
+  if(m.type === 'hello' && !isPresenter) send({type:'state', idx:idx, frag:frag, ts:lastTs});
+  if(m.type === 'timer' && isPresenter) applyTimer(m);
+}
+if(chan) chan.onmessage = function(e){ onMsg(e.data); };
+window.addEventListener('storage', function(e){
+  if(e.key === 'mdc-deck-msg' && e.newValue){ try{ onMsg(JSON.parse(e.newValue)); }catch(err){} }
+});
+
+/* ---------- render ---------- */
+var dotsEl = document.getElementById('dots');
+slides.forEach(function(_, i){
+  var d = document.createElement('button');
+  d.className = 'dot'; d.setAttribute('aria-label', 'Ir para o slide ' + (i+1));
+  d.addEventListener('click', function(){ render(i, 0); });
+  dotsEl.appendChild(d);
+});
+var dots = dotsEl.children;
+
+function render(i, f, fromRemote, ts){
+  i = Math.max(0, Math.min(total-1, i));
+  var list = frags(i);
+  f = Math.max(0, Math.min(list.length, f));
+  var changed = i !== idx;
+
+  slides.forEach(function(s, k){ s.classList.toggle('on', k === i); });
+  Array.prototype.forEach.call(list, function(el, k){ el.classList.toggle('on', k < f); });
+  if(changed) slides[i].scrollTop = 0;
+
+  idx = i; frag = f;
+  lastTs = (typeof ts === 'number') ? ts : Date.now();
+
+  document.getElementById('count').textContent = (i+1) + ' / ' + total;
+  document.getElementById('tabname').textContent = slides[i].getAttribute('data-file') || '';
+  document.getElementById('progress').style.width = ((i+1)/total*100) + '%';
+  for(var k=0;k<dots.length;k++){
+    dots[k].classList.toggle('on', k === i);
+    dots[k].classList.toggle('done', k < i);
+  }
+  gutter();
+  checkMore();
+  if(changed && i === 0) type('typed');
+  updateNotesPane();
+  if(isPresenter) renderPresenter();
+
+  var h = '#' + (i+1);
+  if(location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
+  if(!fromRemote) send({type:'state', idx:idx, frag:frag, ts:lastTs});
+}
+
+function next(){
+  if(frag < frags(idx).length) render(idx, frag+1);
+  else if(idx < total-1) render(idx+1, 0);
+}
+function prev(){
+  if(frag > 0) render(idx, frag-1);
+  else if(idx > 0) render(idx-1, frags(idx-1).length);
+}
+
+/* ---------- aviso de conteudo abaixo (celular) ---------- */
+function checkMore(){
+  var s = slides[idx], m = document.getElementById('more'); if(!m) return;
+  m.classList.toggle('on', s.scrollHeight - s.clientHeight - s.scrollTop > 24);
+}
+slides.forEach(function(s){ s.addEventListener('scroll', checkMore, {passive:true}); });
+window.addEventListener('resize', checkMore);
+
+/* ---------- numeros de linha decorativos ---------- */
+function gutter(){
+  var g = document.getElementById('gutter'); if(!g) return;
+  var start = idx * 40 + 1, n = Math.ceil(window.innerHeight / 26) + 1, out = [];
+  for(var k=0;k<n;k++) out.push(start + k);
+  g.textContent = out.join('\n');
+  g.style.whiteSpace = 'pre';
+}
+
+/* ---------- efeito de digitacao ---------- */
+var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function type(id){
+  var el = document.getElementById(id); if(!el || reduce) return;
+  var txt = el.getAttribute('data-text'), n = 0;
+  el.textContent = '';
+  clearInterval(el._t);
+  el._t = setInterval(function(){
+    n++; el.textContent = txt.slice(0, n);
+    if(n >= txt.length) clearInterval(el._t);
+  }, 55);
+}
+
+/* ---------- camadas ---------- */
+var pane = document.getElementById('notespane');
+function updateNotesPane(){
+  if(!pane.classList.contains('on')) return;
+  var n = slides[idx].querySelector('.notes');
+  document.getElementById('notestitle').textContent = 'ROTEIRO · ' + (idx+1) + ' · ' + title(idx);
+  document.getElementById('notesbody').innerHTML = n ? n.innerHTML : '';
+}
+function toggleNotes(){ pane.classList.toggle('on'); updateNotesPane(); }
+function toggleBlack(){ document.getElementById('blackout').classList.toggle('on'); }
+function toggleHelp(force){
+  var h = document.getElementById('help');
+  h.classList.toggle('on', typeof force === 'boolean' ? force : !h.classList.contains('on'));
+}
+function fullscreen(){
+  var d = document.documentElement;
+  if(!document.fullscreenElement){ (d.requestFullscreen || d.webkitRequestFullscreen || function(){}).call(d); }
+  else{ (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document); }
+}
+function openPresenter(){
+  var url = location.pathname + '?presenter' + location.hash;
+  window.open(url, 'mdc-presenter', 'width=1100,height=760');
+}
+
+/* ---------- teclado ---------- */
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  var k = e.key;
+  if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].indexOf(k) > -1){ e.preventDefault(); next(); return; }
+  if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(k) > -1){ e.preventDefault(); prev(); return; }
+  if(k === 'Home'){ e.preventDefault(); render(0, 0); return; }
+  if(k === 'End'){ e.preventDefault(); render(total-1, 0); return; }
+  if(isPresenter) return;
+  var l = k.toLowerCase();
+  if(l === 'f') fullscreen();
+  else if(l === 'n') toggleNotes();
+  else if(l === 'b' || k === '.') toggleBlack();
+  else if(l === 'p') openPresenter();
+  else if(k === '?') toggleHelp();
+  else if(k === 'Escape'){ toggleHelp(false); document.getElementById('blackout').classList.remove('on'); }
+});
+
+/* ---------- botoes e toque ---------- */
+document.getElementById('next').addEventListener('click', next);
+document.getElementById('prev').addEventListener('click', prev);
+document.getElementById('fs').addEventListener('click', fullscreen);
+document.getElementById('helpbtn').addEventListener('click', function(){ toggleHelp(); });
+document.getElementById('help').addEventListener('click', function(e){ if(e.target.id === 'help') toggleHelp(false); });
+document.getElementById('blackout').addEventListener('click', toggleBlack);
+
+var tx = 0, ty = 0;
+document.getElementById('deck').addEventListener('touchstart', function(e){
+  tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY;
+}, {passive:true});
+document.getElementById('deck').addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if(Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4){ dx < 0 ? next() : prev(); }
+}, {passive:true});
+
+/* barra some quando o mouse fica parado */
+var bar = document.getElementById('bar'), idleT;
+function wake(){ bar.classList.remove('dim'); clearTimeout(idleT); idleT = setTimeout(function(){ bar.classList.add('dim'); }, 2600); }
+document.addEventListener('mousemove', wake); wake();
+
+window.addEventListener('resize', gutter);
+
+/* ---------- apresentador ---------- */
+var tStart = 0, tAcc = 0, running = false, tick;
+function elapsed(){ return tAcc + (running ? (Date.now() - tStart) : 0); }
+function fmt(ms){
+  var s = Math.max(0, Math.round(ms/1000)), m = Math.floor(s/60);
+  return String(m).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+function applyTimer(m){ tAcc = m.acc; running = m.running; tStart = m.start; paintClock(); }
+function paintClock(){
+  if(!isPresenter) return;
+  var el = elapsed();
+  document.getElementById('pvclock').textContent = fmt(el);
+  var planned = 0;
+  for(var i=0;i<idx;i++) planned += minutes(i);
+  var diff = el/60000 - planned;
+  var d = document.getElementById('pvdelta');
+  if(!running && el === 0){ d.textContent = 'parado'; d.className = 'delta'; }
+  else if(diff > 1){ d.textContent = '+' + fmt(diff*60000) + ' atrasado'; d.className = 'delta late'; }
+  else if(diff < -1){ d.textContent = fmt(-diff*60000) + ' adiantado'; d.className = 'delta ok'; }
+  else{ d.textContent = 'no tempo'; d.className = 'delta ok'; }
+  document.getElementById('pvtimer').textContent = running ? '❚❚ pausar' : '▶ iniciar';
+}
+function renderPresenter(){
+  var n = slides[idx].querySelector('.notes');
+  var fl = frags(idx).length;
+  document.getElementById('pvnow').textContent = 'slide ' + (idx+1) + ' / ' + total + ' · ' + (slides[idx].getAttribute('data-file')||'');
+  document.getElementById('pvtitle').textContent = title(idx);
+  document.getElementById('pvfrag').textContent = fl ? ('revelações: ' + frag + ' de ' + fl + (frag < fl ? '  ·  → revela o próximo item' : '  ·  → vai pro próximo slide')) : 'sem revelações neste slide';
+  document.getElementById('pvnotes').innerHTML = n ? n.innerHTML : '<p>Sem roteiro.</p>';
+  document.getElementById('pvnext2').textContent = idx < total-1 ? title(idx+1) : 'Fim da apresentação';
+  var list = document.getElementById('pvplanlist'), acc = 0, html = '';
+  for(var i=0;i<total;i++){
+    html += '<li data-i="' + i + '" class="' + (i === idx ? 'cur' : (i < idx ? 'past' : '')) + '"><span>' +
+            String(i+1).padStart(2,'0') + ' · ' + title(i) + '</span><span>' + fmt(acc*60000) + '</span></li>';
+    acc += minutes(i);
+  }
+  list.innerHTML = html;
+  paintClock();
+}
+
+if(isPresenter){
+  body.classList.add('presenter');
+  document.title = 'Apresentador · O código que muda tudo';
+  document.getElementById('pvplan').textContent = 'plano: ' + Math.round(planTotal) + ' min · limite 30';
+  document.getElementById('pvnext').addEventListener('click', function(){ next(); });
+  document.getElementById('pvprev').addEventListener('click', function(){ prev(); });
+  document.getElementById('pvplanlist').addEventListener('click', function(e){
+    var li = e.target.closest('li'); if(li) render(+li.getAttribute('data-i'), 0);
+  });
+  document.getElementById('pvtimer').addEventListener('click', function(){
+    if(running){ tAcc = elapsed(); running = false; }
+    else{ tStart = Date.now(); running = true; }
+    paintClock();
+  });
+  document.getElementById('pvreset').addEventListener('click', function(){
+    tAcc = 0; running = false; paintClock();
+  });
+  tick = setInterval(paintClock, 500);
+  send({type:'hello'});
+}
+
+/* ---------- inicio ---------- */
+var start = parseInt((location.hash || '').replace('#',''), 10);
+render(isNaN(start) ? 0 : start - 1, 0, true, 0);
+if(idx === 0) type('typed');
+})();
+</script>
+</body>
+</html>
