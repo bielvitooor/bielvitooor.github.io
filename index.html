@@ -494,6 +494,26 @@ footer{border-top:1px solid var(--line);padding:2.2rem 0;margin-top:88px}
   .wrap{padding:0 18px}
   .hero h1{font-size:2.2rem}
 }
+/* itens de grid nao podem crescer alem da coluna (o heatmap empurrava a pagina) */
+.hero-grid>*,.pillars>*,.xp-grid>*,.proj-grid>*,.act-grid>*,.about-grid>*,.values>*{min-width:0}
+@media (max-width:480px){
+  .nav-in{gap:.5rem}
+  .nav-right{gap:.4rem}
+  .nav-right>.btn-primary{display:none}
+  .brand{font-size:.98rem}
+  .brand .dotname{display:none}
+  .lang button{padding:.3rem .45rem}
+  .stat{padding:.95rem .9rem}
+  .stat b{font-size:1.45rem}
+  .hero-cta .btn{flex:1 1 auto}
+  .heat-card{padding:1.3rem}
+  .proj,.xp,.pillar{padding:1.4rem}
+  .about-lead,.timeline{padding:1.5rem}
+  .contact h2{font-size:1.75rem}
+  .contact-actions .btn{width:100%}
+  #copymail span{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .foot-in{justify-content:center;text-align:center}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
     transition-duration:.01ms!important;scroll-behavior:auto!important}
