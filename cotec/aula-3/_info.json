@@ -1,0 +1,8 @@
+{
+  "titulo": "Aula 3 — O Sistema Operacional",
+  "descricao": "O papel do sistema operacional e a analogia do gerente, quais sistemas existem e a parte prática no Windows: área de trabalho, ícones, atalhos e barra de tarefas.",
+  "arquivos": {
+    "index.html": { "titulo": "Slide da aula 3" },
+    "resumo-aula-3.pdf": { "titulo": "Resumo da aula 3" }
+  }
+}

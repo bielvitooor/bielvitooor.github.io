@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 3 - O Sistema Operacional | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Fundo Animado Premium (Mesh Gradient) */
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        /* Barra de Progresso */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%;
+            transition: width 0.4s ease-out;
+            z-index: 100;
+        }
+
+        /* Slides */
+        .slide-container {
+            width: 90%;
+            max-width: 1300px;
+            height: 80vh;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 4rem 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg);
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateZ(0) rotateX(0);
+        }
+
+        /* Animações Internas dos Elementos */
+        .slide > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide.active > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        /* Tipografia e Estrutura */
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        p, li {
+            font-size: 1.5rem;
+            line-height: 1.7;
+            color: var(--text-sec);
+        }
+
+        ul {
+            margin-top: 1.5rem;
+            padding-left: 2rem;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        li::before {
+            content: "";
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+
+        /* Grids e Componentes */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .center { text-align: center; }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+            font-size: 1rem;
+            color: #52525b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #52525b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 5rem;">O Sistema Operacional</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 3: O seu ambiente de trabalho digital</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>Antes de avançarmos...</h2>
+            <p>Na nossa última aula, separamos o computador em duas partes fundamentais:</p>
+            <div class="grid-2" style="margin-top: 2rem;">
+                <div class="card center" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Hardware</h3>
+                    <p>O corpo. A parte física que tocamos (teclado, tela, processador).</p>
+                </div>
+                <div class="card center" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Software</h3>
+                    <p>A mente. A parte lógica que não tocamos (os programas).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: O Grande Desafio -->
+        <div class="slide">
+            <h2>O Grande Desafio</h2>
+            <p>Imagine que você comprou as melhores peças do mercado e montou um computador perfeito. Você aperta o botão de ligar e... <span class="highlight-3">nada útil acontece.</span></p>
+            <p style="margin-top: 1rem;">O teclado não sabe falar com a tela. O processador não sabe como guardar o arquivo. Tudo está desconectado.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1);">
+                <p>Nós precisamos de um "Maestro" para reger essa orquestra. Esse maestro tem um nome.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: O Sistema Operacional -->
+        <div class="slide">
+            <h2>O Sistema Operacional</h2>
+            <p>O Sistema Operacional (ou S.O.) é o software mais importante de qualquer máquina.</p>
+            <ul>
+                <li>Ele é a ponte que liga você, os programas e as peças físicas.</li>
+                <li>Sem ele, você precisaria saber programação avançada só para abrir uma foto.</li>
+                <li>Ele traduz códigos complexos em botões, setas e janelas visuais.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: A Analogia do Gerente -->
+        <div class="slide">
+            <h2>A Analogia do Gerente</h2>
+            <p>No desenvolvimento de softwares no Grupo Accerte, costumo explicar o sistema operacional como o <span class="highlight-2">Gerente de uma grande fábrica</span>.</p>
+            <div class="grid-2">
+                <div>
+                    <ul>
+                        <li><span class="highlight-1">Os funcionários (Hardware):</span> Têm muita força e sabem trabalhar, mas precisam de ordens.</li>
+                        <li><span class="highlight-3">O cliente (Você):</span> Quer o produto pronto, mas não quer aprender a operar as máquinas da fábrica.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <p>O <strong>Gerente (Sistema Operacional)</strong> ouve o que você quer, traduz para os funcionários e te entrega o resultado em uma bandeja de prata.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Onde vemos o S.O.? -->
+        <div class="slide">
+            <h2>Quais são os Sistemas Operacionais?</h2>
+            <p>Eles estão em todos os lugares, com nomes que você já conhece:</p>
+            <div class="grid-2 mt-2">
+                <div class="card">
+                    <h3 class="highlight-1">Nos Computadores</h3>
+                    <p>• Windows (O mais usado no mundo)<br>• macOS (Da Apple)<br>• Linux (Muito usado em servidores)</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Nos Celulares</h3>
+                    <p>• Android (Do Google)<br>• iOS (Do iPhone)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Explorando o Windows -->
+        <div class="slide">
+            <h2>Mão na massa: O Windows</h2>
+            <p>Hoje o nosso foco será prático. Vamos explorar o ambiente de trabalho do Windows, o sistema que vocês mais encontrarão nas empresas.</p>
+            <div class="card center" style="margin-top: 2rem; border-left: 5px solid var(--accent-3);">
+                <h3 style="color: var(--accent-3);">O Primeiro Contato</h3>
+                <p>Quando você liga o computador e coloca sua senha, a primeira tela que aparece é a sua <strong>Área de Trabalho</strong> (ou Desktop).</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: A Área de Trabalho (Analogia) -->
+        <div class="slide">
+            <h2>A Área de Trabalho (Desktop)</h2>
+            <p>Vamos usar a analogia do escritório físico para entender perfeitamente:</p>
+            <p style="margin-top: 1rem;">Imagine que você acabou de chegar para trabalhar num escritório em Ceres. A primeira coisa que você vê é a sua <span class="highlight-1">mesa de madeira vazia</span>.</p>
+            <ul>
+                <li>O "Desktop" do computador é exatamente a sua mesa de trabalho física.</li>
+                <li>É o seu espaço principal para apoiar documentos, gavetas de acesso rápido e ferramentas que você usa toda hora.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 9: O Plano de Fundo e Ícones -->
+        <div class="slide">
+            <h2>O Plano de Fundo e os Ícones</h2>
+            <p>Em cima dessa "mesa virtual", temos os elementos visuais:</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Plano de Fundo</h3>
+                    <p>A imagem de fundo. É como o "forro" da sua mesa. Pode ser a foto da sua família ou o logo da empresa. Ele serve apenas para estética.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">Os Ícones</h3>
+                    <p>São pequenos desenhos na tela. Eles representam fisicamente os papéis (arquivos), pastas ou ferramentas em cima da sua mesa.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: O Atalho -->
+        <div class="slide">
+            <h2>O que é um Atalho?</h2>
+            <p>Alguns ícones possuem uma pequena <span class="highlight-3">setinha azul no canto inferior</span>. Eles são os Atalhos.</p>
+            <div class="card" style="margin-top: 2rem;">
+                <h3 class="highlight-3">Analogia da Porta de Teletransporte</h3>
+                <p style="margin-top: 1rem;">Imagine que a ferramenta pesada que você precisa usar está guardada no fundo de um armário do escritório. Para não ter que andar até lá toda vez, você cria um "fio" mágico na sua mesa que puxa a ferramenta instantaneamente.</p>
+                <p style="margin-top: 1rem;">O atalho não é o arquivo real, é só uma ponte rápida para ele.</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: A Barra de Tarefas -->
+        <div class="slide">
+            <h2>A Barra de Tarefas</h2>
+            <p>Sabe aquela barra longa que fica na parte inferior da tela? Ela é o seu <span class="highlight-2">Cinto de Utilidades</span>.</p>
+            <ul>
+                <li>Ela mostra quais ferramentas (programas) você está usando agora.</li>
+                <li>Fica visível o tempo todo para você não se perder.</li>
+                <li>Nela, temos o <strong>Menu Iniciar</strong> (o grande catálogo onde estão guardadas todas as coisas que não couberam na mesa).</li>
+            </ul>
+        </div>
+
+        <!-- Slide 12: As Janelas (Windows) -->
+        <div class="slide">
+            <h2>As famosas Janelas (Windows)</h2>
+            <p>Por que o sistema mais famoso do mundo se chama "Windows" (Janelas em inglês)?</p>
+            <p style="margin-top: 1rem;">Porque nele, cada programa que você abre é exibido dentro de um quadro retangular independente. Você pode abrir várias "janelas" ao mesmo tempo, como se estivesse com vários papéis abertos na sua mesa.</p>
+        </div>
+
+        <!-- Slide 13: O Controle das Janelas -->
+        <div class="slide">
+            <h2>Controlando a sua Janela</h2>
+            <p>No canto superior direito de toda janela, existem três botões vitais para a organização:</p>
+            <div class="card mt-2">
+                <p><span class="highlight-1">1. Minimizar (O traço):</span> Você não quer fechar o documento, só quer "colocá-lo na gaveta" rapidinho para ver a mesa que está embaixo. Ele vai para a Barra de Tarefas.</p>
+                <p style="margin-top: 1rem;"><span class="highlight-3">2. Maximizar / Restaurar (O quadrado):</span> É o ato de espalhar a folha para cobrir a mesa inteira (tela cheia) ou voltar ao tamanho normal.</p>
+                <p style="margin-top: 1rem; color: #f43f5e; font-weight: 600;">3. Fechar (O "X"): Você terminou o trabalho e guardou o papel definitivamente. O programa é encerrado.</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Prática Orientada (1) -->
+        <div class="slide">
+            <h2>Prática Orientada 1: A Mesa</h2>
+            <p>Vamos para o computador! Façam junto comigo:</p>
+            <ul style="font-size: 1.8rem; line-height: 2;">
+                <li><span class="highlight-2">Passo 1:</span> Olhe para a Área de Trabalho (Desktop).</li>
+                <li><span class="highlight-2">Passo 2:</span> Dê apenas UM clique sobre um ícone (Ele fica selecionado).</li>
+                <li><span class="highlight-2">Passo 3:</span> Dê DOIS cliques rápidos sobre um ícone (Para executá-lo/abri-lo).</li>
+            </ul>
+        </div>
+
+        <!-- Slide 15: Prática Orientada (2) -->
+        <div class="slide">
+            <h2>Prática Orientada 2: As Janelas</h2>
+            <p>Agora vamos dominar os programas abertos:</p>
+            <ul style="font-size: 1.8rem; line-height: 2;">
+                <li><span class="highlight-1">Passo 1:</span> Abra o programa "Calculadora".</li>
+                <li><span class="highlight-1">Passo 2:</span> Clique no traço para <span class="highlight-3">Minimizar</span>. (Veja que ela desceu para a barra).</li>
+                <li><span class="highlight-1">Passo 3:</span> Clique nela na Barra de Tarefas para trazê-la de volta.</li>
+                <li><span class="highlight-1">Passo 4:</span> Clique no "X" para fechar.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 16: O Desafio Prático -->
+        <div class="slide">
+            <h2>O Desafio do Operador</h2>
+            <p>Em suas estações (ou em grupos), executem a seguinte missão:</p>
+            <div class="card" style="margin-top: 2rem; border-color: var(--accent-2);">
+                <p>1. Localize o ícone do Navegador (Chrome ou Edge) e o ícone de Pastas (Explorador de Arquivos).</p>
+                <p style="margin-top: 1rem;">2. Abra os dois ao mesmo tempo.</p>
+                <p style="margin-top: 1rem;">3. Utilize a <strong>Barra de Tarefas</strong> para pular do Navegador para a Pasta, e da Pasta para o Navegador, sem fechar nenhum dos dois.</p>
+                <p style="margin-top: 1rem;">4. Feche ambos no "X".</p>
+            </div>
+        </div>
+
+        <!-- Slide 17: Quiz 1 -->
+        <div class="slide">
+            <h2>Quiz Interativo (1/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Qual é a principal função de um Sistema Operacional?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Editar apenas textos de documentos.</li>
+                    <li>B) Gerenciar as peças (hardware) e permitir que os programas rodem.</li>
+                    <li>C) Aumentar o tamanho do monitor fisicamente.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 18: Quiz 2 -->
+        <div class="slide">
+            <h2>Quiz Interativo (2/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-3">Para que serve o botão "Minimizar" (o tracinho)?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Ocultar a janela temporariamente na barra de tarefas, mantendo o programa vivo.</li>
+                    <li>B) Apagar o programa do computador para sempre.</li>
+                    <li>C) Desligar o computador da tomada.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 19: Quiz 3 -->
+        <div class="slide">
+            <h2>Quiz Interativo (3/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-2">O que acontece ao clicar em "Fechar" (o X)?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) A janela é minimizada para o cinto de utilidades.</li>
+                    <li>B) O computador é reiniciado.</li>
+                    <li>C) A janela e o programa são encerrados, liberando a mesa (memória).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 20: Revisão Final -->
+        <div class="slide">
+            <h2>A nossa colheita de hoje</h2>
+            <p>O que nos tornou mais profissionais hoje?</p>
+            <ul>
+                <li>Descobrimos que o <span class="highlight-1">Sistema Operacional</span> é o gerente que traduz as nossas ordens para as máquinas.</li>
+                <li>Vimos que a <span class="highlight-2">Área de Trabalho</span> é a nossa mesa virtual.</li>
+                <li>Aprendemos que a <span class="highlight-3">Barra de Tarefas</span> é o nosso cinto de utilidades.</li>
+                <li>Dominamos o ato de abrir, encolher e fechar as janelas de trabalho.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 21: Encerramento -->
+        <div class="slide">
+            <h1 class="center">Fim da Aula 3</h1>
+            <p class="center" style="font-size: 2.2rem; color: #fff; margin-top: 2rem;">A tecnologia obedece aos seus comandos. Não tenha medo de clicar.</p>
+            <p class="center highlight-2" style="margin-top: 3rem;">Recebam o material impresso com o resumo de hoje. Excelente prática e até amanhã!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 21</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        document.addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+            if (clickX > screenWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>

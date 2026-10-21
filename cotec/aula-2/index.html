@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 2 - Hardware e Software | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Fundo Animado Premium (Mesh Gradient) */
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        /* Barra de Progresso */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%;
+            transition: width 0.4s ease-out;
+            z-index: 100;
+        }
+
+        /* Slides */
+        .slide-container {
+            width: 90%;
+            max-width: 1300px;
+            height: 80vh;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 4rem 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg);
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateZ(0) rotateX(0);
+        }
+
+        /* Animações Internas dos Elementos */
+        .slide > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide.active > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        /* Tipografia e Estrutura */
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        p, li {
+            font-size: 1.5rem;
+            line-height: 1.7;
+            color: var(--text-sec);
+        }
+
+        ul {
+            margin-top: 1.5rem;
+            padding-left: 2rem;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        li::before {
+            content: "";
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+
+        /* Grids e Componentes */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .center { text-align: center; }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+            font-size: 1rem;
+            color: #52525b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #52525b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 5rem;">Hardware & Software</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 2: A anatomia da tecnologia</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>Nossa jornada até aqui</h2>
+            <p>Na aula anterior, desmistificamos o conceito de informática e entendemos que o computador existe para um único propósito:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Tratar a informação automaticamente</h3>
+                <p>Receber dados brutos, processar em alta velocidade e entregar resultados úteis para facilitar o nosso trabalho diário.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: O Paradigma -->
+        <div class="slide">
+            <h2>O Paradigma do Celular</h2>
+            <p>Pense no aparelho que está no seu bolso neste momento.</p>
+            <p style="margin-top: 1rem;">Ele permite acessar bancos, editar textos, enviar vídeos e participar de reuniões do outro lado do mundo.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1); border-color: var(--accent-1);">
+                <h3 style="color: var(--accent-1);">O seu celular é um computador?</h3>
+                <p>Sim. E assim como os grandes computadores corporativos, ele obedece a uma divisão técnica fundamental.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: A Divisão Fundamental -->
+        <div class="slide">
+            <h2>A Divisão Fundamental</h2>
+            <p>Nenhuma máquina inteligente opera sem a união perfeita de duas metades. Uma não existe sem a outra.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Hardware</h3>
+                    <p>O corpo. A estrutura física, os cabos, os chips e o metal. Tudo aquilo que você pode tocar, montar e desmontar.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">Software</h3>
+                    <p>A mente. A lógica, as instruções, os programas e os aplicativos. Tudo aquilo que você vê na tela, mas não pode segurar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Hardware Externo -->
+        <div class="slide">
+            <h2>Hardware Externo: Periféricos</h2>
+            <p>São as peças que ficam fora da caixa principal. Elas servem para fazer a ponte entre você e a máquina.</p>
+            <ul>
+                <li><span class="highlight-1">Teclado:</span> Principal ferramenta para inserir textos e comandos estruturados.</li>
+                <li><span class="highlight-1">Mouse:</span> Extensão da sua mão dentro da tela. Usado para apontar, selecionar e executar.</li>
+                <li><span class="highlight-1">Monitor:</span> O visor que traduz os cálculos matemáticos do computador em imagens e textos compreensíveis.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 6: O Gabinete -->
+        <div class="slide">
+            <h2>A Caixa Preta: O Gabinete</h2>
+            <p>Muitas pessoas chamam a torre inteira de "CPU", mas o nome correto da carcaça é <span class="highlight-2">Gabinete</span>.</p>
+            <p style="margin-top: 1rem;">Ele não processa nada. Sua função é proteger os componentes mais sensíveis contra poeira, impactos e superaquecimento.</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <p>É dentro do gabinete que a verdadeira mágica do processamento acontece.</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Placa-Mãe -->
+        <div class="slide">
+            <h2>A Placa-Mãe (Motherboard)</h2>
+            <p>O alicerce do computador. A espinha dorsal.</p>
+            <ul>
+                <li>Trata-se da placa de circuito principal onde <strong>absolutamente todas</strong> as outras peças são conectadas.</li>
+                <li>Sua função é garantir que o teclado converse com a tela, e que o cérebro da máquina receba a energia correta.</li>
+                <li>Como uma rodovia, ela gerencia o tráfego de dados entre todos os componentes.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 8: O Processador (CPU) -->
+        <div class="slide">
+            <h2>O Processador (CPU)</h2>
+            <p>Este é o verdadeiro cérebro do computador. Um chip pequeno, mas incrivelmente poderoso.</p>
+            <div class="grid-2">
+                <div>
+                    <ul>
+                        <li>Responsável por ler, interpretar e executar todos os comandos.</li>
+                        <li>Trabalha realizando bilhões de cálculos por segundo.</li>
+                        <li>Quanto melhor o processador, mais rápido o computador executa tarefas complexas.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">Analogia do Cozinheiro</h3>
+                    <p>O processador é como o <strong>Cozinheiro Chefe</strong>. Ele é quem pega a receita, organiza os ingredientes e prepara o prato rapidamente.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Memória RAM -->
+        <div class="slide">
+            <h2>A Memória RAM</h2>
+            <p>A memória de trabalho. Ela é extremamente rápida, mas tem um detalhe: é <span class="highlight-3">temporária</span> (apaga tudo ao desligar).</p>
+            <div class="grid-2">
+                <div>
+                    <ul>
+                        <li>Guarda apenas os programas e arquivos que estão abertos neste exato momento.</li>
+                        <li>Permite que o processador acesse os dados instantaneamente.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">Analogia da Bancada</h3>
+                    <p>A RAM é a <strong>Bancada da Cozinha</strong>. Quanto maior a bancada, mais ingredientes (programas) o cozinheiro pode usar ao mesmo tempo sem fazer bagunça (travar).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Armazenamento -->
+        <div class="slide">
+            <h2>Armazenamento (HD e SSD)</h2>
+            <p>A memória definitiva. Aqui ficam o Windows, seus documentos, fotos e músicas.</p>
+            <div class="grid-2">
+                <div>
+                    <ul>
+                        <li>Mesmo sem energia, os dados permanecem gravados com segurança.</li>
+                        <li>Possui capacidade imensa, mas é mais lento que a Memória RAM.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Analogia da Despensa</h3>
+                    <p>O Armazenamento é a <strong>Despensa</strong>. Cabe muita coisa, mas o cozinheiro demora mais para ir até lá buscar um ingrediente do que pegá-lo na bancada (RAM).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Dinâmica - Hardware -->
+        <div class="slide">
+            <h2>Dinâmica: Identificando o Corpo</h2>
+            <p>Vou descrever uma situação. Vocês me dizem qual peça de Hardware estou utilizando:</p>
+            <div class="card" style="margin-top: 1.5rem;">
+                <p>1. Estou digitando o meu nome de usuário. <span class="highlight-1">(Ferramenta de Entrada)</span></p>
+                <p style="margin-top: 1rem;">2. O computador desligou na tomada e perdi o texto que eu não havia salvo. Onde esse texto estava? <span class="highlight-3">(Trabalho temporário)</span></p>
+                <p style="margin-top: 1rem;">3. Salvei minhas fotos de 10 anos atrás. <span class="highlight-2">(Arquivo definitivo)</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 12: A Alma do Computador -->
+        <div class="slide">
+            <h2>Software: A Alma do Computador</h2>
+            <p>Como desenvolvedor no Grupo Accerte, passo o meu dia criando Softwares. Mas o que eles são na essência?</p>
+            <p style="margin-top: 1rem;">O Software é uma coleção de códigos matemáticos e instruções lógicas que dizem ao Hardware exatamente o que ele deve fazer, quando e como.</p>
+            <div class="card center" style="margin-top: 2rem; border-color: var(--accent-3);">
+                <p>Sem o Software, o computador mais caro do mundo é apenas um amontoado de silício e plástico que consome energia.</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: O Sistema Operacional -->
+        <div class="slide">
+            <h2>Sistemas Operacionais (OS)</h2>
+            <p>O Software principal. O gerente geral de toda a operação.</p>
+            <ul>
+                <li>Ele traduz a linguagem complexa da máquina para uma interface visual amigável que nós humanos conseguimos entender.</li>
+                <li>Gerencia a energia, o som, a imagem e permite que outros programas funcionem.</li>
+                <li>Exemplos: <span class="highlight-1">Windows, Linux, macOS, Android e iOS.</span></li>
+            </ul>
+        </div>
+
+        <!-- Slide 14: Os Aplicativos -->
+        <div class="slide">
+            <h2>Aplicativos e Programas</h2>
+            <p>São Softwares criados para finalidades específicas. Eles rodam "por cima" do Sistema Operacional.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Produtividade</h3>
+                    <p>Ferramentas de trabalho direto. Editores de texto (Word), planilhas financeiras (Excel) e criadores de apresentações.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">Comunicação e Web</h3>
+                    <p>Aplicativos de mensagem (WhatsApp), correio eletrônico corporativo e Navegadores de internet (Google Chrome).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: O Casamento Perfeito -->
+        <div class="slide">
+            <h2>O Casamento: Hardware + Software</h2>
+            <p>A tecnologia exige que a mente e o corpo trabalhem em sincronia.</p>
+            <div class="card" style="margin-top: 2rem;">
+                <h3 style="color: var(--accent-3);">A Analogia do Músico</h3>
+                <p style="margin-top: 1rem;">O <span class="highlight-2">Hardware</span> é o violão. A madeira bem cortada, as cordas afinadas, a caixa de ressonância.</p>
+                <p style="margin-top: 1rem;">O <span class="highlight-1">Software</span> é a partitura. As notas musicais compostas no papel.</p>
+                <p style="margin-top: 1rem;">O violão sozinho não cria música. A partitura sozinha não emite som. O resultado só existe quando um atua sobre o outro.</p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Jogo Rápido -->
+        <div class="slide">
+            <h2>Jogo Rápido: Físico ou Lógico?</h2>
+            <p>Respondam rapidamente se o item a seguir é Hardware (Físico) ou Software (Lógico):</p>
+            <div class="grid-2">
+                <div class="card center">
+                    <h3 class="highlight-2">Bateria 1</h3>
+                    <p>O Mouse</p>
+                    <p>O Google Chrome</p>
+                    <p>A Placa-Mãe</p>
+                </div>
+                <div class="card center">
+                    <h3 class="highlight-3">Bateria 2</h3>
+                    <p>O Sistema Windows</p>
+                    <p>O Editor de Textos</p>
+                    <p>O Cabo de Força</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Estudo de Caso 1 -->
+        <div class="slide">
+            <h2>Cotidiano: Estudo de Caso 1</h2>
+            <p>Vamos resolver problemas como Operadores Profissionais.</p>
+            <div class="card" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1); border-left: 5px solid var(--accent-1);">
+                <h3>Situação: Busca por Emprego</h3>
+                <p style="margin-top: 1rem;">Um colega precisa pesquisar vagas de emprego na internet e enviar mensagens para recrutadores.</p>
+                <p style="margin-top: 1rem; color: #fff;"><strong>Pergunta:</strong> Quais componentes físicos (Hardware) e quais programas (Software) ele precisará utilizar para completar essa tarefa?</p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Estudo de Caso 2 -->
+        <div class="slide">
+            <h2>Cotidiano: Estudo de Caso 2</h2>
+            <p>Diagnóstico básico de problemas.</p>
+            <div class="card" style="margin-top: 2rem; background: rgba(244, 63, 94, 0.1); border-left: 5px solid #f43f5e;">
+                <h3>Situação: A Tela Preta</h3>
+                <p style="margin-top: 1rem;">Você chega ao escritório, aperta o botão de ligar do gabinete. Você ouve as ventoinhas girando e as luzes acendem, mas a tela continua completamente preta.</p>
+                <p style="margin-top: 1rem; color: #fff;"><strong>Pergunta:</strong> Antes de chamar o técnico de software, qual componente físico você deve verificar primeiro?</p>
+            </div>
+        </div>
+
+        <!-- Slide 19: Estudo de Caso 3 -->
+        <div class="slide">
+            <h2>Cotidiano: Estudo de Caso 3</h2>
+            <p>Entendendo o fluxo de trabalho.</p>
+            <div class="card" style="margin-top: 2rem; background: rgba(52, 211, 153, 0.1); border-left: 5px solid var(--accent-2);">
+                <h3>Situação: Produção de Relatório</h3>
+                <p style="margin-top: 1rem;">O gerente pediu para você digitar um relatório, salvar o documento para a reunião de amanhã e entregar uma cópia em papel.</p>
+                <p style="margin-top: 1rem; color: #fff;"><strong>Pergunta:</strong> Em qual programa você trabalha? Onde ele fica guardado até amanhã? Qual hardware finaliza a tarefa?</p>
+            </div>
+        </div>
+
+        <!-- Slide 20: Revisão Geral (1/3) -->
+        <div class="slide">
+            <h2>Quiz de Revisão (1/3)</h2>
+            <p>Validação final dos conceitos de hoje.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Pergunta 1</h3>
+                    <p>Qual alternativa é um exemplo claro de Hardware?</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>A) Microsoft Word</li>
+                        <li>B) Teclado</li>
+                        <li>C) Windows</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">Pergunta 2</h3>
+                    <p>Qual alternativa é um exemplo claro de Software?</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>A) Mouse</li>
+                        <li>B) Monitor</li>
+                        <li>C) Navegador de Internet</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Revisão Geral (2/3) -->
+        <div class="slide">
+            <h2>Quiz de Revisão (2/3)</h2>
+            <p>Validação final dos conceitos de hoje.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Pergunta 3</h3>
+                    <p>Qual é a função principal da Memória RAM (a bancada)?</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>A) Guardar temporariamente os dados em uso.</li>
+                        <li>B) Exibir imagens na tela.</li>
+                        <li>C) Imprimir documentos corporativos.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">Pergunta 4</h3>
+                    <p>Qual componente físico permite apontar, selecionar e clicar em itens na tela?</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>A) Processador</li>
+                        <li>B) Mouse</li>
+                        <li>C) SSD de Armazenamento</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: Revisão Geral (3/3) -->
+        <div class="slide">
+            <h2>Quiz de Revisão (3/3)</h2>
+            <p>Validação final dos conceitos de hoje.</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-3">Pergunta 5</h3>
+                <p style="margin-top: 1rem; font-size: 1.8rem; color: #fff;">Para estruturar, escrever e formatar um currículo profissional no computador, normalmente nós utilizamos:</p>
+                <ul style="display: inline-block; text-align: left; margin-top: 2rem; font-size: 1.6rem;">
+                    <li>A) Um Sistema Operacional apenas</li>
+                    <li>B) Um Editor de Textos (Software Aplicativo)</li>
+                    <li>C) Somente a Memória RAM e o Gabinete</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 23: O que conquistamos hoje -->
+        <div class="slide">
+            <h2>O que conquistamos hoje</h2>
+            <p>O conhecimento consolida a segurança.</p>
+            <ul>
+                <li>Entendemos que o computador não é uma caixa mágica, mas uma montagem lógica de componentes com funções específicas.</li>
+                <li>Diferenciamos a estrutura física (corpo/hardware) da inteligência virtual (mente/software).</li>
+                <li>Compreendemos o fluxo: os dados entram pelo hardware, são processados pelo sistema e guardados no armazenamento.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 24: Preparação para a Aula 3 -->
+        <div class="slide">
+            <h2>Preparação para a Aula 3</h2>
+            <p>Agora que conhecemos o palco e os atores, vamos começar o espetáculo.</p>
+            <div class="card" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Amanhã entraremos no Sistema Operacional</h3>
+                <p style="margin-top: 1rem;">Vamos ligar as máquinas e desbravar o Windows. Aprenderemos a organizar a Área de Trabalho, controlar janelas, gerenciar ícones e dominar a navegação no ambiente visual do computador.</p>
+            </div>
+        </div>
+
+        <!-- Slide 25: Encerramento -->
+        <div class="slide">
+            <h1 class="center">Fim da Aula 2</h1>
+            <p class="center" style="font-size: 2.2rem; color: #fff; margin-top: 2rem;">Espaço aberto para dúvidas finais.</p>
+            <p class="center highlight-2" style="margin-top: 3rem;">O domínio da tecnologia começa pela compreensão. Parabéns pela dedicação hoje!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 25</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        document.addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+            if (clickX > screenWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Touch swipe support para tablets/telas sensíveis ao toque
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
