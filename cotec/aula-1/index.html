@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 1 - Introdução à Operação de Computadores</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+        
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Azul escuro moderno */
+            color: #f8fafc;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw; height: 100vh;
+            display: flex;
+            align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 80%; max-width: 1000px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #38bdf8; /* Azul claro para destaque */
+            margin-bottom: 0.5rem;
+        }
+
+        h2 { font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1.5rem; border-bottom: 2px solid #334155; padding-bottom: 10px; }
+        
+        p, li { font-size: 1.5rem; line-height: 1.6; color: #94a3b8; }
+        
+        ul { margin-top: 1rem; padding-left: 2rem; }
+        li { margin-bottom: 1rem; }
+
+        .highlight { color: #f472b6; font-weight: bold; } /* Rosa para contrastar */
+        
+        .footer {
+            position: fixed;
+            bottom: 20px; width: 100%;
+            text-align: center;
+            font-size: 1rem; color: #475569;
+        }
+
+        /* Dicas de navegação */
+        .nav-hints {
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1>Operador de Computador</h1>
+            <h2>Aula 1: Introdução e Fundamentos</h2>
+            <p>Sejam todos muito bem-vindos!</p>
+            <p class="nav-hints">Use as setas do teclado (⬅ ➡) ou clique na tela para avançar.</p>
+        </div>
+
+        <!-- Slide 2: Apresentação do Professor -->
+        <div class="slide">
+            <h2>Quem sou eu?</h2>
+            <p>Olá! Meu nome é <strong>Gabriel Vítor Silva Brito</strong> e serei o professor de vocês nesta jornada.</p>
+            <ul>
+                <li>Formado em Sistemas de Informação pelo IF Goiano - Campus Ceres.</li>
+                <li>Engenheiro de Software Full-Stack no Grupo Accerto.</li>
+                <li>Especialista no desenvolvimento de Inteligências Artificiais e criador do projeto HortaClick.</li>
+                <li>Nas horas vagas: você pode me ver correndo ou pedalando pelas ruas de Ceres!</li>
+            </ul>
+        </div>
+
+        <!-- Slide 3: Dinâmica com a Turma -->
+        <div class="slide">
+            <h2>Agora é a vez de vocês!</h2>
+            <p>Nesta sala, vamos construir conhecimento juntos. Gostaria de conhecer cada um de vocês:</p>
+            <ul>
+                <li>Qual é o seu nome?</li>
+                <li>Qual a sua profissão ou o que você estuda?</li>
+                <li>Qual o seu nível de experiência atual com computadores?</li>
+                <li>O que você mais espera aprender neste curso?</li>
+            </ul>
+        </div>
+
+        <!-- Slide 4: O que é Informática? -->
+        <div class="slide">
+            <h2>O que é Informática?</h2>
+            <p>A palavra "Informática" surge da junção de duas outras palavras:</p>
+            <h1 style="text-align: center; margin-top: 2rem;">INFORMAÇÃO + AUTOMÁTICA</h1>
+            <p style="text-align: center;">Trata-se da ciência que estuda o <strong>tratamento automático da informação</strong> através de dispositivos eletrônicos.</p>
+        </div>
+
+        <!-- Slide 5: Dados x Informação -->
+        <div class="slide">
+            <h2>Dados x Informação</h2>
+            <p>O computador trabalha recebendo, processando e entregando coisas. Mas o quê?</p>
+            <ul>
+                <li><span class="highlight">DADOS:</span> São os elementos brutos. (Exemplo: Os números "19", "03", "2004"). Não dizem muita coisa sozinhos.</li>
+                <li><span class="highlight">PROCESSAMENTO:</span> O que o computador faz com esses números.</li>
+                <li><span class="highlight">INFORMAÇÃO:</span> É o dado com significado. (Exemplo: A data de nascimento "19/03/2004").</li>
+            </ul>
+        </div>
+
+        <!-- Slide 6: A Computação no Cotidiano -->
+        <div class="slide">
+            <h2>A Importância da Computação</h2>
+            <p>Como a tecnologia impacta a nossa rotina?</p>
+            <ul>
+                <li><strong>No lado Pessoal:</strong> Comunicação rápida, compras, entretenimento e serviços bancários na palma da mão.</li>
+                <li><strong>Na Educação:</strong> Acesso infinito a pesquisas, cursos online e ferramentas de estudo.</li>
+                <li><strong>No Profissional:</strong> Agilidade em processos, gestão de negócios e novas profissões inteiramente digitais.</li>
+            </ul>
+            <p><em>Pergunta aberta: Qual foi a última vez que vocês usaram um computador ou smartphone hoje, e para quê?</em></p>
+        </div>
+
+        <!-- Slide 7: Encerramento -->
+        <div class="slide">
+            <h2>Resumo e Próximos Passos</h2>
+            <p>Hoje entendemos o propósito da informática e como ela molda o nosso dia a dia.</p>
+            <p>A partir de amanhã (Dia 2), colocaremos a mão na massa para entender as peças que fazem essa mágica acontecer:</p>
+            <ul>
+                <li>O que é Hardware (a parte física).</li>
+                <li>O que é Software (os programas).</li>
+            </ul>
+            <p class="highlight" style="margin-top: 2rem;">Dúvidas? Obrigado pela atenção de hoje e até a próxima aula!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        COTEC - Qualificação Profissional em Operador de Computador | Professor Gabriel Vítor
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === index) slide.classList.add('active');
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Navegação pelo teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Navegação por clique na tela (metade direita avança, esquerda volta)
+        document.addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+            if (clickX > screenWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>

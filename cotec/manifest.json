@@ -1,11 +1,25 @@
 {
   "schema": 1,
-  "gerado_em": "2026-10-21T11:36:42+00:00",
+  "gerado_em": "2026-10-21T08:51:34-03:00",
   "raiz": "cotec",
-  "commit": "12779cf",
-  "total_arquivos": 3,
-  "total_pastas": 2,
+  "commit": "6fb5756",
+  "total_arquivos": 4,
+  "total_pastas": 3,
   "pastas": [
+    {
+      "caminho": "aula-1",
+      "nome": "aula-1",
+      "pai": "",
+      "titulo": "Aula 1 — Introdução e Fundamentos",
+      "descricao": "Apresentação do professor e da turma, o que é informática, a diferença entre dados e informação e por que a computação importa na profissão de operador de computador.",
+      "data": null,
+      "ordem": null,
+      "destaque": false,
+      "qtd_arquivos": 1,
+      "bytes": 7793,
+      "publicado_em": "2026-10-21T08:51:28-03:00",
+      "atualizado_em": "2026-10-21T08:51:28-03:00"
+    },
     {
       "caminho": "aula-2",
       "nome": "aula-2",
@@ -36,6 +50,18 @@
     }
   ],
   "arquivos": [
+    {
+      "caminho": "aula-1/index.html",
+      "nome": "index.html",
+      "pasta": "aula-1",
+      "ext": "html",
+      "bytes": 7793,
+      "publicado_em": "2026-10-21T08:51:28-03:00",
+      "atualizado_em": "2026-10-21T08:51:28-03:00",
+      "versionado": false,
+      "titulo": "Slide da aula 1",
+      "descricao": null
+    },
     {
       "caminho": "aula-3/resumo-aula-3.pdf",
       "nome": "resumo-aula-3.pdf",
