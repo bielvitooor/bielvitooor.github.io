@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "gerado_em": "2026-10-21T08:51:34-03:00",
+  "gerado_em": "2026-10-21T11:51:47+00:00",
   "raiz": "cotec",
-  "commit": "6fb5756",
+  "commit": "1bb0799",
   "total_arquivos": 4,
   "total_pastas": 3,
   "pastas": [
@@ -17,8 +17,8 @@
       "destaque": false,
       "qtd_arquivos": 1,
       "bytes": 7793,
-      "publicado_em": "2026-10-21T08:51:28-03:00",
-      "atualizado_em": "2026-10-21T08:51:28-03:00"
+      "publicado_em": "2026-10-21T08:51:34-03:00",
+      "atualizado_em": "2026-10-21T08:51:34-03:00"
     },
     {
       "caminho": "aula-2",
@@ -56,9 +56,9 @@
       "pasta": "aula-1",
       "ext": "html",
       "bytes": 7793,
-      "publicado_em": "2026-10-21T08:51:28-03:00",
-      "atualizado_em": "2026-10-21T08:51:28-03:00",
-      "versionado": false,
+      "publicado_em": "2026-10-21T08:51:34-03:00",
+      "atualizado_em": "2026-10-21T08:51:34-03:00",
+      "versionado": true,
       "titulo": "Slide da aula 1",
       "descricao": null
     },
