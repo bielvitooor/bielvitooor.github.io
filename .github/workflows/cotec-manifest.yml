@@ -1,0 +1,44 @@
+name: Índice do COTEC
+
+# Sempre que algo entrar (ou sair) de cotec/, regera cotec/manifest.json —
+# é dele que a página cotec/index.html tira a lista e as datas dos arquivos.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cotec/**'
+      - '!cotec/manifest.json'
+      - 'scripts/gerar-manifest-cotec.py'
+      - '.github/workflows/cotec-manifest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cotec-manifest
+  cancel-in-progress: false
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # precisa do histórico inteiro para datar cada arquivo
+
+      - name: Gerar o índice
+        run: python3 scripts/gerar-manifest-cotec.py
+
+      - name: Publicar se mudou
+        run: |
+          if git diff --quiet -- cotec/manifest.json; then
+            echo "Índice já estava em dia."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cotec/manifest.json
+          git commit -m "chore(cotec): atualiza o índice dos arquivos"
+          git push
