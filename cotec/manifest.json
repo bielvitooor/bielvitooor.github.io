@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "gerado_em": "2026-10-21T19:45:22+00:00",
+  "gerado_em": "2026-10-23T13:20:35-03:00",
   "raiz": "cotec",
-  "commit": "c2ef4b9",
-  "total_arquivos": 4,
-  "total_pastas": 3,
+  "commit": "a88a33b",
+  "total_arquivos": 6,
+  "total_pastas": 4,
   "pastas": [
     {
       "caminho": "aula-1",
@@ -46,10 +46,48 @@
       "qtd_arquivos": 2,
       "bytes": 191644,
       "publicado_em": "2026-10-21T08:36:31-03:00",
-      "atualizado_em": "2026-10-21T19:45:05Z"
+      "atualizado_em": "2026-10-21T19:45:05+00:00"
+    },
+    {
+      "caminho": "aula-5",
+      "nome": "aula-5",
+      "pai": "",
+      "titulo": "Aula 5 — Explorando Arquivos e Pastas",
+      "descricao": "Explorar Arquivos e Pastas, copiar e colar arquivos, criar pastas, renomear arquivos e pastas, apagar arquivos e pastas, e entender a importância de organizar os arquivos.",
+      "data": null,
+      "ordem": null,
+      "destaque": false,
+      "qtd_arquivos": 2,
+      "bytes": 171121,
+      "publicado_em": "2026-10-23T13:20:17-03:00",
+      "atualizado_em": "2026-10-23T13:20:17-03:00"
     }
   ],
   "arquivos": [
+    {
+      "caminho": "aula-5/resumo-aula-5.pdf",
+      "nome": "resumo-aula-5.pdf",
+      "pasta": "aula-5",
+      "ext": "pdf",
+      "bytes": 146204,
+      "publicado_em": "2026-10-23T13:20:17-03:00",
+      "atualizado_em": "2026-10-23T13:20:17-03:00",
+      "versionado": true,
+      "titulo": "Resumo da aula 5",
+      "descricao": null
+    },
+    {
+      "caminho": "aula-5/index.html",
+      "nome": "index.html",
+      "pasta": "aula-5",
+      "ext": "html",
+      "bytes": 24917,
+      "publicado_em": "2026-10-23T13:20:17-03:00",
+      "atualizado_em": "2026-10-23T13:20:17-03:00",
+      "versionado": true,
+      "titulo": "Slide da aula 5",
+      "descricao": null
+    },
     {
       "caminho": "aula-1/index.html",
       "nome": "index.html",
@@ -81,7 +119,7 @@
       "ext": "html",
       "bytes": 23790,
       "publicado_em": "2026-10-21T08:36:31-03:00",
-      "atualizado_em": "2026-10-21T19:45:05Z",
+      "atualizado_em": "2026-10-21T19:45:05+00:00",
       "versionado": true,
       "titulo": "Slide da aula 3",
       "descricao": null
