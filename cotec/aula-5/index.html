@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 5 - Arquivos e Pastas | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%;
+            transition: width 0.4s ease-out;
+            z-index: 100;
+        }
+
+        .slide-container {
+            width: 90%;
+            max-width: 1300px;
+            height: 80vh;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 4rem 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg);
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateZ(0) rotateX(0);
+        }
+
+        .slide > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide.active > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        p, li {
+            font-size: 1.5rem;
+            line-height: 1.7;
+            color: var(--text-sec);
+        }
+
+        ul {
+            margin-top: 1.5rem;
+            padding-left: 2rem;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        li::before {
+            content: "";
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .center { text-align: center; }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+            font-size: 1rem;
+            color: #52525b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #52525b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 5rem;">Arquivos e Pastas</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 5: Organizando o seu ambiente digital</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>Nossa jornada até aqui</h2>
+            <p>Na nossa última aula, conhecemos a Área de Trabalho e aprendemos a abrir, minimizar e fechar os programas.</p>
+            <div class="card center" style="margin-top: 2rem; border-color: var(--accent-1);">
+                <h3 class="highlight-1">Hoje daremos um passo além</h3>
+                <p>Onde ficam guardados os seus currículos, suas fotos e os relatórios da empresa? Como garantimos que o computador não vire uma bagunça?</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: O Conceito de Arquivo -->
+        <div class="slide">
+            <h2>O que é um Arquivo?</h2>
+            <p>No mundo digital, a informação bruta ganha um formato específico para ser guardada.</p>
+            <ul>
+                <li>Um arquivo é o seu <strong>produto final</strong>.</li>
+                <li>Pode ser um texto digitado, uma música gravada, uma foto tirada ou uma planilha calculada.</li>
+                <li>Cada arquivo possui um ícone que mostra qual programa é capaz de abri-lo.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 4: O Conceito de Pasta -->
+        <div class="slide">
+            <h2>O que é uma Pasta (Diretório)?</h2>
+            <p>Se você jogar todos os seus documentos soltos na Área de Trabalho, nunca mais vai achar nada.</p>
+            <ul>
+                <li>A Pasta é o <strong>organizador</strong>.</li>
+                <li>Ela não contém informação própria, ela serve unicamente para agrupar e guardar Arquivos (ou até outras pastas).</li>
+                <li>Geralmente é representada pelo ícone de uma pastinha amarela clássica de escritório.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: A Grande Analogia -->
+        <div class="slide">
+            <h2>A Analogia do Arquivo de Aço</h2>
+            <p>Pense em um móvel de aço de escritório cheio de gavetas:</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">A Pasta</h3>
+                    <p>É a gaveta ou a pasta de papelão parda. Ela existe apenas para manter as coisas separadas por categorias (ex: "Contas 2026").</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">O Arquivo</h3>
+                    <p>É a folha de papel impressa dentro da gaveta. É onde a informação que você precisa ler realmente está escrita.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: O Explorador de Arquivos -->
+        <div class="slide">
+            <h2>O Explorador de Arquivos</h2>
+            <p>Para abrir as gavetas virtuais do Windows, utilizamos uma ferramenta chamada <strong>Explorador de Arquivos</strong>.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1);">
+                <h3 style="color: var(--accent-1);">O primeiro Atalho de Teclado</h3>
+                <p>Segure a tecla com o desenho do <strong>Windows</strong> e aperte a letra <strong>E</strong>.</p>
+                <p style="margin-top: 1rem; font-size: 2rem; font-weight: bold; color: #fff;">Windows + E</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Prática 1 - Criar -->
+        <div class="slide">
+            <h2>Prática 1: Construindo a Gaveta</h2>
+            <p>Vamos criar o nosso primeiro espaço de trabalho.</p>
+            <ul style="font-size: 1.8rem; line-height: 2;">
+                <li><span class="highlight-2">Passo 1:</span> Na Área de Trabalho, clique com o <strong>botão direito</strong> do mouse em um espaço vazio.</li>
+                <li><span class="highlight-2">Passo 2:</span> Aponte para a palavra <strong>Novo</strong>.</li>
+                <li><span class="highlight-2">Passo 3:</span> Clique em <strong>Pasta</strong>.</li>
+                <li><span class="highlight-2">Passo 4:</span> Digite o nome <strong>Aula 5</strong> e aperte Enter.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 8: Prática 2 - Treinando a Criação -->
+        <div class="slide">
+            <h2>Prática 2: Treinando o processo</h2>
+            <p>Dê dois cliques rápidos na sua pasta "Aula 5" para abri-la. Ela estará vazia.</p>
+            <div class="card" style="margin-top: 2rem; border-left: 5px solid var(--accent-1);">
+                <p>Agora, crie mais <strong>duas pastas novas</strong> dentro dela. Vocês já sabem o caminho:</p>
+                <p style="margin-top: 1rem;">Botão direito > Novo > Pasta</p>
+                <p style="margin-top: 1rem; color: #fff;">Nomeie a primeira como <strong>Exercício</strong> e a segunda como <strong>Treino</strong>.</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Renomear -->
+        <div class="slide">
+            <h2>Renomear: Mudando a etiqueta</h2>
+            <p>Escreveu errado ou quer mudar a organização? Não precisa apagar, basta <strong>Renomear</strong>.</p>
+            <ul>
+                <li>Selecione o item com um clique.</li>
+                <li>Clique com o <strong>botão direito</strong> e escolha <strong>Renomear</strong>.</li>
+                <li><span class="highlight-3">Dica do Desenvolvedor:</span> Você também pode apenas clicar na pasta e apertar a tecla <strong>F2</strong> no teclado. É muito mais rápido!</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10: Prática 3 - Renomear -->
+        <div class="slide">
+            <h2>Prática 3: Alterando os nomes</h2>
+            <p>Vamos corrigir os nomes das pastas que criamos.</p>
+            <ul style="font-size: 1.8rem; line-height: 2;">
+                <li><span class="highlight-1">Passo 1:</span> Clique uma vez sobre a pasta <strong>Treino</strong> para selecioná-la.</li>
+                <li><span class="highlight-1">Passo 2:</span> Aperte <strong>F2</strong> (ou botão direito > Renomear).</li>
+                <li><span class="highlight-1">Passo 3:</span> Digite o novo nome: <strong>Atividade</strong> e aperte Enter.</li>
+                <li><span class="highlight-1">Passo 4:</span> Faça o mesmo e mude a pasta "Exercício" para <strong>Prática</strong>.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 11: Excluir -->
+        <div class="slide">
+            <h2>Excluir: Jogando no Lixo</h2>
+            <p>Quando um arquivo não serve mais, nós o apagamos para liberar espaço.</p>
+            <div class="grid-2">
+                <div>
+                    <ul>
+                        <li>Selecione o item e aperte a tecla <strong>Delete (Del)</strong> no teclado.</li>
+                        <li>Ou clique com o botão direito e escolha Excluir (ícone da lixeira).</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 style="color: #f43f5e;">Atenção!</h3>
+                    <p>Leia sempre antes de confirmar! Não saia apagando arquivos que você não criou. Eles podem ser essenciais para o Windows funcionar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Prática 4 - A Exclusão -->
+        <div class="slide">
+            <h2>Prática 4: A Exclusão Segura</h2>
+            <p>Nunca apague arquivos reais durante testes. Vamos criar um alvo seguro:</p>
+            <ul style="font-size: 1.8rem; line-height: 2;">
+                <li><span class="highlight-2">Passo 1:</span> Crie uma nova pasta e chame-a de <strong>Apagar Depois</strong>.</li>
+                <li><span class="highlight-2">Passo 2:</span> Clique nela uma vez para selecioná-la.</li>
+                <li><span class="highlight-2">Passo 3:</span> Aperte a tecla <strong>Delete</strong> e observe ela sumir.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 13: Copiar vs Mover -->
+        <div class="slide">
+            <h2>Copiar vs. Mover</h2>
+            <p>O maior erro no mercado de trabalho é confundir essas duas ações. Elas são completamente diferentes.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">COPIAR</h3>
+                    <p>Ocorre uma "Xerox". O arquivo original permanece intacto no lugar, e você cria um "clone" perfeito em outro lugar. Teremos 2 arquivos iguais.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">MOVER (Recortar)</h3>
+                    <p>Ocorre uma "Transferência". Você arranca o arquivo original do lugar e o deposita em outro. Teremos apenas 1 arquivo no final.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Os Atalhos do Copiar -->
+        <div class="slide">
+            <h2>Os atalhos sagrados: Copiar</h2>
+            <p>O mundo corporativo exige velocidade. Para copiar algo rapidamente, usamos o teclado:</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1);">
+                <h3 style="color: var(--accent-1); font-size: 2.5rem;">CTRL + C (Copiar)</h3>
+                <p>O computador guarda a informação na memória invisível.</p>
+                <h3 style="color: var(--accent-2); font-size: 2.5rem; margin-top: 1rem;">CTRL + V (Colar)</h3>
+                <p>O computador despeja a cópia na pasta onde você estiver.</p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Os Atalhos do Mover -->
+        <div class="slide">
+            <h2>Os atalhos sagrados: Mover (Recortar)</h2>
+            <p>Se a intenção é tirar daqui e colocar ali, o atalho muda:</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(129, 140, 248, 0.1);">
+                <h3 style="color: var(--accent-3); font-size: 2.5rem;">CTRL + X (Recortar)</h3>
+                <p>Pense no "X" como uma tesoura. O item fica apagado e pronto para a transferência.</p>
+                <h3 style="color: var(--accent-2); font-size: 2.5rem; margin-top: 1rem;">CTRL + V (Colar)</h3>
+                <p>O item é transferido permanentemente para o novo local.</p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Prática 5 - Cópia e Movimento -->
+        <div class="slide">
+            <h2>Prática 5: Ctrl C vs Ctrl X</h2>
+            <p>Vamos testar a diferença na prática:</p>
+            <ul style="font-size: 1.6rem; line-height: 1.8;">
+                <li><strong>1.</strong> Crie uma pasta chamada <em>Origem</em> e outra chamada <em>Destino</em>.</li>
+                <li><strong>2.</strong> Dentro de Origem, crie uma pasta chamada <em>Documento</em>.</li>
+                <li><strong>3.</strong> Clique em <em>Documento</em>, aperte <strong>Ctrl + C</strong>. Vá em <em>Destino</em> e aperte <strong>Ctrl + V</strong>. (Veja que ela existe nos dois lugares agora).</li>
+                <li><strong>4.</strong> Agora volte na <em>Origem</em>, clique na pasta, aperte <strong>Ctrl + X</strong>. Vá no Destino e aperte <strong>Ctrl + V</strong>. (Veja que ela sumiu da Origem).</li>
+            </ul>
+        </div>
+
+        <!-- Slide 17: O Desafio Final -->
+        <div class="slide">
+            <h2>O Desafio Prático Individual</h2>
+            <p>Siga o fluxo de trabalho sem ajuda (apenas usando as pastas de exercício):</p>
+            <div class="card" style="margin-top: 1.5rem; border-color: var(--accent-2);">
+                <p>1. Crie uma pasta chamada <strong>Desafio</strong>.</p>
+                <p>2. Crie dentro dela uma pasta chamada <strong>Material</strong>.</p>
+                <p>3. Renomeie "Material" para <strong>Documentos</strong>.</p>
+                <p>4. Crie uma pasta chamada <strong>Cópia</strong>.</p>
+                <p>5. Copie (Ctrl+C) "Documentos" para dentro de "Cópia" (Ctrl+V).</p>
+                <p>6. Crie uma pasta "Temporária" e depois exclua ela com o botão Delete.</p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Quiz 1 -->
+        <div class="slide">
+            <h2>Quiz Interativo (1/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Qual é a diferença entre Arquivo e Pasta?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) O arquivo é a peça física; a pasta é a digital.</li>
+                    <li>B) O arquivo guarda informações (textos, fotos); a pasta apenas agrupa e organiza itens.</li>
+                    <li>C) Não existe nenhuma diferença prática.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 19: Quiz 2 -->
+        <div class="slide">
+            <h2>Quiz Interativo (2/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-3">O que acontece ao COPIAR um arquivo?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) O original é sempre apagado.</li>
+                    <li>B) O arquivo é convertido imediatamente em uma pasta amarela.</li>
+                    <li>C) Uma cópia exata é criada no destino, mantendo o arquivo original intacto no mesmo lugar.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 20: Quiz 3 -->
+        <div class="slide">
+            <h2>Quiz Interativo (3/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-2">Qual combinação de teclado recorta um item para MOVER?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Ctrl + C (A Cópia)</li>
+                    <li>B) Ctrl + X (A Tesoura)</li>
+                    <li>C) Ctrl + Z (O Desfazer)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 21: A nossa colheita de hoje -->
+        <div class="slide">
+            <h2>A nossa colheita de hoje</h2>
+            <p>O que conquistamos na aula de hoje?</p>
+            <ul>
+                <li>Entendemos a diferença essencial entre o conteúdo (arquivo) e o organizador (pasta).</li>
+                <li>Aprendemos a criar e renomear nossos espaços de trabalho.</li>
+                <li>Compreendemos que Excluir exige responsabilidade.</li>
+                <li>Dominamos os atalhos de Copiar (Xerox) e Mover (Transferência) que dão agilidade ao trabalho corporativo.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 22: Preparação para a Aula 6 -->
+        <div class="slide">
+            <h2>Preparação para a Aula 6</h2>
+            <p>Agora que sabemos criar as gavetas, vamos aprofundar a técnica.</p>
+            <div class="card" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Amanhã: Organização Hierárquica</h3>
+                <p style="margin-top: 1rem;">Vamos entender a árvore de diretórios do Windows. Aprenderemos técnicas para pesquisar e recuperar arquivos perdidos, e também como criar atalhos definitivos na nossa Área de Trabalho.</p>
+            </div>
+        </div>
+
+        <!-- Slide 23: Encerramento -->
+        <div class="slide">
+            <h1 class="center">Fim da Aula 5</h1>
+            <p class="center" style="font-size: 2.2rem; color: #fff; margin-top: 2rem;">Sempre confira os nomes e os locais antes de excluir ou mover itens.</p>
+            <p class="center highlight-2" style="margin-top: 3rem;">Recebam o material impresso com o resumo de hoje. Excelente prática!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 23</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        document.addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+            if (clickX > screenWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>
