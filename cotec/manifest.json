@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "gerado_em": "2026-10-23T16:21:02+00:00",
+  "gerado_em": "2026-10-23T16:31:07+00:00",
   "raiz": "cotec",
-  "commit": "f3bbf74",
+  "commit": "09a9c80",
   "total_arquivos": 6,
   "total_pastas": 4,
   "pastas": [
@@ -16,9 +16,9 @@
       "ordem": null,
       "destaque": false,
       "qtd_arquivos": 1,
-      "bytes": 7793,
+      "bytes": 10693,
       "publicado_em": "2026-10-21T08:51:34-03:00",
-      "atualizado_em": "2026-10-21T08:51:34-03:00"
+      "atualizado_em": "2026-10-23T13:30:55-03:00"
     },
     {
       "caminho": "aula-2",
@@ -30,9 +30,9 @@
       "ordem": null,
       "destaque": false,
       "qtd_arquivos": 1,
-      "bytes": 28676,
+      "bytes": 31594,
       "publicado_em": "2026-10-21T08:36:31-03:00",
-      "atualizado_em": "2026-10-21T08:36:31-03:00"
+      "atualizado_em": "2026-10-23T13:30:55-03:00"
     },
     {
       "caminho": "aula-3",
@@ -44,9 +44,9 @@
       "ordem": null,
       "destaque": false,
       "qtd_arquivos": 2,
-      "bytes": 191644,
+      "bytes": 195128,
       "publicado_em": "2026-10-21T08:36:31-03:00",
-      "atualizado_em": "2026-10-21T19:45:05Z"
+      "atualizado_em": "2026-10-23T13:30:55-03:00"
     },
     {
       "caminho": "aula-5",
@@ -58,9 +58,9 @@
       "ordem": null,
       "destaque": false,
       "qtd_arquivos": 2,
-      "bytes": 171121,
+      "bytes": 174605,
       "publicado_em": "2026-10-23T13:20:17-03:00",
-      "atualizado_em": "2026-10-23T13:20:17-03:00"
+      "atualizado_em": "2026-10-23T13:30:55-03:00"
     }
   ],
   "arquivos": [
@@ -81,9 +81,9 @@
       "nome": "index.html",
       "pasta": "aula-5",
       "ext": "html",
-      "bytes": 24917,
+      "bytes": 28401,
       "publicado_em": "2026-10-23T13:20:17-03:00",
-      "atualizado_em": "2026-10-23T13:20:17-03:00",
+      "atualizado_em": "2026-10-23T13:30:55-03:00",
       "versionado": true,
       "titulo": "Slide da aula 5",
       "descricao": null
@@ -93,9 +93,9 @@
       "nome": "index.html",
       "pasta": "aula-1",
       "ext": "html",
-      "bytes": 7793,
+      "bytes": 10693,
       "publicado_em": "2026-10-21T08:51:34-03:00",
-      "atualizado_em": "2026-10-21T08:51:34-03:00",
+      "atualizado_em": "2026-10-23T13:30:55-03:00",
       "versionado": true,
       "titulo": "Slide da aula 1",
       "descricao": null
@@ -117,9 +117,9 @@
       "nome": "index.html",
       "pasta": "aula-3",
       "ext": "html",
-      "bytes": 23790,
+      "bytes": 27274,
       "publicado_em": "2026-10-21T08:36:31-03:00",
-      "atualizado_em": "2026-10-21T19:45:05Z",
+      "atualizado_em": "2026-10-23T13:30:55-03:00",
       "versionado": true,
       "titulo": "Slide da aula 3",
       "descricao": null
@@ -129,9 +129,9 @@
       "nome": "index.html",
       "pasta": "aula-2",
       "ext": "html",
-      "bytes": 28676,
+      "bytes": 31594,
       "publicado_em": "2026-10-21T08:36:31-03:00",
-      "atualizado_em": "2026-10-21T08:36:31-03:00",
+      "atualizado_em": "2026-10-23T13:30:55-03:00",
       "versionado": true,
       "titulo": "Slide da aula 2",
       "descricao": null
