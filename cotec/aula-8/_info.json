@@ -1,0 +1,8 @@
+{
+  "titulo": "Aula 8 — Ferramentas e Recursos",
+  "descricao": "Desenhar e salvar imagens no Paint, compactar e extrair pacotes ZIP para enviar vários arquivos de uma vez, e ouvir e assistir mídia no computador.",
+  "arquivos": {
+    "index.html": { "titulo": "Slide da aula 8" },
+    "resumo-aula-8.pdf": { "titulo": "Resumo da aula 8" }
+  }
+}

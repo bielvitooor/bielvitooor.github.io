@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 6 - Organização, Busca e Atalhos | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%;
+            transition: width 0.4s ease-out;
+            z-index: 100;
+        }
+
+        .slide-container {
+            width: 90%;
+            max-width: 1300px;
+            height: 80vh;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 4rem 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg);
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateZ(0) rotateX(0);
+        }
+
+        .slide > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide.active > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        p, li {
+            font-size: 1.5rem;
+            line-height: 1.7;
+            color: var(--text-sec);
+        }
+
+        ul {
+            margin-top: 1.5rem;
+            padding-left: 2rem;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        li::before {
+            content: "";
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+        .alert { color: #f43f5e; font-weight: 600; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .tree-view {
+            font-family: monospace;
+            font-size: 1.6rem;
+            background: rgba(0,0,0,0.5);
+            padding: 2rem;
+            border-radius: 12px;
+            color: var(--accent-2);
+            line-height: 1.8;
+            border: 1px solid var(--glass-border);
+        }
+
+        .center { text-align: center; }
+        .mt-2 { margin-top: 2rem; }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+            font-size: 1rem;
+            color: #52525b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #52525b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* a arvore e monospace: deixa rolar de lado em vez de estourar */
+            .tree-view {
+                padding: 1.2rem;
+                overflow-x: auto;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 5rem;">A Árvore e o GPS</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 6: Organização Hierárquica, Busca e Atalhos</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>Nossa jornada até aqui</h2>
+            <p>Na aula passada, aprendemos a criar gavetas (Pastas) para guardar nossos papéis (Arquivos). Dominamos os comandos de Copiar, Recortar e Renomear.</p>
+            <div class="card center" style="margin-top: 2rem; border-color: var(--accent-1);">
+                <h3 class="highlight-1">O Problema do Crescimento</h3>
+                <p>O que acontece quando você tem 5.000 arquivos e 300 pastas no computador? Como não se perder no próprio trabalho?</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Hierarquia -->
+        <div class="slide">
+            <h2>O Poder da Hierarquia</h2>
+            <p>Organização hierárquica significa colocar "gavetas menores dentro de gavetas maiores". O computador funciona como uma <span class="highlight-2">grande árvore</span>.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-3">A Raiz (Unidade)</h3>
+                    <p>O disco principal do computador (geralmente chamado de C:). É o móvel de aço inteiro.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Os Galhos (Subpastas)</h3>
+                    <p>Pastas dentro de pastas. Ex: Dentro da pasta "2026", criamos a pasta "Novembro".</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Visualizando a Árvore -->
+        <div class="slide">
+            <h2>Visualizando a Estrutura</h2>
+            <p>Veja como o Explorador de Arquivos mapeia as suas informações:</p>
+            <div class="tree-view mt-2">
+                Documentos<br>
+                └── Curso COTEC<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── Informática<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── Aula_1.pdf<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── Aula_2.pdf<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;└── Atividades<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── exercicio.docx
+            </div>
+        </div>
+
+        <!-- Slide 5: Prática 1 -->
+        <div class="slide">
+            <h2>Prática 1: Construindo a Árvore</h2>
+            <p>Abra o Explorador de Arquivos (Windows + E) e crie exatamente esta estrutura na sua Área de Trabalho ou Documentos:</p>
+            <div class="tree-view" style="color: #fff; margin-top: 1.5rem;">
+                Aula 6<br>
+                ├── Estudos<br>
+                │&nbsp;&nbsp;&nbsp;├── Informática<br>
+                │&nbsp;&nbsp;&nbsp;└── Atividades<br>
+                └── Trabalho<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;├── Documentos<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;└── Materiais
+            </div>
+        </div>
+
+        <!-- Slide 6: O GPS do Windows -->
+        <div class="slide">
+            <h2>O GPS do Windows (Busca)</h2>
+            <p>Você sabe o nome do arquivo, mas não lembra em qual das 300 pastas você o guardou.</p>
+            <div class="card" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1);">
+                <h3 class="highlight-1">A Lupa Pesquisadora</h3>
+                <p>No canto superior direito do Explorador de Arquivos existe uma barra de pesquisa. Ela age como um rastreador. Basta digitar parte do nome do arquivo e apertar Enter.</p>
+            </div>
+        </div>
+
+        <!-- Slide 7: A Barra de Endereço -->
+        <div class="slide">
+            <h2>A Barra de Endereço</h2>
+            <p>Quando a pesquisa encontrar o arquivo, como saber onde ele estava escondido?</p>
+            <ul>
+                <li>Olhe para a <span class="highlight-2">Barra de Endereço</span> no topo da janela.</li>
+                <li>Ela mostra o "Caminho" completo (Ex: <em>Este Computador > Documentos > Trabalho > Relatórios</em>).</li>
+                <li>Clicar com o botão direito no arquivo pesquisado e escolher <strong>"Abrir local do arquivo"</strong> te leva direto para a pasta original.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 8: Prática 2 -->
+        <div class="slide">
+            <h2>Prática 2: Encontrando a Agulha no Palheiro</h2>
+            <p>Vamos usar os arquivos de exemplo que preparei para vocês.</p>
+            <ul style="font-size: 1.8rem; line-height: 2;">
+                <li><span class="highlight-3">Passo 1:</span> Vá para a pasta principal (Documentos).</li>
+                <li><span class="highlight-3">Passo 2:</span> Na barra de pesquisa (canto superior direito), digite o nome do arquivo que informei no quadro.</li>
+                <li><span class="highlight-3">Passo 3:</span> Quando o Windows encontrar, clique com o botão direito nele e escolha <strong>"Abrir local do arquivo"</strong>. Onde ele estava?</li>
+            </ul>
+        </div>
+
+        <!-- Slide 9: A Rede de Segurança -->
+        <div class="slide">
+            <h2>A Lixeira: Sua Rede de Segurança</h2>
+            <p>Você excluiu um documento crítico sem querer. E agora?</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">A Boa Notícia</h3>
+                    <p>O Windows não destrói o arquivo imediatamente. Ele o move para a <strong>Lixeira</strong> (um ícone que fica na Área de Trabalho).</p>
+                </div>
+                <div class="card">
+                    <h3 class="alert">A Regra Ouro</h3>
+                    <p>Os arquivos ficam lá até você "Esvaziar a Lixeira". Uma vez esvaziada, a recuperação se torna impossível no dia a dia.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Restaurando Arquivos -->
+        <div class="slide">
+            <h2>Como Restaurar o que foi perdido?</h2>
+            <p>O processo de resgate é simples e direto:</p>
+            <ol style="margin-left: 2rem; font-size: 1.6rem; color: var(--text-sec); line-height: 1.8;">
+                <li>Vá até a Área de Trabalho e abra o ícone da <strong>Lixeira</strong>.</li>
+                <li>Localize o arquivo que você apagou por acidente.</li>
+                <li>Clique nele com o <strong>botão direito</strong>.</li>
+                <li>Escolha a opção <span class="highlight-1">"Restaurar"</span>.</li>
+            </ol>
+            <p style="margin-top: 1.5rem; color: #fff;">O Windows vai devolver o arquivo magicamente para a mesma pasta onde ele estava antes de ser apagado.</p>
+        </div>
+
+        <!-- Slide 11: Prática 3 -->
+        <div class="slide">
+            <h2>Prática 3: O Resgate</h2>
+            <p>Vamos treinar nossa rede de segurança.</p>
+            <div class="card" style="margin-top: 1.5rem; border-color: var(--accent-1);">
+                <p>1. Na sua pasta "Atividades", crie um arquivo qualquer.</p>
+                <p>2. Selecione o arquivo e aperte <strong>Delete</strong>. Ele sumiu.</p>
+                <p>3. Vá até a Área de Trabalho e abra a <strong>Lixeira</strong>.</p>
+                <p>4. Encontre o arquivo, clique com o botão direito e escolha <strong>Restaurar</strong>.</p>
+                <p>5. Volte na pasta "Atividades". Ele está lá de novo?</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: O Portal Mágico -->
+        <div class="slide">
+            <h2>Atalhos: O Portal Mágico</h2>
+            <p>Você tem uma pasta do seu projeto que fica guardada profundamente na estrutura: <em>Trabalho > Ano 2026 > Projetos > Ativos > Relatório Final</em>.</p>
+            <p style="margin-top: 1rem;">Você não quer dar 5 cliques todos os dias para chegar lá, mas também não quer tirar a pasta do lugar certo dela para não bagunçar a organização.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(129, 140, 248, 0.1);">
+                <h3 style="color: var(--accent-3);">A Solução: Criar um Atalho.</h3>
+            </div>
+        </div>
+
+        <!-- Slide 13: Entendendo o Atalho -->
+        <div class="slide">
+            <h2>A Anatomia do Atalho</h2>
+            <p>Como desenvolvedor de sistemas no Grupo Accerte, garanto: o atalho é a ferramenta de produtividade mais usada no mundo corporativo.</p>
+            <ul>
+                <li>Ele é apenas uma ponte invisível. Um "fio" que te teletransporta para a pasta original.</li>
+                <li>Tem o desenho de uma <span class="highlight-1">pequena seta azul</span> no canto inferior do ícone.</li>
+                <li><strong class="alert">Se você apagar o atalho, o arquivo original NÃO é apagado.</strong> Você só destruiu a ponte, mas o prédio continua lá.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 14: Prática 4 -->
+        <div class="slide">
+            <h2>Prática 4: Criando Pontes</h2>
+            <p>Vamos facilitar nossa vida criando um acesso rápido.</p>
+            <ul style="font-size: 1.8rem; line-height: 2;">
+                <li><span class="highlight-2">Passo 1:</span> Volte na árvore de pastas que criamos e localize a pasta <strong>Informática</strong>.</li>
+                <li><span class="highlight-2">Passo 2:</span> Clique com o botão direito nela e escolha <strong>"Criar atalho"</strong> (ou "Enviar para > Área de trabalho").</li>
+                <li><span class="highlight-2">Passo 3:</span> Pegue o atalho gerado (tem a setinha) e mova para a sua Área de Trabalho principal.</li>
+                <li><span class="highlight-2">Passo 4:</span> Teste o seu portal: dê dois cliques no atalho e veja para onde ele te leva.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 15: Revisão - Quiz 1 -->
+        <div class="slide">
+            <h2>Quiz Interativo (1/4)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Para que serve organizar arquivos em diretórios (pastas e subpastas)?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Para o computador ficar mais rápido e rodar jogos melhores.</li>
+                    <li>B) Para manter uma lógica hierárquica, facilitando encontrar arquivos no futuro.</li>
+                    <li>C) Para transformar arquivos pesados em atalhos leves.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 16: Revisão - Quiz 2 -->
+        <div class="slide">
+            <h2>Quiz Interativo (2/4)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-2">O que a barra de endereço do Explorador de Arquivos te informa?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) O "caminho" completo (localização exata) de onde você está dentro do computador.</li>
+                    <li>B) O endereço de internet do site que você está acessando.</li>
+                    <li>C) A quantidade de vírus no computador.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 17: Revisão - Quiz 3 -->
+        <div class="slide">
+            <h2>Quiz Interativo (3/4)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-3">Se você esvaziar a Lixeira do Windows, o que acontece com os arquivos?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Eles voltam para as pastas originais.</li>
+                    <li>B) Eles são compactados para economizar espaço.</li>
+                    <li>C) Eles são excluídos permanentemente e não podem ser restaurados facilmente.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 18: Revisão - Quiz 4 -->
+        <div class="slide">
+            <h2>Quiz Interativo (4/4)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Se você deletar um atalho que está na sua Área de Trabalho...</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) O arquivo original também é deletado.</li>
+                    <li>B) O computador bloqueia a ação para proteger o sistema.</li>
+                    <li>C) Apenas a "ponte" de acesso rápido é apagada. O arquivo original continua intacto no lugar dele.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 19: O que conquistamos hoje -->
+        <div class="slide">
+            <h2>A nossa colheita de hoje</h2>
+            <p>O que nos tornou operadores mais eficientes hoje?</p>
+            <ul>
+                <li>Entendemos que o computador funciona como uma <span class="highlight-2">Árvore Hierárquica</span> (pastas dentro de pastas).</li>
+                <li>Dominamos a técnica de <span class="highlight-1">Buscar Arquivos</span> perdidos e ler a Barra de Endereço.</li>
+                <li>Testamos a nossa rede de segurança restaurando itens da <span class="highlight-3">Lixeira</span>.</li>
+                <li>Criamos pontes invisíveis usando <span class="highlight-2">Atalhos</span> para ganhar produtividade.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 20: Encerramento -->
+        <div class="slide">
+            <h1 class="center">Fim da Aula 6</h1>
+            <p class="center" style="font-size: 2.2rem; color: #fff; margin-top: 2rem;">O operador eficiente não é o que decora onde tudo está, mas o que sabe usar as ferramentas para encontrar qualquer coisa.</p>
+            <p class="center highlight-2" style="margin-top: 3rem;">Recebam o material impresso. Na aula 7 começaremos a criar arquivos reais!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 20</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>

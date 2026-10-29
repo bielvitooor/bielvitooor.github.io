@@ -1,0 +1,8 @@
+{
+  "titulo": "Aula 9 — Configurações do Sistema",
+  "descricao": "As Configurações do Windows como a oficina do computador: ajustar o tamanho do que aparece na tela, escolher a saída e a entrada de som, acertar o teclado e chegar lá pelo atalho.",
+  "arquivos": {
+    "index.html": { "titulo": "Slide da aula 9" },
+    "resumo-aula-9.pdf": { "titulo": "Resumo da aula 9" }
+  }
+}

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 7 - A Criação Digital | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%;
+            transition: width 0.4s ease-out;
+            z-index: 100;
+        }
+
+        .slide-container {
+            width: 90%;
+            max-width: 1300px;
+            height: 80vh;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 4rem 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg);
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateZ(0) rotateX(0);
+        }
+
+        .slide > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide.active > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        p, li {
+            font-size: 1.5rem;
+            line-height: 1.7;
+            color: var(--text-sec);
+        }
+
+        ul, ol {
+            margin-top: 1.5rem;
+            padding-left: 2rem;
+        }
+        
+        ul { list-style: none; }
+
+        ul li {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        ul li::before {
+            content: "";
+            position: absolute;
+            left: -1.5rem;
+            top: 0.6rem;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .center { text-align: center; }
+        .alert { color: #f43f5e; font-weight: 600; }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+            font-size: 1rem;
+            color: #52525b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #52525b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 5rem;">A Criação Digital</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 7: Editores de Texto e Salvamento</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>De Arquivistas a Criadores</h2>
+            <p>Até agora, nós aprendemos a organizar as gavetas. Aprendemos a encontrar as pastas perdidas, copiar e movimentar documentos de um lado para o outro.</p>
+            <div class="card center" style="margin-top: 2rem; border-color: var(--accent-1);">
+                <h3 class="highlight-1">Mas de onde vêm esses arquivos?</h3>
+                <p>Alguém teve de criá-los. Hoje, deixaremos de ser apenas organizadores para nos tornarmos os autores da nossa própria informação.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: O Caderno e a Caneta -->
+        <div class="slide">
+            <h2>A Analogia Essencial</h2>
+            <p>Antes de abrir qualquer ferramenta, entenda a diferença entre o Programa e o Documento:</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">O Aplicativo (A Caneta)</h3>
+                    <p>O <strong>Bloco de Notas</strong> ou o <strong>Word</strong> é a ferramenta. Ele é a máquina que permite que a tinta virtual vá para o papel.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">O Arquivo (A Folha Preenchida)</h3>
+                    <p>O <strong>texto que você salva</strong> é a folha escrita. Depois de pronta, a folha tem uma vida independente da caneta.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: O Bloco de Notas -->
+        <div class="slide">
+            <h2>O Bloco de Notas do Windows</h2>
+            <p>Para começar, vamos utilizar a ferramenta mais simples e leve do sistema: O Bloco de Notas (Notepad).</p>
+            <ul>
+                <li>Ele cria textos puros, sem imagens ou letras coloridas.</li>
+                <li>Ideal para rascunhos, avisos rápidos e anotações do dia a dia corporativo.</li>
+                <li>Para abri-lo: <strong>Menu Iniciar > Digite "Bloco de Notas" > Enter.</strong></li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: Prática 1 -->
+        <div class="slide">
+            <h2>Prática 1: O Primeiro Texto</h2>
+            <p>Vamos preencher a nossa primeira folha em branco.</p>
+            <div class="card" style="margin-top: 1.5rem; background: rgba(0,0,0,0.5); font-family: monospace;">
+                <p>Abra o Bloco de Notas e digite exatamente o seguinte texto:</p>
+                <p style="margin-top: 1.5rem; color: var(--accent-1);">Meu primeiro arquivo de texto</p>
+                <p style="margin-top: 1rem; color: var(--accent-1);">Meu nome é: [Seu Nome]</p>
+                <p style="color: var(--accent-1);">Estou fazendo o curso de Operador de Computador.</p>
+                <p style="color: var(--accent-1);">Hoje estou aprendendo a criar arquivos digitais.</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Teclas de Edição -->
+        <div class="slide">
+            <h2>Dominando o Teclado (A Borracha)</h2>
+            <p>O texto ficou errado? Não entre em pânico. Use as ferramentas corretas de edição:</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Borrachas de Texto</h3>
+                    <p><strong>Backspace (←):</strong> Apaga o que está <em>antes</em> do traço piscante.</p>
+                    <p><strong>Delete (Del):</strong> Apaga o que está <em>depois</em> do traço piscante.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">Organização</h3>
+                    <p><strong>Enter:</strong> Pula para a linha de baixo (Novo parágrafo).</p>
+                    <p><strong>Espaço:</strong> Separa as palavras.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Prática 2 -->
+        <div class="slide">
+            <h2>Prática 2: Edição e Aperfeiçoamento</h2>
+            <p>Edite o texto que acabou de escrever. Adicione linhas e apague trechos até ele se tornar o aviso abaixo:</p>
+            <div class="card" style="margin-top: 1.5rem; background: rgba(0,0,0,0.5); font-family: monospace;">
+                <p style="color: var(--accent-2);">AVISO</p>
+                <p style="margin-top: 1rem; color: var(--accent-2);">Curso: Operador de Computador</p>
+                <p style="color: var(--accent-2);">Assunto: Organização dos estudos</p>
+                <p style="margin-top: 1rem; color: var(--accent-2);">Lembrete: revisar os conteúdos das aulas e manter os arquivos organizados.</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: O Grande Perigo -->
+        <div class="slide">
+            <h2>O Grande Perigo: A Perda</h2>
+            <p>Preste muita atenção agora. Se faltar luz na sala neste exato momento, o que acontece com o seu aviso?</p>
+            <div class="card center" style="margin-top: 2rem; border-color: #f43f5e; background: rgba(244, 63, 94, 0.1);">
+                <h3 class="alert">Ele deixará de existir!</h3>
+                <p>Lembra-se da Memória RAM (a bancada de trabalho)? O texto está solto em cima dela. Se desligarmos a máquina, a bancada é limpa e o trabalho é perdido para sempre.</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: O Salvamento (Save) -->
+        <div class="slide">
+            <h2>O Salvamento (A Gaveta Definitiva)</h2>
+            <p>Para garantir a segurança, temos de pegar na folha que está solta e guardá-la no Armazenamento Definitivo (O HD/SSD).</p>
+            <ul style="font-size: 1.6rem;">
+                <li>Para guardar algo pela primeira vez, clicamos em <strong>Arquivo > Salvar Como</strong>.</li>
+                <li>O Windows vai fazer-te duas perguntas cruciais:</li>
+                <li><strong>1. "Onde queres guardar?"</strong> (Escolha a sua pasta de exercícios).</li>
+                <li><strong>2. "Que nome dou a isto?"</strong> (Dê um nome lógico para encontrar depois).</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10: Prática 3 -->
+        <div class="slide">
+            <h2>Prática 3: O Primeiro Salvamento</h2>
+            <p>Siga os passos com cuidado para imortalizar o seu documento:</p>
+            <ol style="font-size: 1.7rem; color: var(--text-sec); line-height: 1.8;">
+                <li>No Bloco de Notas, clique em <strong>Arquivo</strong> (Canto superior esquerdo).</li>
+                <li>Escolha a opção <span class="highlight-1">Salvar Como</span>.</li>
+                <li>No menu esquerdo da janela, procure a sua pasta da <strong>Aula 7</strong>.</li>
+                <li>No campo "Nome do Arquivo", digite: <span class="highlight-3">Meu_aviso.txt</span>.</li>
+                <li>Clique no botão <strong>Salvar</strong>.</li>
+            </ol>
+        </div>
+
+        <!-- Slide 11: A Extensão (.txt) -->
+        <div class="slide">
+            <h2>O Apelido Tecnológico (.txt)</h2>
+            <p>Reparou que no nome do arquivo apareceu ".txt" no final?</p>
+            <ul>
+                <li>Isso chama-se <span class="highlight-2">Extensão do Arquivo</span>.</li>
+                <li>É o "apelido" que indica ao Windows que tipo de folha é aquela.</li>
+                <li><strong>.txt</strong> significa que é um texto simples puro.</li>
+                <li>Quando vir <strong>.mp3</strong> saberá que é música, e <strong>.jpg</strong> que é uma fotografia.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 12: A Atualização Constante -->
+        <div class="slide">
+            <h2>Salvando Alterações (Ctrl + S)</h2>
+            <p>A folha já foi guardada na gaveta uma vez. Se adicionares uma linha nova hoje, como avisas o Windows para atualizar a cópia da gaveta?</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Não precisas usar o "Salvar Como" de novo!</h3>
+                <p>Basta ires a <strong>Arquivo > Salvar</strong>, ou usar o atalho profissional:</p>
+                <p style="margin-top: 1rem; font-size: 2.5rem; font-weight: bold; color: var(--accent-2);">CTRL + S</p>
+                <p>O Windows substitui a versão antiga pela nova instantaneamente.</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: O Desafio Final -->
+        <div class="slide">
+            <h2>O Desafio Prático Individual</h2>
+            <p>Emule a vida num escritório. Feche o Bloco de Notas atual. E siga:</p>
+            <div class="card" style="margin-top: 1.5rem; border-color: var(--accent-3);">
+                <p>1. Abra o <strong>Explorador de Arquivos</strong> e encontre a pasta "Aula 7".</p>
+                <p>2. Dê dois cliques no seu arquivo "Meu_aviso.txt" para reabri-lo.</p>
+                <p>3. Pule uma linha no fim do documento e digite: <em>"Documento revisado com sucesso."</em></p>
+                <p>4. Aperte o atalho <span class="highlight-3">Ctrl + S</span> para atualizar a gaveta.</p>
+                <p>5. Feche a janela no "X", e reabra o arquivo para confirmar se a alteração foi salva.</p>
+            </div>
+        </div>
+
+        <!-- Slide 14: Quiz 1 -->
+        <div class="slide">
+            <h2>Quiz Interativo (1/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Qual é a função do comando "Salvar Como"?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Enviar o documento para a impressora imediatamente.</li>
+                    <li>B) Gravar o arquivo pela primeira vez, escolhendo o lugar e o nome da "folha".</li>
+                    <li>C) Mudar a cor da letra no ecrã.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 15: Quiz 2 -->
+        <div class="slide">
+            <h2>Quiz Interativo (2/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-2">Se apagares acidentalmente uma palavra que não devias usando o Backspace, qual atalho desfaz o erro?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Ctrl + C</li>
+                    <li>B) Delete</li>
+                    <li>C) Ctrl + Z (Desfazer Ação)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 16: Quiz 3 -->
+        <div class="slide">
+            <h2>Quiz Interativo (3/3)</h2>
+            <p>Pense antes de responder em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-3">O que significa quando um arquivo tem o nome "Resumo.txt"?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Que se trata de um arquivo de som.</li>
+                    <li>B) O ".txt" é a extensão que avisa o computador que se trata de um arquivo de Texto Puro.</li>
+                    <li>C) Que é um vírus de computador.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 17: O que conquistamos hoje -->
+        <div class="slide">
+            <h2>A nossa colheita de hoje</h2>
+            <p>O que nos tornou verdadeiros Operadores hoje?</p>
+            <ul>
+                <li>Diferenciamos o <span class="highlight-1">Aplicativo</span> (Ferramenta) do <span class="highlight-2">Arquivo</span> (Produto gerado).</li>
+                <li>Dominamos a criação e edição de parágrafos usando o teclado (Backspace, Delete, Enter).</li>
+                <li>Compreendemos o perigo da perda de dados e aprendemos a imortalizá-los com o <span class="highlight-3">Salvar Como</span> e o <strong>Ctrl+S</strong>.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 18: Encerramento -->
+        <div class="slide">
+            <h1 class="center">Fim da Aula 7</h1>
+            <p class="center" style="font-size: 2.2rem; color: #fff; margin-top: 2rem;">A informação digital só está segura quando está gravada e nomeada corretamente.</p>
+            <p class="center highlight-2" style="margin-top: 3rem;">Recebam o material impresso. Estão oficialmente a criar conteúdo! Excelente aula.</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 18</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>
