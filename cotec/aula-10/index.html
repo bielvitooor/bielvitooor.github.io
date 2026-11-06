@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 10 - O Operador Completo | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+            --alert: #f43f5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%;
+            transition: width 0.4s ease-out;
+            z-index: 100;
+        }
+
+        .slide-container {
+            width: 90%;
+            max-width: 1300px;
+            height: 80vh;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 4rem 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg);
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateZ(0) rotateX(0);
+        }
+
+        .slide > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .slide.active > * { opacity: 1; transform: translateY(0); }
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        h1 {
+            font-size: 4rem; font-weight: 800;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; line-height: 1.1; letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.8rem; font-weight: 600; color: #fff;
+            margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem; letter-spacing: -0.5px;
+        }
+
+        p, li { font-size: 1.5rem; line-height: 1.7; color: var(--text-sec); }
+        
+        ul, ol { margin-top: 1.5rem; padding-left: 2rem; }
+        ul { list-style: none; }
+        ul li { margin-bottom: 1.2rem; position: relative; }
+        ul li::before {
+            content: ""; position: absolute; left: -1.5rem; top: 0.6rem;
+            width: 8px; height: 8px; background: var(--accent-1);
+            border-radius: 50%; box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+        .alert { color: var(--alert); font-weight: 600; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 1.5rem; }
+        .card {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 2rem; transition: transform 0.3s;
+        }
+
+        .center { text-align: center; }
+        
+        .footer {
+            position: fixed; bottom: 20px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 50px;
+            font-size: 1rem; color: #52525b; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); font-size: 0.9rem; color: #52525b;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+/* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* tabelas largas precisam caber na tela sem rolar para o lado */
+            table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            th, td {
+                padding: 0.45rem 0.3rem;
+                font-size: 0.8em;
+                overflow-wrap: break-word;
+                hyphens: auto;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 5rem;">O Operador Completo</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 10: Encerramento do Módulo</p>
+            <p class="center" style="margin-top: 2rem;">Manutenção, Segurança e o Desafio Final</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>A Nossa Trajetória</h2>
+            <p>Começamos por ligar o computador e entender o que era Hardware e Software. Navegamos em janelas, criamos pastas, redigimos textos, compactamos arquivos e ajustamos configurações.</p>
+            <div class="card center" style="margin-top: 2rem; border-color: var(--accent-1);">
+                <h3 class="highlight-1">Hoje é o dia de consolidar a Autonomia.</h3>
+                <p>Nesta última aula, vamos focar-nos no que mantém a máquina funcionando bem no longo prazo: a organização inteligente, a manutenção preventiva e a segurança blindada.</p>
+            </div>
+        </div>
+
+        <!-- PARTE 1: MANUTENÇÃO E ORGANIZAÇÃO -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4rem; color: var(--accent-2);">PARTE 1</h1>
+            <p class="center highlight-2" style="font-size: 2rem;">Manutenção e Organização</p>
+        </div>
+
+        <!-- Slide 4: Manutenção Preventiva -->
+        <div class="slide">
+            <h2>Manutenção Preventiva (Física)</h2>
+            <p>Manutenção não é apenas desmontar o computador. É o que fazemos todos os dias para evitar que ele quebre.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Ventilação</h3>
+                    <p>O maior inimigo do hardware é o calor. Nunca bloqueie as saídas de ar do gabinete ou do notebook.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Limpeza</h3>
+                    <p>Mantenha líquidos longe. Evite puxar cabos pelos fios. Não abra o gabinete sem o conhecimento técnico necessário.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Manutenção Lógica -->
+        <div class="slide">
+            <h2>Manutenção Preventiva (Sistema)</h2>
+            <p>Um computador com a Área de Trabalho lotada de arquivos perde desempenho e produtividade.</p>
+            <ul>
+                <li><strong>Reiniciar é fundamental:</strong> A máquina precisa de "dormir". Reiniciar limpa a Memória RAM e resolve dezenas de pequenos travamentos.</li>
+                <li><strong>Atualizações:</strong> Nunca ignore as atualizações do Windows. Elas não são apenas visuais; elas corrigem falhas graves de segurança.</li>
+                <li><strong>Desligamento Correto:</strong> Use sempre o Menu Iniciar para desligar, nunca arranque o cabo da tomada.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 6: Prática 1 -->
+        <div class="slide">
+            <h2>Prática 1: O 5S Digital</h2>
+            <p>Vamos aplicar a organização corporativa no seu ambiente.</p>
+            <div class="card" style="margin-top: 1.5rem; background: rgba(0,0,0,0.5);">
+                <ol style="margin-top: 1rem; color: var(--accent-1); font-size: 1.6rem; line-height: 1.8;">
+                    <li>Olhe para a sua <strong>Área de Trabalho</strong>. Tem ficheiros que deviam estar nas Pastas de Documentos?</li>
+                    <li>Crie pastas específicas e mova os arquivos para lá. Deixe no desktop apenas os atalhos.</li>
+                    <li>Personalize a barra de tarefas: clique com o botão direito nos aplicativos que mais usa e escolha <strong>Fixar na barra de tarefas</strong>.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- PARTE 2: INSTALAÇÕES -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4rem; color: var(--accent-3);">PARTE 2</h1>
+            <p class="center highlight-3" style="font-size: 2rem;">Instalações e Periféricos</p>
+        </div>
+
+        <!-- Slide 8: Instalação de Programas -->
+        <div class="slide">
+            <h2>Adicionando Ferramentas (Instalação)</h2>
+            <p>O Windows vem com ferramentas básicas, mas nós precisamos instalar programas novos (Navegadores, Softwares da Empresa, etc).</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-3">O Instalador</h3>
+                    <p>É o ficheiro executável (geralmente .exe). Ele é o responsável por extrair e posicionar o software dentro do Windows.</p>
+                </div>
+                <div class="card">
+                    <h3 class="alert">Atenção Crítica</h3>
+                    <p>Leia cada tela ao clicar em "Avançar". Muitos instaladores tentam instalar "barras de pesquisa" ou programas extras embutidos.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Desinstalação -->
+        <div class="slide">
+            <h2>A Arte de Desinstalar</h2>
+            <p>Se excluir o ícone (atalho) do programa da Área de Trabalho, o programa foi desinstalado?</p>
+            <div class="card center" style="margin-top: 2rem; border-color: #f43f5e;">
+                <h3 class="alert">NÃO! O programa continua intacto no sistema.</h3>
+                <p style="margin-top: 1rem;">Para remover um programa corretamente e libertar espaço, devemos ir a: <br><strong class="highlight-1">Configurações > Aplicativos > Aplicativos Instalados</strong>, encontrar o programa na lista e clicar em <strong>Desinstalar</strong>.</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Periféricos -->
+        <div class="slide">
+            <h2>Periféricos (Plug and Play)</h2>
+            <p>Dispositivos como Mouses, Teclados e Pendrives são periféricos externos.</p>
+            <ul>
+                <li><strong>Plug and Play:</strong> O Windows moderno reconhece 90% dos dispositivos básicos assim que você conecta o cabo USB.</li>
+                <li><strong>Drivers:</strong> Dispositivos complexos (como Impressoras ou Placas de Vídeo) precisam de um "Driver" — um software que traduz o que o dispositivo faz para o Windows entender.</li>
+            </ul>
+        </div>
+
+        <!-- PARTE 3: SEGURANÇA DIGITAL -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4rem; color: #f43f5e;">PARTE 3</h1>
+            <p class="center alert" style="font-size: 2rem;">Segurança Digital</p>
+        </div>
+
+        <!-- Slide 12: Os Riscos -->
+        <div class="slide">
+            <h2>Ameaças Reais do Mundo Digital</h2>
+            <p>Na tecnologia corporativa moderna, o principal ponto fraco não é a máquina, mas sim o fator humano.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="alert">Malware / Ransomware</h3>
+                    <p>Softwares maliciosos que infetam o sistema, destroem ficheiros ou bloqueiam os dados da empresa exigindo "resgate".</p>
+                </div>
+                <div class="card">
+                    <h3 class="alert">Phishing</h3>
+                    <p>O golpe do engano. Mensagens falsas de bancos ou sistemas fingindo ser suporte técnico, pedindo que clique num link urgente e coloque a sua senha.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: As Defesas -->
+        <div class="slide">
+            <h2>As Boas Práticas de Defesa</h2>
+            <p>O antivírus (Windows Defender) ajuda muito, mas o melhor escudo é a sua desconfiança.</p>
+            <ul>
+                <li><strong>Downloads Seguros:</strong> Só baixe instaladores do <em>site oficial</em> da fabricante. Nunca de sites agregadores ou links enviados pelo WhatsApp.</li>
+                <li><strong>Gestão de Senhas:</strong> Evite senhas como "123456" ou "data de nascimento". Não repita a mesma senha pessoal nos sistemas da empresa.</li>
+                <li><strong>A Urgência é Suspense:</strong> O banco nunca enviará um SMS dizendo: "Sua conta será bloqueada hoje! Clique aqui". Eles querem que aja por impulso. Ignore.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 14: O Segredo de Ouro -->
+        <div class="slide">
+            <h2>O Hábito Corporativo: Bloqueio e Backup</h2>
+            <p>Dois hábitos que separam o iniciante do profissional de excelência.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1);">
+                <h3 class="highlight-1">Windows + L</h3>
+                <p style="margin-top: 1rem;">Vai levantar-se para ir buscar um café ou ao banheiro? <strong>Pressione a tecla Windows + L.</strong> Isso bloqueia a tela instantaneamente, protegendo a sua sessão contra curiosos.</p>
+                <h3 class="highlight-1" style="margin-top: 2rem;">Backup (Cópias de Segurança)</h3>
+                <p>Hardware falha. Computadores estragam. Tenha sempre cópias dos seus relatórios importantes num Pendrive ou na Nuvem (Google Drive/OneDrive).</p>
+            </div>
+        </div>
+
+        <!-- Slide 15: Prática de Segurança -->
+        <div class="slide">
+            <h2>Prática 2: Seguro ou Suspeito?</h2>
+            <p>Responda em voz alta:</p>
+            <div class="card" style="margin-top: 1.5rem;">
+                <p><strong>1.</strong> Baixar o navegador Chrome do site "baixaki-gratis.com"? <span style="color: transparent; transition: color 0.5s;" onmouseover="this.style.color='#f43f5e'">SUSPEITO!</span></p>
+                <p style="margin-top: 1rem;"><strong>2.</strong> Desativar o antivírus temporariamente porque um jogo pirata pediu? <span style="color: transparent; transition: color 0.5s;" onmouseover="this.style.color='#f43f5e'">INSEGURO (ALTO RISCO)!</span></p>
+                <p style="margin-top: 1rem;"><strong>3.</strong> Copiar a sua pasta de trabalho para um Pendrive no fim da sexta-feira? <span style="color: transparent; transition: color 0.5s;" onmouseover="this.style.color='var(--accent-2)'">SEGURO E RECOMENDADO!</span></p>
+            </div>
+            <p style="margin-top: 1rem; font-size: 1rem;">(Passe o mouse por cima do espaço final de cada frase para ver a resposta)</p>
+        </div>
+
+        <!-- PARTE 4: O DESAFIO FINAL -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4rem; color: #fff;">O GRANDE DESAFIO FINAL</h1>
+            <p class="center highlight-1" style="font-size: 2rem;">Consolidação Prática de Conhecimentos</p>
+        </div>
+
+        <!-- Slide 17: Etapas 1 e 2 -->
+        <div class="slide">
+            <h2>Desafio Final: Etapas 1 e 2</h2>
+            <p>Atue como um funcionário no seu primeiro dia num novo departamento. Execute:</p>
+            <div class="card" style="border-color: var(--accent-1);">
+                <h3 style="color: var(--accent-1); margin-bottom: 1rem;">Etapa 1: Infraestrutura</h3>
+                <p>- Crie uma pasta principal chamada <strong>Desafio_Final</strong> na Área de Trabalho.</p>
+                <p>- Dentro dela, crie <strong>Documentos</strong> e <strong>Materiais</strong>.</p>
+                
+                <h3 style="color: var(--accent-1); margin-bottom: 1rem; margin-top: 1.5rem;">Etapa 2: A Redação</h3>
+                <p>- Abra o Bloco de Notas e digite o seu nome, o curso e a data de hoje.</p>
+                <p>- Salve esse texto como <strong>Relatorio.txt</strong> dentro da pasta Documentos.</p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Etapas 3 e 4 -->
+        <div class="slide">
+            <h2>Desafio Final: Etapas 3 e 4</h2>
+            <p>Agora vamos manipular as informações:</p>
+            <div class="card" style="border-color: var(--accent-2);">
+                <h3 style="color: var(--accent-2); margin-bottom: 1rem;">Etapa 3: Movimentação</h3>
+                <p>- Copie (Não recorte) o arquivo <em>Relatorio.txt</em> para a pasta Materiais.</p>
+                <p>- Renomeie essa cópia nova para <strong>Relatorio_Copia.txt</strong>.</p>
+                
+                <h3 style="color: var(--accent-2); margin-bottom: 1rem; margin-top: 1.5rem;">Etapa 4: Criatividade e Compactação</h3>
+                <p>- Abra o <strong>Paint</strong>, desenhe uma estrela ou logotipo, e salve como imagem dentro de Materiais.</p>
+                <p>- <strong>Compacte (Transforme num ZIP)</strong> a pasta Materiais inteira.</p>
+            </div>
+        </div>
+
+        <!-- Slide 19: Etapa 5 -->
+        <div class="slide">
+            <h2>Desafio Final: Etapa 5</h2>
+            <p>Por fim, a auditoria de sistema e segurança:</p>
+            <div class="card" style="border-color: var(--accent-3);">
+                <h3 style="color: var(--accent-3); margin-bottom: 1rem;">Etapa 5: Segurança</h3>
+                <p>- Abra as <strong>Configurações</strong> e verifique qual é a <em>Escala</em> atual do seu monitor.</p>
+                <p>- Aplique o atalho profissional <strong>Windows + L</strong> para bloquear a sua máquina perante todos.</p>
+                <p>- Desbloqueie o computador, chame o professor e mostre o pacote ZIP concluído!</p>
+            </div>
+        </div>
+
+        <!-- Slide 20: Revisão Geral 1 -->
+        <div class="slide">
+            <h2>O Grande Raio-X do Módulo (1/3)</h2>
+            <p>Vamos confirmar se o conhecimento ficou cimentado na vossa mente.</p>
+            <ul>
+                <li><strong>Hardware vs Software:</strong> Qual é o que podemos chutar e qual é o que podemos apenas xingar? (Físico vs Lógico).</li>
+                <li><strong>Sistema Operacional:</strong> O Windows é o maestro. É ele que gere tudo. Sem ele, a máquina é apenas peso de papel.</li>
+                <li><strong>Copiar vs Recortar:</strong> Copiar (Xerox = Gera 2 arquivos). Recortar (Transferência = Mantém apenas 1 arquivo).</li>
+            </ul>
+        </div>
+
+        <!-- Slide 21: Revisão Geral 2 -->
+        <div class="slide">
+            <h2>O Grande Raio-X do Módulo (2/3)</h2>
+            <p>O núcleo da gestão de ficheiros:</p>
+            <ul>
+                <li><strong>Extensões:</strong> O apelido do arquivo. (.txt para texto, .png para imagem, .zip para pacote).</li>
+                <li><strong>Busca:</strong> Usamos a lupa no Explorador de Arquivos para rastrear arquivos perdidos na hierarquia.</li>
+                <li><strong>Lixeira:</strong> A nossa rede de segurança. Se apagarmos um atalho, o original permanece. Se apagarmos um arquivo, podemos restaurá-lo da lixeira antes de a esvaziar.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 22: Revisão Geral 3 -->
+        <div class="slide">
+            <h2>O Grande Raio-X do Módulo (3/3)</h2>
+            <p>Os hábitos de um Operador de Excelência:</p>
+            <ul>
+                <li><strong>Atalhos de Ouro:</strong> CTRL+C, CTRL+V, CTRL+S (Salvar sempre!), Win+E (Explorador) e Win+L (Bloquear Tela).</li>
+                <li><strong>Personalização:</strong> Alteramos o Idioma do Teclado, o Som e a Escala Visual através do aplicativo Configurações.</li>
+                <li><strong>Segurança Primordial:</strong> Desconfiar de urgências, downloads suspeitos e nunca fornecer credenciais em pop-ups não oficiais.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 23: Despedida -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-1);">Parabéns!</h1>
+            <p class="center" style="font-size: 2rem; color: #fff; margin-top: 2rem;">Vocês concluíram a "Introdução à Operação de Computador".</p>
+            <p class="center" style="font-size: 1.6rem; color: var(--text-sec); margin-top: 2rem;">Deixaram de ser meros usuários passivos e tornaram-se Operadores conscientes, organizados e seguros. A máquina agora trabalha para vocês.</p>
+        </div>
+
+        <!-- Slide 24: Encerramento Oficial -->
+        <div class="slide">
+            <h1 class="center">Fim do Módulo</h1>
+            <p class="center" style="font-size: 2.2rem; color: #fff; margin-top: 2rem;">O conhecimento tecnológico é uma jornada contínua. Continuem praticando todos os dias.</p>
+            <p class="center highlight-2" style="margin-top: 3rem;">Recebam o material impresso com o Checklist Definitivo. Muito sucesso profissional!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 24</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>

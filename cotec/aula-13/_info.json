@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 13 — Placa-Mãe e Processador",
+  "descricao": "A placa-mãe e o processador em detalhe: socket, chipset, slots, formatos ATX/micro-ATX/mini-ITX, frequência, núcleos, threads, cache e a regra de ouro da compatibilidade.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 13"
+    },
+    "resumo-aula-13.pdf": {
+      "titulo": "Resumo da aula 13"
+    }
+  }
+}

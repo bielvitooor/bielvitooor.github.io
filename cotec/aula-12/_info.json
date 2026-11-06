@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 12 — Por Dentro da Máquina",
+  "descricao": "Os seis componentes vitais dentro do gabinete — placa-mãe, processador, memória RAM, HD/SSD, fonte e placas de expansão — e como eles trabalham juntos ao abrir um programa ou salvar um arquivo.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 12"
+    },
+    "resumo-aula-12.pdf": {
+      "titulo": "Resumo da aula 12"
+    }
+  }
+}

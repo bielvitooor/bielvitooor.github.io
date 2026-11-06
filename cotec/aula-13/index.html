@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 13 - Placa-Mãe e Processador | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+            --alert: #f43f5e;
+            --warning: #facc15;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #000;
+        }
+
+        .blob {
+            position: absolute; filter: blur(80px); opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%; transition: width 0.4s ease-out; z-index: 100;
+        }
+
+        .slide-container {
+            width: 90%; max-width: 1300px; height: 80vh;
+            position: relative; perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); border-radius: 30px;
+            padding: 4rem 5rem; display: flex; flex-direction: column;
+            justify-content: center; opacity: 0; visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg); transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: translateZ(0) rotateX(0); }
+        .slide > * { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .slide.active > * { opacity: 1; transform: translateY(0); }
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        h1 {
+            font-size: 4rem; font-weight: 800; background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; line-height: 1.1; letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.8rem; font-weight: 600; color: #fff;
+            margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem; letter-spacing: -0.5px;
+        }
+
+        p, li { font-size: 1.5rem; line-height: 1.7; color: var(--text-sec); }
+        
+        ul, ol { margin-top: 1.5rem; padding-left: 2rem; }
+        ul { list-style: none; }
+        ul li { margin-bottom: 1.2rem; position: relative; }
+        ul li::before {
+            content: ""; position: absolute; left: -1.5rem; top: 0.6rem;
+            width: 8px; height: 8px; background: var(--accent-1);
+            border-radius: 50%; box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+        .highlight-4 { color: var(--alert); font-weight: 600; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+        
+        .card {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 2rem; transition: transform 0.3s;
+        }
+
+        .center { text-align: center; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 1.4rem; color: #fff; }
+        th, td { padding: 1rem; text-align: center; border: 1px solid var(--glass-border); }
+        th { background: rgba(56, 189, 248, 0.2); color: var(--accent-1); }
+
+        .footer {
+            position: fixed; bottom: 20px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 50px;
+            font-size: 1rem; color: #52525b; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); font-size: 0.9rem; color: #52525b;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+/* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* tabelas largas precisam caber na tela sem rolar para o lado */
+            table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            th, td {
+                padding: 0.45rem 0.3rem;
+                font-size: 0.8em;
+                overflow-wrap: break-word;
+                hyphens: auto;
+            }
+
+            .tabela-especificacoes th:first-child,
+            .tabela-especificacoes td:first-child {
+                width: 28%;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 5rem;">O Terreno e o Cérebro</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 13: Placa-Mãe e Processador</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>Na aula passada...</h2>
+            <p>Descobrimos que a "caixa preta" do computador (o Gabinete) abriga 6 órgãos vitais. Vimos que todos eles precisam conversar entre si para a máquina funcionar.</p>
+            <div class="card center" style="margin-top: 2rem; border-color: var(--accent-2);">
+                <h3 class="highlight-2">A Grande Pergunta de Hoje</h3>
+                <p>Como peças tão diferentes, fabricadas por empresas diferentes, conseguem comunicar? E quem, exatamente, faz a "força bruta" de pensar e calcular dentro da máquina?</p>
+            </div>
+        </div>
+
+        <!-- BLOCO 1: PLACA-MÃE -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-1);">1. A PLACA-MÃE</h1>
+            <p class="center highlight-1" style="font-size: 2rem; margin-top: 1rem;">(A Fundação do Sistema)</p>
+        </div>
+
+        <!-- Slide 4: O que é a Placa-Mãe -->
+        <div class="slide">
+            <h2>O que é a Placa-Mãe?</h2>
+            <p>A <em>Motherboard</em> (Placa-Mãe) é a maior placa de circuito eletrônico do computador.</p>
+            <div class="card" style="margin-top: 1.5rem;">
+                <p>A sua função é <strong>conectar e permitir a comunicação absoluta</strong> entre todos os outros componentes. O Processador, a Memória RAM, a Fonte e os cabos USB... tudo se liga nela.</p>
+                <p style="margin-top: 1rem; color: var(--accent-2);"><em>Analogia:</em> Imagine a Placa-Mãe como o terreno e os corredores de uma empresa. Nenhum departamento funciona se não houver um corredor que os ligue.</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Anatomia - Socket e Memória -->
+        <div class="slide">
+            <h2>A Anatomia da Placa (Parte 1)</h2>
+            <p>Se olharmos para a placa, veremos vários "encaixes". Cada um tem um dono:</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">1. O Socket</h3>
+                    <p>É o berço do Processador. Um quadrado cheio de furos minúsculos ou pinos metálicos no centro da placa. É aqui que o "Cérebro" repousa.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">2. Slots de Memória</h3>
+                    <p>São canaletas longas e finas. É lá que os pentes de Memória RAM são espetados. Ficam sempre bem pertinho do Socket para que o Processador acesse os dados rápido.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Anatomia - Energia e Chipset -->
+        <div class="slide">
+            <h2>A Anatomia da Placa (Parte 2)</h2>
+            <p>O que mais encontramos neste terreno?</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="color: var(--warning);">3. Conectores de Energia</h3>
+                    <p>São os "bocais" onde ligamos os cabos grossos que vêm da Fonte de Alimentação. Eles trazem a energia elétrica para espalhar pela placa.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">4. Chipset</h3>
+                    <p>É o "gerente de tráfego" da placa. Um chip embutido que auxilia a organizar os dados que viajam de um lado para o outro. Ele define os limites de velocidade da placa.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Anatomia - Expansão e Externos -->
+        <div class="slide">
+            <h2>A Anatomia da Placa (Parte 3)</h2>
+            <p>E como conectamos coisas de fora?</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="color: #c084fc;">5. Slots de Expansão</h3>
+                    <p>Encaixes na parte inferior da placa onde conectamos equipamentos extras pesados, como uma Placa de Vídeo ou Placa de Wi-Fi.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">6. Conectores Externos</h3>
+                    <p>É o painel traseiro que fica virado para fora do gabinete. Contém os buracos para o cabo de rede, fone de ouvido, HDMI e as entradas USB.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Formatos de Placa -->
+        <div class="slide">
+            <h2>Tamanhos e Formatos (Form Factor)</h2>
+            <p>As placas-mãe não têm todas o mesmo tamanho. O tamanho afeta a quantidade de peças que pode conectar e o tamanho do gabinete.</p>
+            <ul>
+                <li><span class="highlight-1">ATX:</span> O padrão grande. Ideal para computadores potentes e espaçosos. Tem muitos slots de expansão.</li>
+                <li><span class="highlight-2">Micro-ATX:</span> O meio-termo e o mais comum nos escritórios. É menor e mais barato.</li>
+                <li><span class="highlight-3">Mini-ITX:</span> Muito pequena, projetada para computadores super compactos. Quase não tem espaço para peças extras.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 9: Prática 1 -->
+        <div class="slide">
+            <h2>Prática 1: Análise Crítica</h2>
+            <p>Respondam em equipa:</p>
+            <div class="card" style="margin-top: 2rem; border-color: var(--warning);">
+                <h3 style="color: var(--warning);">Situação:</h3>
+                <p>Uma pessoa comprou um Gabinete pequeno, muito fino e compacto para colocar na mesa do escritório. Depois, comprou uma Placa-Mãe gigante do formato <strong>ATX</strong>. O que vai acontecer na hora da montagem?</p>
+                <p style="margin-top: 1rem; color: var(--text-sec);"><em>Resposta: Tragédia física. A placa-mãe simplesmente não vai caber dentro da carcaça do gabinete. Tudo deve ser compatível!</em></p>
+            </div>
+        </div>
+
+        <!-- BLOCO 2: PROCESSADOR -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-2);">2. O PROCESSADOR</h1>
+            <p class="center highlight-2" style="font-size: 2rem; margin-top: 1rem;">(A CPU / O Cérebro)</p>
+        </div>
+
+        <!-- Slide 11: O que é o Processador? -->
+        <div class="slide">
+            <h2>O que é o Processador (CPU)?</h2>
+            <p>A CPU (Unidade Central de Processamento) é um pequeno quadrado de silício que custa caro e esquenta muito.</p>
+            <div class="card" style="margin-top: 1.5rem; background: rgba(52, 211, 153, 0.1);">
+                <p>Ele é o cérebro da máquina. É ele que <strong>recebe, interpreta e executa</strong> as instruções de todos os programas. Sem ele, o computador está literalmente em "morte cerebral".</p>
+                <p style="margin-top: 1rem; color: #fff;">Sempre que abre o Google Chrome ou soma algo no Excel, é o Processador que trabalha nos bastidores.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Características - Frequência -->
+        <div class="slide">
+            <h2>1. Frequência (A Velocidade em GHz)</h2>
+            <p>Quando vai comprar um computador, vê na etiqueta: <em>"Processador 3.5 GHz"</em>. O que significa isso?</p>
+            <ul>
+                <li><strong>GHz (Gigahertz)</strong> indica a velocidade do "relógio" interno do processador.</li>
+                <li>Significa a quantidade de <strong>ciclos de operação por segundo</strong>.</li>
+                <li>Um processador de 3.5 GHz faz 3,5 bilhões de ciclos num único segundo. É a velocidade bruta do operário.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 13: Características - Núcleos -->
+        <div class="slide">
+            <h2>2. Núcleos (Cores)</h2>
+            <p>No passado, a CPU era apenas 1 operário super rápido. Hoje, o chip é dividido em <strong>Núcleos</strong>.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Multi-Cores</h3>
+                    <p>Se tem um processador de "6 Núcleos", é como ter <strong>6 operários trabalhando juntos</strong> dentro da mesma sala. Permite que o computador faça várias tarefas pesadas ao mesmo tempo sem travar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Características - Threads e Cache -->
+        <div class="slide">
+            <h2>3. Threads e 4. Memória Cache</h2>
+            <p>Mais dois termos que separam os processadores básicos dos profissionais:</p>
+            <ul>
+                <li><span class="highlight-1">Threads (Linhas de execução):</span> São os braços dos operários. Se 1 núcleo tiver 2 threads, um único operário consegue usar os dois braços para segurar dois processos virtuais diferentes.</li>
+                <li><span class="highlight-3">Cache:</span> É uma bolsinha de memória extremamente rápida que fica embutida <em>dentro</em> da CPU. O processador usa-a para guardar as informações que ele sabe que vai usar daqui a um segundo.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 15: O Segredo do Desempenho -->
+        <div class="slide">
+            <h2>Desempenho: O Maior Mito</h2>
+            <p>Muitos clientes dizem: <em>"Vou comprar este processador porque tem 4.0 GHz e o outro tem 3.0 GHz, por isso é melhor!"</em></p>
+            <div class="card center" style="margin-top: 2rem; border-color: var(--alert);">
+                <h3 class="alert">FALSO! A velocidade do relógio não é tudo.</h3>
+                <p style="margin-top: 1rem;">O que é melhor: 1 operário a trabalhar na velocidade da luz (1 núcleo a 4.0GHz) ou 6 operários a trabalhar a uma velocidade normal (6 núcleos a 3.0GHz)? A quantidade de núcleos e o Cache modernos muitas vezes vencem a frequência bruta.</p>
+            </div>
+        </div>
+
+        <!-- BLOCO 3: INTEGRAÇÃO E DESAFIO -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-3);">3. A INTEGRAÇÃO</h1>
+            <p class="center highlight-3" style="font-size: 2rem; margin-top: 1rem;">Placa-Mãe + Processador</p>
+        </div>
+
+        <!-- Slide 17: A Regra de Compatibilidade -->
+        <div class="slide">
+            <h2>A Regra de Ouro: O Socket</h2>
+            <p>Não podes simplesmente ir à loja, comprar um excelente processador da Intel, e tentá-lo espetar numa placa-mãe projetada para AMD.</p>
+            <div class="card" style="margin-top: 2rem;">
+                <h3 class="highlight-1">O Processador e a Placa-Mãe devem ter o mesmo SOCKET.</h3>
+                <p style="margin-top: 1rem;">Se o processador exigir o Socket "LGA 1700", a placa-mãe DEVE ter o berço "LGA 1700". Caso contrário, os pinos metálicos não vão encaixar e você pode quebrar peças de milhares de reais.</p>
+            </div>
+        </div>
+
+        <!-- Slide 18: Prática 2 - Análise de Specs -->
+        <div class="slide">
+            <h2>Prática 2: Análise de Especificações</h2>
+            <p>Vocês são os consultores. Olhem para estes 3 processadores:</p>
+            <table class="tabela-especificacoes">
+                <tr>
+                    <th>Modelo</th>
+                    <th>Frequência (GHz)</th>
+                    <th>Núcleos</th>
+                    <th>Threads</th>
+                </tr>
+                <tr>
+                    <td><strong>Processador A</strong></td>
+                    <td>4.0 GHz</td>
+                    <td>2 Núcleos</td>
+                    <td>4 Threads</td>
+                </tr>
+                <tr>
+                    <td><strong>Processador B</strong></td>
+                    <td>3.0 GHz</td>
+                    <td>6 Núcleos</td>
+                    <td>12 Threads</td>
+                </tr>
+            </table>
+            <p style="margin-top: 2rem; color: var(--accent-2); font-weight: bold;">Pergunta: Qual destes é o melhor para alguém que abre 15 janelas pesadas ao mesmo tempo e faz muito Multitarefa? Porquê?</p>
+        </div>
+
+        <!-- Slide 19: Resposta Prática 2 -->
+        <div class="slide">
+            <h2>Resposta do Consultor:</h2>
+            <p>O <strong>Processador B</strong> é muito superior para essa tarefa.</p>
+            <div class="card" style="margin-top: 2rem; border-left: 5px solid var(--accent-2);">
+                <p>Apesar de o Processador A ter uma Frequência maior (4.0 GHz), ele tem apenas 2 Núcleos. Ele vai engasgar-se a tentar fazer muitas coisas.</p>
+                <p style="margin-top: 1rem;">O Processador B tem <strong>6 Núcleos e 12 Threads</strong>. Ele consegue dividir o trabalho pesado entre os seus "6 operários virtuais", garantindo que a máquina flui maravilhosamente bem com 15 abas abertas.</p>
+            </div>
+        </div>
+
+        <!-- Slide 20: Quiz 1 -->
+        <div class="slide">
+            <h2>Revisão Rápida (1/3)</h2>
+            <p>Pense e responda em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-1">Como se chama o local da Placa-mãe onde encaixamos o Processador?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Slot de Expansão.</li>
+                    <li>B) Socket (Berço).</li>
+                    <li>C) Chipset.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 21: Quiz 2 -->
+        <div class="slide">
+            <h2>Revisão Rápida (2/3)</h2>
+            <p>Pense e responda em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-2">O que significa "GHz" no mundo dos processadores?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) O tamanho físico da placa.</li>
+                    <li>B) A quantidade de energia que ele gasta.</li>
+                    <li>C) A frequência (Velocidade / Bilhões de ciclos por segundo).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 22: Quiz 3 -->
+        <div class="slide">
+            <h2>Revisão Rápida (3/3)</h2>
+            <p>Pense e responda em voz alta:</p>
+            <div class="card center" style="margin-top: 2rem;">
+                <h3 class="highlight-3">Eu posso comprar qualquer placa-mãe moderna para colocar um processador moderno?</h3>
+                <ul style="display: inline-block; text-align: left; margin-top: 1rem;">
+                    <li>A) Sim, se for moderno ele encaixa.</li>
+                    <li>B) Não, é obrigatório verificar se o Socket e a Plataforma são estritamente compatíveis.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 23: O que vem a seguir -->
+        <div class="slide">
+            <h2>O Que Vem A Seguir?</h2>
+            <p>Hoje desvendámos as duas fundações da máquina: O Terreno que liga tudo e o Cérebro que executa o trabalho.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(250, 204, 21, 0.1);">
+                <h3 style="color: var(--warning);">Na Próxima Aula...</h3>
+                <p style="margin-top: 1rem;">Vamos dar espaço e memória a esse cérebro! Vamos descobrir a fundo o que é a Memória RAM e qual é a diferença colossal entre os antigos Discos Rígidos (HD) e as unidades ultrarrápidas (SSD).</p>
+            </div>
+        </div>
+
+        <!-- Slide 24: Encerramento -->
+        <div class="slide">
+            <h1 class="center">Fim da Aula 13</h1>
+            <p class="center" style="font-size: 2.2rem; color: #fff; margin-top: 2rem;">Um operador experiente sabe que o coração de um computador potente começa sempre na união perfeita entre a Placa-Mãe e o Processador.</p>
+            <p class="center highlight-2" style="margin-top: 3rem;">Recebam o material impresso. Brilhante Aula!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 24</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>

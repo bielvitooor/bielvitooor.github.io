@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 11 — O Mundo Físico (Hardware)",
+  "descricao": "A diferença entre hardware e software, os periféricos do dia a dia, a analogia do corpo e da mente e os quatro pilares do computador: entrada, processamento, saída e armazenamento.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 11"
+    },
+    "resumo-aula-11.pdf": {
+      "titulo": "Resumo da aula 11"
+    }
+  }
+}
