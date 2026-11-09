@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 14 — Memória RAM, Armazenamento e Fonte",
+  "descricao": "A memória RAM como mesa de trabalho, a diferença entre HD e SSD, a função da fonte de alimentação e o papel das placas de expansão — fechando o hardware interno antes de partir para os periféricos.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 14"
+    },
+    "resumo-aula-14.pdf": {
+      "titulo": "Resumo da aula 14"
+    }
+  }
+}
