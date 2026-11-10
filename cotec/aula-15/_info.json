@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 15 — Dispositivos Periféricos",
+  "descricao": "Periféricos de entrada, saída e híbridos: teclado, mouse, monitores, impressoras, touchscreen, pen drives e como classificar cada equipamento pelo sentido da informação, com foco no diagnóstico de problemas do dia a dia.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 15"
+    },
+    "resumo-aula-15.pdf": {
+      "titulo": "Resumo da aula 15"
+    }
+  }
+}
