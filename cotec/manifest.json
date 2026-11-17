@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "gerado_em": "2026-11-17T21:17:06+00:00",
+  "gerado_em": "2026-11-17T21:39:33+00:00",
   "raiz": "cotec",
-  "commit": "a73db1a",
+  "commit": "22c2b75",
   "total_arquivos": 37,
   "total_pastas": 20,
   "pastas": [
@@ -282,9 +282,9 @@
       "ordem": null,
       "destaque": true,
       "qtd_arquivos": 1,
-      "bytes": 166805,
+      "bytes": 167899,
       "publicado_em": "2026-11-17T18:16:27-03:00",
-      "atualizado_em": "2026-11-17T18:16:27-03:00"
+      "atualizado_em": "2026-11-17T18:39:14-03:00"
     }
   ],
   "arquivos": [
@@ -293,9 +293,9 @@
       "nome": "index.html",
       "pasta": "simulador-3d",
       "ext": "html",
-      "bytes": 166805,
+      "bytes": 167899,
       "publicado_em": "2026-11-17T18:16:27-03:00",
-      "atualizado_em": "2026-11-17T18:16:27-03:00",
+      "atualizado_em": "2026-11-17T18:39:14-03:00",
       "versionado": true,
       "titulo": "Abrir simulador 3D",
       "descricao": null
