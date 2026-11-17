@@ -178,7 +178,7 @@
             <!-- Dica Rápida Discreta na Base do Viewport -->
             <div id="viewport-hint-bar" class="hidden sm:flex items-center gap-2 absolute bottom-3 left-3 z-10 px-3 py-1.5 rounded-full bg-white/85 backdrop-blur border border-slate-300/80 text-[10px] font-mono-tech text-slate-700 pointer-events-none shadow-sm">
                 <span class="w-2 h-2 rounded-full bg-sky-500"></span>
-                <span>Duplo-clique em qualquer peça para desplugar/plugar • Para remover a CPU, remova primeiro o Cooler Torre</span>
+                <span>Role para dar zoom no ponto do mouse • Arraste para girar • Duplo-clique para acoplar/remover</span>
             </div>
 
             <!-- HUD do Modo Desafio -->
@@ -1332,7 +1332,7 @@
         let targetGhostMesh = null;
 
         const CAMERA_PRESETS = {
-            overview: { pos: new THREE.Vector3(18, 66, 102), target: new THREE.Vector3(14, 16, -4) },
+            overview: { pos: new THREE.Vector3(-12, 66, 92), target: new THREE.Vector3(-34, 24, -10) },
             interior: { pos: new THREE.Vector3(-22, 32, 42), target: new THREE.Vector3(-36, 26, -10) },
             cpu_nvme: { pos: new THREE.Vector3(-34, 34, 18), target: new THREE.Vector3(-44, 32, -14) },
             pci_buses: { pos: new THREE.Vector3(-28, 28, 36), target: new THREE.Vector3(-42, 26, -12) },
@@ -1340,6 +1340,20 @@
         };
         let camTweenPos = null;
         let camTweenTarget = null;
+        let activePreset = 'overview';
+        let userMovedCamera = false;
+
+        function getCameraPreset(key) {
+            const preset = CAMERA_PRESETS[key];
+            if (!preset) return preset;
+            if (key === 'overview' && camera && camera.aspect < 0.72) {
+                return {
+                    pos: new THREE.Vector3(-4, 82, 131),
+                    target: preset.target.clone()
+                };
+            }
+            return preset;
+        }
 
         const MAT = {};
 
@@ -1430,8 +1444,8 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xdbe4ee);
 
-            camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 1, 600);
-            camera.position.copy(CAMERA_PRESETS.overview.pos);
+            camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 1500);
+            camera.position.copy(getCameraPreset('overview').pos);
 
             renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -1447,12 +1461,17 @@
             scene.environmentIntensity = 0.75;
 
             controls = new OrbitControls(camera, renderer.domElement);
-            controls.target.copy(CAMERA_PRESETS.overview.target);
+            controls.target.copy(getCameraPreset('overview').target);
             controls.enableDamping = true;
             controls.dampingFactor = 0.07;
-            controls.minDistance = 14;
-            controls.maxDistance = 240;
+            controls.minDistance = 30;
+            controls.maxDistance = 260;
             controls.maxPolarAngle = Math.PI * 0.485;
+            controls.zoomSpeed = 1.4;
+            controls.zoomToCursor = true;
+            controls.screenSpacePanning = true;
+            controls.panSpeed = 1.15;
+            controls.addEventListener('start', () => { userMovedCamera = true; });
 
             raycaster = new THREE.Raycaster();
             pointer = new THREE.Vector2();
@@ -3197,8 +3216,10 @@
         }
 
         function moveCameraPreset(key) {
-            const p = CAMERA_PRESETS[key];
+            const p = getCameraPreset(key);
             if (!p) return;
+            activePreset = key;
+            userMovedCamera = false;
             camTweenPos = p.pos.clone();
             camTweenTarget = p.target.clone();
         }
@@ -3283,10 +3304,17 @@
 
         function onWindowResize() {
             const container = document.getElementById('viewport-3d');
-            if (!container || !renderer || !camera) return;
+            if (!container || !renderer || !camera || !controls) return;
             camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(container.clientWidth, container.clientHeight);
+
+            if (activePreset === 'overview' && !userMovedCamera) {
+                const preset = getCameraPreset('overview');
+                camera.position.copy(preset.pos);
+                controls.target.copy(preset.target);
+                controls.update();
+            }
         }
 
         const clock = new THREE.Clock();
