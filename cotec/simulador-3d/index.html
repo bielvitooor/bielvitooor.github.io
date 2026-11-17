@@ -1,0 +1,3403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Hardware Lab 3D — Montagem &amp; Barramentos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #dbe4ee;
+            color: #0f172a;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .font-mono-tech {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(226, 232, 240, 0.75);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            outline: none;
+            touch-action: none;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-color: rgba(148, 163, 184, 0.45);
+        }
+        #hover-pill {
+            transition: opacity 0.1s ease;
+        }
+        .bus-callout-badge {
+            transition: transform 0.12s ease, background-color 0.15s ease, border-color 0.15s ease;
+        }
+        .bus-callout-badge:hover {
+            transform: scale(1.04);
+            z-index: 35;
+        }
+    </style>
+
+    <!-- Importmap para Three.js r160 ES Modules -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body class="h-screen w-screen flex flex-col relative">
+
+    <!-- CABEÇALHO SUPERIOR -->
+    <header class="glass-panel z-30 px-3 lg:px-4 py-2 flex flex-wrap items-center justify-between gap-2 border-b shadow-sm">
+        <!-- Identidade -->
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center shadow-sm shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xs sm:text-sm font-bold text-slate-900 leading-none">
+                    PC Hardware Lab <span class="text-sky-600 font-mono-tech">3D</span>
+                </h1>
+                <p class="text-[10px] text-slate-500 font-mono-tech mt-0.5 hidden 2xl:block">
+                    MONTAGEM INTERATIVA • SOCKET LGA1700 • BARRAMENTOS PCI/PCIe
+                </p>
+            </div>
+        </div>
+
+        <!-- Seletor de Modo + Botão de Destaque Modo Barramentos (10) -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <div class="flex bg-slate-200/90 p-0.5 rounded-lg border border-slate-300">
+                <button id="btn-mode-free" class="px-2.5 py-1 rounded-md text-[11px] font-semibold transition bg-sky-600 text-white shadow-sm">
+                    Exploração Livre
+                </button>
+                <button id="btn-mode-challenge" class="px-2.5 py-1 rounded-md text-[11px] font-semibold transition text-slate-600 hover:text-slate-900">
+                    Modo Desafio
+                </button>
+            </div>
+
+            <button id="btn-bus-overlay" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] shadow-sm border border-amber-600/40 transition">
+                <span class="w-2 h-2 rounded-full bg-slate-950"></span>
+                <span>Modo Barramentos (10)</span>
+            </button>
+        </div>
+
+        <!-- Presets de Câmera -->
+        <div class="hidden xl:flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-lg border border-slate-300">
+            <button data-cam="overview" class="cam-btn px-2 py-1 rounded-md text-[11px] font-medium text-slate-700 hover:bg-white transition">Visão Geral</button>
+            <button data-cam="interior" class="cam-btn px-2 py-1 rounded-md text-[11px] font-medium text-slate-700 hover:bg-white transition">Interior Gabinete</button>
+            <button data-cam="cpu_nvme" class="cam-btn px-2 py-1 rounded-md text-[11px] font-semibold text-sky-800 bg-sky-50/90 hover:bg-white transition">CPU &amp; NVMe</button>
+            <button data-cam="pci_buses" class="cam-btn px-2 py-1 rounded-md text-[11px] font-medium text-slate-700 hover:bg-white transition">Barramentos PCI/PCIe</button>
+            <button data-cam="bench" class="cam-btn px-2 py-1 rounded-md text-[11px] font-medium text-slate-700 hover:bg-white transition">Bancada ESD</button>
+        </div>
+
+        <!-- Controles de Simulação -->
+        <div class="flex items-center gap-1.5">
+            <div id="challenge-score-box" class="hidden px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-300 text-[11px] font-mono-tech font-bold text-emerald-700">
+                PONTOS: <span id="score-value">0</span>
+            </div>
+
+            <button id="btn-exploded" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-[11px] font-medium text-slate-700 transition">
+                Visão Explodida
+            </button>
+
+            <button id="btn-power" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-[11px] font-semibold text-white shadow-sm transition">
+                <span id="power-led" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span id="power-label">Ligar PC (POST)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="flex-1 relative flex overflow-hidden">
+
+        <!-- PAINEL ESQUERDO: LISTA DOS 16 COMPONENTES -->
+        <aside id="left-drawer" class="w-72 glass-panel border-r flex flex-col z-20 absolute lg:relative inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 shadow-lg lg:shadow-none">
+            <div class="px-3 py-2.5 border-b border-slate-300/80 flex items-center justify-between bg-slate-100/80">
+                <span class="text-[11px] font-mono-tech uppercase tracking-wider font-bold text-slate-700">
+                    Peças (<span id="count-installed">15</span>/16)
+                </span>
+                <div class="flex items-center gap-1">
+                    <button id="btn-strip-all" class="px-2 py-1 rounded bg-rose-100 hover:bg-rose-200 border border-rose-300 text-[10px] font-semibold text-rose-800 transition">
+                        Desmontar Tudo
+                    </button>
+                    <button id="btn-build-all" class="px-2 py-1 rounded bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 text-[10px] font-semibold text-emerald-800 transition">
+                        Montar Tudo
+                    </button>
+                    <button id="btn-close-left" class="lg:hidden ml-1 text-slate-500 hover:text-slate-900 text-xs font-bold px-1.5 py-0.5 rounded bg-slate-200">X</button>
+                </div>
+            </div>
+
+            <div id="components-list" class="flex-1 overflow-y-auto p-2.5 space-y-3">
+                <!-- Preenchido via JS -->
+            </div>
+        </aside>
+
+        <!-- VIEWPORT 3D CENTRAL -->
+        <div id="viewport-3d" class="flex-1 h-full relative bg-[#dbe4ee] overflow-hidden">
+
+            <!-- CAMADA DE BADGES DO MODO BARRAMENTOS (10) — DUAS COLUNAS LIMPAS SEM SOBREPOSIÇÃO -->
+            <div id="bus-callouts-layer" class="hidden absolute inset-0 pointer-events-none z-20 overflow-hidden">
+                <!-- Badges gerados dinamicamente via JS e alinhados com as linhas-guia 3D -->
+            </div>
+
+            <!-- PILL ÚNICO DINÂMICO NO HOVER (MODO NORMAL) -->
+            <div id="hover-pill" class="pointer-events-none opacity-0 fixed z-40 px-3.5 py-2 rounded-full bg-slate-900/95 text-white shadow-2xl border border-slate-700/90 flex items-center gap-2.5 max-w-sm">
+                <span id="hover-pill-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono-tech font-bold uppercase tracking-wider bg-sky-400 text-slate-950 shrink-0">
+                    HARDWARE
+                </span>
+                <div class="min-w-0">
+                    <div id="hover-pill-title" class="text-xs font-bold leading-tight truncate text-white">Placa-Mãe ATX</div>
+                    <div id="hover-pill-sub" class="text-[10px] font-mono-tech text-slate-300 truncate">Clique para detalhes • Duplo-clique para acoplar</div>
+                </div>
+            </div>
+
+            <!-- Dica Rápida Discreta na Base do Viewport -->
+            <div id="viewport-hint-bar" class="hidden sm:flex items-center gap-2 absolute bottom-3 left-3 z-10 px-3 py-1.5 rounded-full bg-white/85 backdrop-blur border border-slate-300/80 text-[10px] font-mono-tech text-slate-700 pointer-events-none shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                <span>Duplo-clique em qualquer peça para desplugar/plugar • Para remover a CPU, remova primeiro o Cooler Torre</span>
+            </div>
+
+            <!-- HUD do Modo Desafio -->
+            <div id="challenge-hud" class="hidden absolute top-3 left-3 right-3 md:right-auto md:w-96 z-20 glass-panel rounded-xl p-3.5 border-2 border-sky-500 shadow-xl">
+                <div class="flex items-center justify-between text-[10px] font-mono-tech">
+                    <span class="text-sky-700 font-bold uppercase tracking-wider">Desafio de Montagem</span>
+                    <span id="challenge-counter" class="text-slate-600 font-semibold">Etapa 1 / 16</span>
+                </div>
+                <h2 id="challenge-step-title" class="text-xs sm:text-sm font-bold text-slate-900 mt-1">Instale a Fonte ATX 850W</h2>
+                <p id="challenge-step-desc" class="text-[11px] text-slate-700 mt-1 leading-relaxed">
+                    Clique ou dê duplo-clique na Fonte sobre o tapete anti-estático.
+                </p>
+                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-2.5 border border-slate-300">
+                    <div id="challenge-bar" class="h-full bg-sky-600 transition-all duration-300" style="width: 6%"></div>
+                </div>
+            </div>
+
+            <!-- Notificação Toast -->
+            <div id="system-toast" class="pointer-events-none opacity-0 transition-opacity duration-200 absolute bottom-14 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-xl bg-slate-900/95 text-white text-xs font-medium shadow-2xl flex items-center gap-2.5 max-w-lg border border-slate-700">
+                <span id="toast-dot" class="w-2.5 h-2.5 rounded-full bg-sky-400 shrink-0"></span>
+                <span id="toast-text">Mensagem do Sistema</span>
+            </div>
+
+            <!-- Barra Mobile / Tablet Inferior -->
+            <div class="lg:hidden absolute bottom-3 left-3 right-3 z-20 flex items-center justify-between gap-2 pointer-events-none">
+                <button id="btn-open-left" class="pointer-events-auto px-3 py-2 rounded-lg bg-white/95 border border-slate-300 text-xs font-semibold text-slate-800 shadow-md">
+                    Peças (16)
+                </button>
+
+                <div class="xl:hidden pointer-events-auto flex items-center gap-1 bg-white/95 p-1 rounded-lg border border-slate-300 shadow-md overflow-x-auto">
+                    <button data-cam="overview" class="cam-btn px-2 py-1 rounded text-[10px] font-semibold text-slate-700">Geral</button>
+                    <button data-cam="cpu_nvme" class="cam-btn px-2 py-1 rounded text-[10px] font-semibold text-sky-700">CPU/NVMe</button>
+                    <button data-cam="pci_buses" class="cam-btn px-2 py-1 rounded text-[10px] font-semibold text-amber-700">PCI/PCIe</button>
+                    <button data-cam="bench" class="cam-btn px-2 py-1 rounded text-[10px] font-semibold text-slate-700">Bancada</button>
+                </div>
+
+                <button id="btn-open-right" class="pointer-events-auto px-3 py-2 rounded-lg bg-sky-600 text-xs font-semibold text-white shadow-md">
+                    Inspetor
+                </button>
+            </div>
+        </div>
+
+        <!-- PAINEL DIREITO: INSPETOR TÉCNICO & BARRAMENTOS DA PLACA-MÃE -->
+        <aside id="right-drawer" class="w-full sm:w-80 xl:w-96 glass-panel border-l flex flex-col z-20 absolute lg:relative inset-y-0 right-0 transform translate-x-full lg:translate-x-0 transition-transform duration-200 shadow-lg lg:shadow-none">
+            <!-- Cabeçalho com Abas -->
+            <div class="px-3 py-2 border-b border-slate-300/80 flex items-center justify-between gap-2 bg-slate-100/80">
+                <div class="flex bg-slate-200/90 p-0.5 rounded-lg border border-slate-300 flex-1">
+                    <button id="tab-inspector" class="flex-1 py-1 px-2 rounded-md text-[11px] font-bold transition bg-white text-sky-700 shadow-sm">
+                        Inspetor Técnico
+                    </button>
+                    <button id="tab-buses" class="flex-1 py-1 px-2 rounded-md text-[11px] font-bold transition text-slate-600 hover:text-slate-900">
+                        Barramentos (10)
+                    </button>
+                </div>
+                <button id="btn-close-right" class="lg:hidden text-slate-500 hover:text-slate-900 text-xs font-bold px-2 py-1 rounded bg-slate-200">X</button>
+            </div>
+
+            <!-- ABA 1: INSPETOR DETALHADO -->
+            <div id="view-inspector" class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+                <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between gap-2">
+                        <span id="insp-category" class="text-[10px] font-mono-tech uppercase tracking-wider font-semibold text-slate-500">Categoria</span>
+                        <span id="insp-state-pill" class="px-2 py-0.5 rounded-md text-[10px] font-mono-tech font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            INSTALADO NO GABINETE
+                        </span>
+                    </div>
+                    <h2 id="insp-title" class="text-sm sm:text-base font-bold text-slate-900 mt-1">Placa-Mãe ATX Z790</h2>
+                    <p id="insp-subtitle" class="text-[11px] font-mono-tech text-slate-500 mt-0.5">PCB Verde Esmeralda • Socket LGA 1700</p>
+
+                    <!-- Botão Principal de Ação Inteligente -->
+                    <button id="btn-toggle-part" class="mt-3 w-full py-2.5 px-3 rounded-lg text-xs font-bold transition bg-rose-600 hover:bg-rose-700 text-white shadow-sm">
+                        Remover para Bancada
+                    </button>
+                </div>
+
+                <!-- Especificações de Barramento e Largura de Banda -->
+                <div class="space-y-2">
+                    <div class="text-[10px] font-mono-tech uppercase tracking-wider text-slate-500 font-bold">
+                        Barramento, Topologia &amp; Protocolo
+                    </div>
+
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                        <div class="text-[10px] text-slate-500">Interface Física / Barramento</div>
+                        <div id="insp-bus" class="text-xs font-mono-tech text-sky-700 font-bold mt-0.5">PCI Express 5.0 x16</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                            <div class="text-[10px] text-slate-500">Largura de Banda</div>
+                            <div id="insp-bandwidth" class="text-[11px] font-mono-tech text-emerald-700 font-bold mt-0.5">64 GB/s</div>
+                        </div>
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                            <div class="text-[10px] text-slate-500">Topologia / Energia</div>
+                            <div id="insp-power" class="text-[11px] font-mono-tech text-amber-700 font-bold mt-0.5">Serial Ponto-a-Ponto</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                        <div id="insp-deps-label" class="text-[10px] text-slate-500">Pré-Requisitos de Acoplamento</div>
+                        <div id="insp-deps" class="text-[11px] font-mono-tech text-slate-800 font-medium mt-0.5">Fixação direta no gabinete</div>
+                    </div>
+                </div>
+
+                <!-- Explicação Técnica -->
+                <div class="space-y-1.5">
+                    <div class="text-[10px] font-mono-tech uppercase tracking-wider text-slate-500 font-bold">
+                        Funcionalidade &amp; Arquitetura
+                    </div>
+                    <p id="insp-arch" class="text-xs text-slate-700 leading-relaxed bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                        Explicação técnica detalhada.
+                    </p>
+                </div>
+
+                <!-- Diagnóstico POST -->
+                <div class="bg-slate-900 text-slate-100 rounded-xl p-3 border border-slate-700 space-y-1.5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-mono-tech uppercase tracking-wider text-slate-400 font-bold">Diagnóstico POST / UEFI</span>
+                        <span id="post-code-badge" class="text-[10px] font-mono-tech text-sky-400 font-bold">STANDBY</span>
+                    </div>
+                    <p id="post-diagnostic-msg" class="text-[11px] font-mono-tech text-slate-300 leading-snug">
+                        Clique em "Ligar PC (POST)" para validar energia e todos os barramentos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- ABA 2: CATÁLOGO DOS 10 BARRAMENTOS DA PLACA-MÃE -->
+            <div id="view-buses" class="hidden flex-1 overflow-y-auto p-3.5 space-y-2.5">
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-950">
+                    <div class="font-bold text-amber-900 flex items-center justify-between">
+                        <span>Arquitetura de Barramentos ATX</span>
+                        <span class="text-[10px] font-mono-tech bg-amber-200 px-1.5 py-0.5 rounded font-bold">10 INTERFACES</span>
+                    </div>
+                    <p class="text-[11px] text-amber-900/90 mt-1 leading-snug">
+                        Ative <strong>"Modo Barramentos (10)"</strong> no topo ou clique em qualquer item abaixo para visualizar as linhas-guia 3D e comparar larguras de banda.
+                    </p>
+                </div>
+
+                <div id="buses-list-container" class="space-y-2">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- SCRIPT PRINCIPAL THREE.JS ES MODULE -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+        /**
+         * =========================================================================
+         * 1. CATÁLOGO DOS 16 COMPONENTES DE HARDWARE (1 UNIDADE = 1 CM)
+         * =========================================================================
+         */
+        const CATEGORIES = [
+            { id: 'chassis_power', label: 'Gabinete & Energia' },
+            { id: 'core_compute', label: 'Placa-Mãe, CPU & Memória' },
+            { id: 'expansion_storage', label: 'Vídeo & Armazenamento' },
+            { id: 'cabling_buses', label: 'Cabos & Barramentos' }
+        ];
+
+        const HARDWARE_CATALOG = [
+            {
+                id: 'psu',
+                category: 'chassis_power',
+                name: 'Fonte ATX 850W 80+ Gold Modular',
+                subtitle: 'Chassi Grafite • Trilhos DC Regulados • Conectores Coloridos',
+                bus: 'ATX12V v3.0 / Trilhos +12V (70.8A), +5V, +3.3V, +5VSB',
+                bandwidth: '850W Contínuos (Eficiência 92%)',
+                power: '100-240V AC -> DC Regulado',
+                requires: [],
+                installedLocalPos: { x: -14.5, y: 6.5, z: -1.2 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 12.0, y: 4.6, z: -34.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 16 },
+                arch: 'Converte corrente alternada (AC) da rede elétrica em corrente contínua estabilizada (DC). Possui saídas modulares codificadas: Preto (ATX 24-pin), Azul (CPU EPS 8-pin), Vermelho (GPU PCIe 12VHPWR) e Amarelo (SATA/Periféricos).',
+                guide: 'Instale a Fonte ATX 850W no compartimento inferior traseiro do gabinete.'
+            },
+            {
+                id: 'mobo',
+                category: 'core_compute',
+                name: 'Placa-Mãe ATX Z790 Pro',
+                subtitle: 'PCB Verde Esmeralda • VRM 14+1+1 • PCIe 5.0 + PCI Legado',
+                bus: 'DMI 4.0 x8 / PCIe 5.0, PCIe 4.0, PCI 32-bit, DDR5, M.2, SATA III',
+                bandwidth: '15.75 GB/s (Link CPU <-> Chipset Z790)',
+                power: 'ATX 24-Pinos + EPS 12V 8-Pinos',
+                requires: [],
+                installedLocalPos: { x: -8.5, y: 29.0, z: -6.8 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 17.0, y: 0.45, z: -10.0 },
+                benchWorldRot: { x: -Math.PI / 2, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 6 },
+                arch: 'Placa de circuito impresso multicamadas que interconecta todos os barramentos do PC. Suas trilhas de cobre douradas ligam diretamente o Socket LGA1700 aos slots DDR5, PCIEX16_1 e M2_1, enquanto o Chipset Z790 gerencia PCIe x4, PCI legado, SATA III e USB.',
+                guide: 'Fixe a Placa-Mãe ATX Verde Esmeralda sobre os 9 espaçadores dourados do gabinete.'
+            },
+            {
+                id: 'cpu',
+                category: 'core_compute',
+                name: 'Processador Core i9 5.6 GHz',
+                subtitle: 'IHS Níquel Prateado • Socket LGA 1700 • Contatos Ouro',
+                bus: 'Socket LGA 1700 (IMC DDR5 + 20 Lanes PCIe 5.0/4.0)',
+                bandwidth: '128 GB/s Agregado (RAM + PCIe 5.0 + DMI)',
+                power: '125W TDP Base / 253W Turbo',
+                requires: ['mobo'],
+                // Socket LGA1700 posicionado em moboLocal (-3.5, +7.8) -> case (-12.0, 36.8)
+                installedLocalPos: { x: -12.0, y: 36.8, z: -6.38 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 10.0, y: 0.55, z: 14.0 },
+                benchWorldRot: { x: -Math.PI / 2, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 12 },
+                arch: 'Unidade Central de Processamento com Controlador Integrado de Memória (IMC) e Controlador Raiz PCI Express embutidos no silício. Comunica-se com a placa-mãe através de 1.700 contatos banhados a ouro.',
+                guide: 'Encaixe o Processador (CPU) no Socket LGA 1700 da placa-mãe.'
+            },
+            {
+                id: 'cooler',
+                category: 'core_compute',
+                name: 'Cooler Torre 4-Heatpipes + Fan 120mm',
+                subtitle: 'Base & Heatpipes Cobre • Aletas Alumínio Prata',
+                bus: 'Header CPU_FAN 4-Pinos PWM (25 kHz)',
+                bandwidth: '74.5 CFM Fluxo de Ar @ 1900 RPM',
+                power: '12V DC / 2.8W PWM',
+                requires: ['mobo', 'cpu'],
+                // Acoplado exatamente sobre a CPU (Y = 36.8, altura 8.4 cm -> borda inferior em moboLocal Y = +3.6, deixando canal aberto para M.2 NVMe!)
+                installedLocalPos: { x: -12.0, y: 36.8, z: -6.16 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 32.0, y: 0.3, z: -34.0 },
+                benchWorldRot: { x: -Math.PI / 2, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 22 },
+                arch: 'Dissipador ativo composto por base de cobre polido acoplada ao IHS da CPU, 4 heatpipes de cobre em U e aletas de alumínio prata. Deixa livre tanto os módulos DDR5 à direita quanto o canal do SSD M.2 NVMe logo abaixo.',
+                guide: 'Acople o Cooler Torre de Cobre/Alumínio diretamente sobre o IHS da CPU.'
+            },
+            {
+                id: 'ram',
+                category: 'core_compute',
+                name: 'Memória RAM 32GB DDR5-6000 (2x16GB)',
+                subtitle: 'Dissipador Vermelho Metálico • Dual-Channel A2 & B2',
+                bus: 'DIMM 288-Pinos (Dual-Channel 2x 64-bit)',
+                bandwidth: '89.6 GB/s a 96.0 GB/s',
+                power: '1.35V VDD (PMIC Integrado)',
+                requires: ['mobo'],
+                installedLocalPos: { x: -3.3, y: 36.2, z: -5.6 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 26.0, y: 0.55, z: 14.0 },
+                benchWorldRot: { x: -Math.PI / 2, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 16 },
+                arch: 'Módulos DDR5 instalados nos slots DDR5_A2 e DDR5_B2 para habilitar dois canais independentes de 64 bits (Dual-Channel), dobrando a taxa de transferência entre a memória principal e a CPU.',
+                guide: 'Instale os dois pentes de Memória RAM DDR5 Vermelha nos slots A2 e B2.'
+            },
+            {
+                id: 'ssd_m2',
+                category: 'expansion_storage',
+                name: 'SSD M.2 2280 NVMe 2TB',
+                subtitle: 'Dissipador Azul/Prata • Conector M-Key Dourado',
+                bus: 'M.2 Key-M (PCI Express 4.0 x4 Direto CPU)',
+                bandwidth: '7.88 GB/s (7.450 MB/s Reais)',
+                power: '3.3V DC / 6.5W via Slot M2_1',
+                requires: ['mobo'],
+                // Posicionado no canal aberto em moboLocal Y = +2.0 (case Y = 31.0), 100% visível entre Cooler (Y=+3.6) e GPU (Y=-0.3)!
+                installedLocalPos: { x: -10.7, y: 31.0, z: -6.28 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 44.0, y: 0.5, z: 14.0 },
+                benchWorldRot: { x: -Math.PI / 2, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 14 },
+                arch: 'Unidade SSD ultrarrápida instalada no slot M2_1 no corredor aberto entre o Cooler da CPU e a Placa de Vídeo, conectada diretamente a 4 pistas PCIe 4.0 do processador via protocolo NVMe.',
+                guide: 'Encaixe o SSD M.2 NVMe no slot M2_1 entre o Cooler da CPU e o slot da GPU.'
+            },
+            {
+                id: 'gpu',
+                category: 'expansion_storage',
+                name: 'Placa de Vídeo Triple-Fan 16GB',
+                subtitle: 'Prata Titânio & Grafite • Backplate Escovado',
+                bus: 'PCI Express 5.0 x16 (Slot Blindado PCIEX16_1)',
+                bandwidth: '64.0 GB/s (Slot PCIe) + 736 GB/s (VRAM)',
+                power: '285W TBP (75W Slot + 12VHPWR)',
+                requires: ['mobo'],
+                // Slot PCIEX16_1 em moboLocal Y = -2.0 (case Y = 27.0) -> topo do backplate em moboLocal Y = -0.3 (deixando M.2 NVMe livre!)
+                installedLocalPos: { x: -8.2, y: 27.0, z: -6.3 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 49.0, y: 6.8, z: -10.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 20 },
+                arch: 'Acelerador gráfico encaixado no slot blindado PCIEX16_1, mantendo o SSD M.2 NVMe visível acima do backplate e os barramentos PCIe 4.0 x4 e PCI Legado 32-bit expostos logo abaixo.',
+                guide: 'Encaixe a Placa de Vídeo Prata Titânio no slot principal PCI Express 5.0 x16.'
+            },
+            {
+                id: 'ssd_sata',
+                category: 'expansion_storage',
+                name: 'SSD SATA III 2.5" 2TB',
+                subtitle: 'Carcaça Azul Cobalto • Suporte Interno Frontal',
+                bus: 'SATA III (6.0 Gbps) + Alimentação 15-Pinos',
+                bandwidth: '600 MB/s Interface (560 MB/s Reais)',
+                power: '+5V DC / 3.2W Ativo',
+                requires: [],
+                installedLocalPos: { x: 12.5, y: 29.5, z: -7.1 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 67.0, y: 0.65, z: -34.0 },
+                benchWorldRot: { x: -Math.PI / 2, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 12 },
+                arch: 'Unidade de estado sólido de 2.5 polegadas fixada na bandeja frontal interna, comunicando-se com o chipset Z790 através do barramento serial SATA III.',
+                guide: 'Fixe o SSD SATA 2.5" Azul Cobalto no suporte frontal interno do gabinete.'
+            },
+            {
+                id: 'hdd_sata',
+                category: 'expansion_storage',
+                name: 'Disco Rígido HD SATA 3.5" 4TB',
+                subtitle: 'Aço Escovado Prata • Baia Inferior Frontal',
+                bus: 'SATA III (6.0 Gbps) + Alimentação +12V/+5V',
+                bandwidth: '210 MB/s Transferência Sequencial',
+                power: '+12V Motor / +5V Lógica (6.8W)',
+                requires: [],
+                installedLocalPos: { x: 15.0, y: 5.0, z: -1.2 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 50.0, y: 1.6, z: -34.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 16 },
+                arch: 'Disco rígido magnético de 3.5 polegadas instalado na gaiola inferior frontal, visível através da abertura frontal da cobertura da fonte.',
+                guide: 'Instale o HD SATA 3.5" Prata na baia inferior frontal do gabinete.'
+            },
+            {
+                id: 'case_fans',
+                category: 'chassis_power',
+                name: 'Kit 4 Ventoinhas 120mm PWM',
+                subtitle: '3x Admissão Frontal + 1x Exaustão Traseira',
+                bus: 'Headers SYS_FAN 4-Pinos PWM',
+                bandwidth: '3x 65 CFM Admissão / 68 CFM Exaustão',
+                power: '12V DC PWM',
+                requires: [],
+                installedLocalPos: { x: 0, y: 0, z: 0 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 73.0, y: 1.55, z: -8.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 14 },
+                arch: 'Mantém fluxo de ar contínuo frente-traseira (pressão positiva), trazendo ar frio pelo painel frontal mesh e expulsando o calor pelo painel traseiro.',
+                guide: 'Instale o conjunto de 4 ventoinhas PWM de 120mm no gabinete.'
+            },
+            {
+                id: 'cable_24pin',
+                category: 'cabling_buses',
+                name: 'Cabo ATX 24-Pinos (Placa-Mãe)',
+                subtitle: 'Malha Trançada Vermelho / Amarelo / Preto',
+                bus: 'ATX Main Power (+12V, +5V, +3.3V, +5VSB, PS_ON#)',
+                bandwidth: 'Até 168W Contínuos para PCB & Slots',
+                power: 'Fonte (Preto 24P) -> Placa-Mãe (ATX_PWR)',
+                requires: ['psu', 'mobo'],
+                installedLocalPos: { x: 0, y: 0, z: 0 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 10.0, y: 1.1, z: 32.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 10 },
+                arch: 'Alimenta os circuitos lógicos e barramentos da placa-mãe e conduz o sinal PS_ON# responsável por ligar a fonte quando o botão Power é acionado.',
+                guide: 'Conecte o Cabo ATX 24-Pinos entre a Fonte e a borda direita da Placa-Mãe.'
+            },
+            {
+                id: 'cable_eps',
+                category: 'cabling_buses',
+                name: 'Cabo CPU EPS 12V 8-Pinos',
+                subtitle: 'Malha Trançada Amarelo / Preto • Linha VRM',
+                bus: 'EPS12V 8-Pin (4x +12V / 4x GND)',
+                bandwidth: 'Até 336W Exclusivos para VRM da CPU',
+                power: 'Fonte (Azul CPU) -> Topo Placa-Mãe (CPU_PWR)',
+                requires: ['psu', 'mobo'],
+                installedLocalPos: { x: 0, y: 0, z: 0 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 27.0, y: 1.1, z: 32.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 10 },
+                arch: 'Fornece corrente +12V dedicada aos estágios reguladores de tensão (VRM) que alimentam os núcleos do processador.',
+                guide: 'Conecte o Cabo CPU EPS 8-Pinos no conector superior esquerdo da Placa-Mãe.'
+            },
+            {
+                id: 'cable_pcie',
+                category: 'cabling_buses',
+                name: 'Cabo GPU PCIe 12VHPWR (16-Pinos)',
+                subtitle: 'Malha Trançada Azul Ciano / Preto',
+                bus: 'PCIe Gen5 12+4 Pinos (Potência + Pinos Sense)',
+                bandwidth: 'Até 600W Contínuos para GPU',
+                power: 'Fonte (Vermelho PCIe) -> Placa de Vídeo',
+                requires: ['psu', 'gpu'],
+                installedLocalPos: { x: 0, y: 0, z: 0 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 44.0, y: 1.1, z: 32.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 14 },
+                arch: 'Entrega energia direta dos trilhos +12V da fonte aos VRMs da placa de vídeo, complementando os 75W fornecidos pelo barramento PCI Express x16.',
+                guide: 'Conecte o Cabo PCIe 12VHPWR Azul Ciano na Placa de Vídeo.'
+            },
+            {
+                id: 'cable_sata',
+                category: 'cabling_buses',
+                name: 'Cabo de Dados SATA III (6 Gbps)',
+                subtitle: 'Fita Plana Vermelho Carmesim • Trava Metálica',
+                bus: 'Serial ATA Rev 3.0 (Pares Diferenciais Tx/Rx)',
+                bandwidth: '6.0 Gbps (600 MB/s)',
+                power: 'Placa-Mãe (SATA6G_1) -> SSD SATA 2.5"',
+                requires: ['mobo', 'ssd_sata'],
+                installedLocalPos: { x: 0, y: 0, z: 0 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 61.0, y: 1.1, z: 32.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 10 },
+                arch: 'Interliga a controladora SATA do chipset Z790 da placa-mãe à interface de dados de 7 pinos do SSD de 2.5 polegadas.',
+                guide: 'Ligue o Cabo de Dados SATA III Vermelho entre a Placa-Mãe e o SSD 2.5".'
+            },
+            {
+                id: 'cable_front_io',
+                category: 'cabling_buses',
+                name: 'Cabos USB 3.0 Azul & Painel Frontal',
+                subtitle: 'Conector Azul 19-Pinos + Chicote F_PANEL',
+                bus: 'USB 3.2 Gen1 (5 Gbps) + Pinos PWR_SW / LED',
+                bandwidth: '5.0 Gbps Full-Duplex',
+                power: 'Painel Superior -> Placa-Mãe (USB3_19P)',
+                requires: ['mobo'],
+                installedLocalPos: { x: 0, y: 0, z: 0 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 78.0, y: 1.1, z: 32.0 },
+                benchWorldRot: { x: 0, y: 0, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 10 },
+                arch: 'Conecta o botão Power, os LEDs de status e as portas USB 3.0 superiores do gabinete aos controladores da placa-mãe.',
+                guide: 'Conecte o cabo USB 3.0 Azul e o chicote do painel frontal na placa-mãe.'
+            },
+            {
+                id: 'glass_panel',
+                category: 'chassis_power',
+                name: 'Tampa Lateral de Vidro Temperado',
+                subtitle: 'Vidro Transparente 4mm • Bordas Pretas • 4 Parafusos',
+                bus: 'Fechamento Lateral & Câmara Aerodinâmica',
+                bandwidth: 'Vedação de Pressão Positiva',
+                power: 'Passivo (Proteção Física e Acústica)',
+                requires: [],
+                installedLocalPos: { x: 0, y: 24.5, z: 11.6 },
+                installedLocalRot: { x: 0, y: 0, z: 0 },
+                benchWorldPos: { x: 86.0, y: 22.8, z: -24.0 },
+                benchWorldRot: { x: 0, y: Math.PI / 2, z: 0 },
+                explodeLocalOffset: { x: 0, y: 0, z: 24 },
+                arch: 'Fecha o lado esquerdo do gabinete ATX para canalizar o fluxo de ar frio das ventoinhas frontais até a exaustão traseira.',
+                guide: 'Finalize fechando o gabinete com a Tampa Lateral de Vidro Temperado.'
+            }
+        ];
+
+        /**
+         * =========================================================================
+         * 2. CATÁLOGO DOS 10 BARRAMENTOS DA PLACA-MÃE (COLUNAS ESQUERDA & DIREITA)
+         * =========================================================================
+         */
+        const MOTHERBOARD_BUSES = [
+            // --- COLUNA ESQUERDA (5 BARRAMENTOS: X = -16.5, Y espaçados a cada 5.5 cm) ---
+            {
+                id: 'bus_vrm',
+                num: '01',
+                col: 'left',
+                calloutLocalPos: { x: -16.5, y: 13.0, z: 1.5 },
+                name: 'Circuito VRM 14+1+1 Fases',
+                shortTag: 'VRM • DrMOS 90A & Chokes',
+                topology: 'Conversor Buck Multifásico DC-DC',
+                bandwidth: 'Até 90A/Fase (Regulação < 1mV)',
+                bandPercent: 76,
+                powerSpec: 'Converte +12V EPS em ~1.15V Vcore',
+                prereqText: 'Alimentado pelo cabo CPU EPS 12V 8-Pinos',
+                moboLocalPos: { x: -8.8, y: 9.0, z: 1.2 },
+                moboHitSize: { w: 4.4, h: 11.5, d: 2.5 },
+                arch: 'Módulo Regulador de Tensão (VRM) composto por controladores PWM, estágios DrMOS de 90A, bobinas de ferrite (R22) e capacitores sólidos. Rebaixa os +12V da fonte para a tensão exata exigida pelos núcleos da CPU.'
+            },
+            {
+                id: 'bus_socket_cpu',
+                num: '02',
+                col: 'left',
+                calloutLocalPos: { x: -16.5, y: 7.5, z: 1.5 },
+                name: 'Socket LGA 1700 & Barramento CPU',
+                shortTag: 'LGA 1700 • 1.700 Pinos Ouro',
+                topology: 'Matriz Land Grid Array + DMI 4.0',
+                bandwidth: '128 GB/s Agregado (RAM + PCIe)',
+                bandPercent: 98,
+                powerSpec: 'Pinos Vcore, GND, DDR5, PCIe & Clock',
+                prereqText: 'Interface mecânica e elétrica da CPU',
+                moboLocalPos: { x: -3.5, y: 7.8, z: 0.4 },
+                moboHitSize: { w: 4.8, h: 5.4, d: 0.9 },
+                arch: 'Soquete com 1.700 contatos elásticos banhados a ouro que pressionam os pads inferiores do processador, distribuindo energia de alta corrente, sinais de clock diferencial e pistas diretas para RAM, M.2 e GPU.'
+            },
+            {
+                id: 'bus_m2_nvme',
+                num: '03',
+                col: 'left',
+                calloutLocalPos: { x: -16.5, y: 2.0, z: 1.5 },
+                name: 'Barramento M.2 Key-M NVMe',
+                shortTag: 'M2_1 • PCIe 4.0 x4',
+                topology: 'Serial Ponto-a-Ponto (4 Lanes CPU)',
+                bandwidth: '7.88 GB/s (7.450 MB/s Reais)',
+                bandPercent: 32,
+                powerSpec: '3.3V DC Direto no Conector M-Key',
+                prereqText: '4 pistas PCIe exclusivas vindas direto da CPU',
+                moboLocalPos: { x: -2.2, y: 2.0, z: 0.45 },
+                moboHitSize: { w: 8.4, h: 2.3, d: 0.8 },
+                arch: 'Conector compacto M.2 Key-M posicionado no canal aberto entre a CPU e a GPU. Transporta 4 pistas PCI Express 4.0 diretamente para unidades SSD NVMe, eliminando o gargalo da interface SATA.'
+            },
+            {
+                id: 'bus_pcie_x16',
+                num: '04',
+                col: 'left',
+                calloutLocalPos: { x: -16.5, y: -3.5, z: 1.5 },
+                name: 'Barramento PCI Express 5.0 x16',
+                shortTag: 'PCIEX16_1 • Slot Blindado',
+                topology: 'Serial Ponto-a-Ponto (16 Lanes)',
+                bandwidth: '64.0 GB/s Bidirecional',
+                bandPercent: 100,
+                powerSpec: '75W via Slot +12V / +3.3V',
+                prereqText: '16 pistas diferenciais ligadas diretamente à CPU',
+                moboLocalPos: { x: -3.2, y: -2.0, z: 0.65 },
+                moboHitSize: { w: 12.6, h: 1.5, d: 1.5 },
+                arch: 'Barramento de expansão principal de altíssima velocidade blindado em aço inox para Placas de Vídeo (GPUs). Utiliza comunicação serial full-duplex com 16 pistas (lanes) independentes ligadas diretamente à CPU.'
+            },
+            {
+                id: 'bus_pci_legacy',
+                num: '05',
+                col: 'left',
+                calloutLocalPos: { x: -16.5, y: -9.0, z: 1.5 },
+                name: 'Barramento PCI Legado 32-bit',
+                shortTag: 'PCI_1 • Paralelo 33 MHz',
+                topology: 'Paralelo Compartilhado (32-bit)',
+                bandwidth: '133 MB/s Compartilhado',
+                bandPercent: 8,
+                powerSpec: 'Barramento 5V / 3.3V Clássico',
+                prereqText: 'Ponte PCIe-para-PCI no Chipset Z790',
+                moboLocalPos: { x: -4.2, y: -12.4, z: 0.65 },
+                moboHitSize: { w: 9.6, h: 1.4, d: 1.4 },
+                arch: 'Barramento paralelo clássico de 32 bits (slot marfim/creme com chanfro de tensão). Ao contrário do PCI Express (serial dedicado), todos os dispositivos no barramento PCI convencional compartilham os mesmos 133 MB/s e disputam acesso via arbitragem de sinal.'
+            },
+
+            // --- COLUNA DIREITA (5 BARRAMENTOS: X = +16.5, Y espaçados a cada 5.5 cm) ---
+            {
+                id: 'bus_ddr5',
+                num: '06',
+                col: 'right',
+                calloutLocalPos: { x: 16.5, y: 13.0, z: 1.5 },
+                name: 'Barramento Memória DDR5 Dual-Channel',
+                shortTag: 'DDR5_A1/A2/B1/B2 • 4 Slots',
+                topology: 'Paralelo Dual-Channel (2x 64-bit)',
+                bandwidth: '89.6 GB/s a 96.0 GB/s',
+                bandPercent: 95,
+                powerSpec: '1.1V - 1.35V VDD (PMIC no Módulo)',
+                prereqText: 'Trilhas de comprimento casado direto ao IMC da CPU',
+                moboLocalPos: { x: 4.7, y: 7.2, z: 0.65 },
+                moboHitSize: { w: 4.4, h: 13.8, d: 1.4 },
+                arch: 'Interface síncrona de altíssima frequência entre a RAM e o Controlador Integrado de Memória (IMC) do processador. Cada módulo DDR5 opera com dois subcanais independentes de 32 bits, totalizando 128 bits em Dual-Channel.'
+            },
+            {
+                id: 'bus_power_io',
+                num: '07',
+                col: 'right',
+                calloutLocalPos: { x: 16.5, y: 7.5, z: 1.5 },
+                name: 'Energia ATX 24p, EPS 8p & USB 3.2',
+                shortTag: 'ATX_PWR + CPU_PWR + USB3',
+                topology: 'Distribuição DC + Serial USB 5 Gbps',
+                bandwidth: '5.0 Gbps (USB 3.2) + Trilhos ATX',
+                bandPercent: 25,
+                powerSpec: '+12V, +5V, +3.3V, +5VSB, PS_ON#',
+                prereqText: 'Conectores de energia e painel frontal',
+                moboLocalPos: { x: 11.2, y: 2.5, z: 0.8 },
+                moboHitSize: { w: 2.0, h: 10.5, d: 1.6 },
+                arch: 'Agrupa o conector principal ATX de 24 pinos (que conduz os trilhos de tensão da fonte e o sinal de partida PS_ON#), o conector EPS 12V de 8 pinos do VRM e o header interno de 19 pinos para portas USB 3.2 frontais.'
+            },
+            {
+                id: 'bus_pcie_x4',
+                num: '08',
+                col: 'right',
+                calloutLocalPos: { x: 16.5, y: 2.0, z: 1.5 },
+                name: 'Barramento PCI Express 4.0 x4',
+                shortTag: 'PCIEX4_1 • Slot Aberto x4',
+                topology: 'Serial Ponto-a-Ponto (4 Lanes)',
+                bandwidth: '8.0 GB/s Bidirecional',
+                bandPercent: 34,
+                powerSpec: '25W via Slot +12V / +3.3V',
+                prereqText: '4 pistas gerenciadas pelo Chipset Z790 (via DMI 4.0)',
+                moboLocalPos: { x: -4.6, y: -8.2, z: 0.65 },
+                moboHitSize: { w: 8.8, h: 1.4, d: 1.4 },
+                arch: 'Slot PCI Express intermediário aberto conectado ao Chipset Z790. Projetado para placas de captura 4K, adaptadores Wi-Fi 7, placas de rede 10GbE ou controladoras RAID NVMe.'
+            },
+            {
+                id: 'bus_chipset_dmi',
+                num: '09',
+                col: 'right',
+                calloutLocalPos: { x: 16.5, y: -3.5, z: 1.5 },
+                name: 'Chipset Intel Z790 & DMI 4.0 x8',
+                shortTag: 'Z790 PCH • Hub I/O DMI 4.0',
+                topology: 'Link Serial CPU <-> Chipset (8 Lanes)',
+                bandwidth: '16.0 GB/s Bidirecional (DMI 4.0)',
+                bandPercent: 48,
+                powerSpec: 'Chipset 6W TDP (Dissipador Prata)',
+                prereqText: 'Concentrador Platform Controller Hub (PCH)',
+                moboLocalPos: { x: 6.3, y: -9.5, z: 0.65 },
+                moboHitSize: { w: 6.8, h: 6.5, d: 1.4 },
+                arch: 'O Chipset Z790 (PCH) atua como concentrador de entrada/saída para todos os barramentos secundários (SATA III, USB 3.2, PCIe x4, PCI legado, Rede e Áudio), comunicando-se com a CPU pelo barramento DMI 4.0 x8.'
+            },
+            {
+                id: 'bus_sata',
+                num: '10',
+                col: 'right',
+                calloutLocalPos: { x: 16.5, y: -9.0, z: 1.5 },
+                name: 'Barramento SATA III 6.0 Gbps (4 Portas)',
+                shortTag: 'SATA6G_1..4 • Controladora AHCI',
+                topology: 'Serial Ponto-a-Ponto (Tx/Rx Diferencial)',
+                bandwidth: '600 MB/s por Porta (6.0 Gbps)',
+                bandPercent: 14,
+                powerSpec: 'Sinal 250mV LVDS (Dados 7-Pinos)',
+                prereqText: 'Controladora AHCI integrada no Chipset Z790',
+                moboLocalPos: { x: 11.2, y: -11.0, z: 0.7 },
+                moboHitSize: { w: 2.0, h: 3.4, d: 1.5 },
+                arch: 'Substituiu o antigo cabo flat paralelo IDE/PATA. Utiliza pares diferenciais seriais de 7 pinos para conectar SSDs de 2.5", Discos Rígidos (HDs) de 3.5" e unidades ópticas ao chipset da placa-mãe.'
+            }
+        ];
+
+        /**
+         * =========================================================================
+         * 3. ÁUDIO PROCEDURAL WEB AUDIO API
+         * =========================================================================
+         */
+        class StudioAudio {
+            constructor() {
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (Ctx) this.ctx = new Ctx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+            click(install = true) {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const t = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(install ? 290 : 460, t);
+                    osc.frequency.exponentialRampToValueAtTime(install ? 710 : 190, t + 0.08);
+                    gain.gain.setValueAtTime(0.15, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.1);
+                } catch (_) {}
+            }
+            error() {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const t = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(175, t);
+                    osc.frequency.linearRampToValueAtTime(125, t + 0.18);
+                    gain.gain.setValueAtTime(0.14, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.21);
+                } catch (_) {}
+            }
+            post(ok = true) {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const t = this.ctx.currentTime;
+                    if (ok) {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(1020, t);
+                        gain.gain.setValueAtTime(0.10, t);
+                        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(t);
+                        osc.stop(t + 0.17);
+                    } else {
+                        [0, 0.17, 0.34].forEach(d => {
+                            const osc = this.ctx.createOscillator();
+                            const gain = this.ctx.createGain();
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(640, t + d);
+                            gain.gain.setValueAtTime(0.10, t + d);
+                            gain.gain.exponentialRampToValueAtTime(0.001, t + d + 0.12);
+                            osc.connect(gain);
+                            gain.connect(this.ctx.destination);
+                            osc.start(t + d);
+                            osc.stop(t + d + 0.13);
+                        });
+                    }
+                } catch (_) {}
+            }
+        }
+        const sfx = new StudioAudio();
+
+        /**
+         * =========================================================================
+         * 4. TEXTURAS PROCEDURAIS PBR DE ALTA DEFINIÇÃO (2048x2048)
+         * =========================================================================
+         */
+        function makeDetailedEmeraldMoboTexture() {
+            const c = document.createElement('canvas');
+            c.width = 2048;
+            c.height = 2048;
+            const ctx = c.getContext('2d');
+
+            // Base PCB Verde Esmeralda Clássico (#146c43)
+            ctx.fillStyle = '#146c43';
+            ctx.fillRect(0, 0, 2048, 2048);
+
+            // Padrão sutil de malha de fibra de vidro FR-4
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 2048; i += 32) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, 2048);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(2048, i);
+                ctx.stroke();
+            }
+
+            // Trilhas de cobre douradas/esverdeadas ligando CPU -> DDR5
+            ctx.strokeStyle = '#4ade80';
+            ctx.lineWidth = 4;
+            for (let i = 0; i < 42; i++) {
+                const y = 300 + i * 13;
+                ctx.beginPath();
+                ctx.moveTo(960, y);
+                ctx.lineTo(1060 + (i % 5) * 8, y - 16);
+                ctx.lineTo(1260, y - 16);
+                ctx.stroke();
+            }
+
+            // Trilhas de cobre douradas ligando CPU -> M2_1 & PCIEX16_1
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 3.5;
+            for (let i = 0; i < 28; i++) {
+                const x = 580 + i * 13;
+                ctx.beginPath();
+                ctx.moveTo(x, 700);
+                ctx.lineTo(x + 24, 860);
+                ctx.lineTo(x + 24, 1140);
+                ctx.stroke();
+            }
+
+            // Trilhas Chipset Z790 -> PCIEX4_1, PCI_1 Legado & SATA6G
+            ctx.strokeStyle = '#34d399';
+            ctx.lineWidth = 3.5;
+            for (let i = 0; i < 22; i++) {
+                const y = 1480 + i * 16;
+                ctx.beginPath();
+                ctx.moveTo(1360, y);
+                ctx.lineTo(1140, y + 35);
+                ctx.lineTo(640, y + 35);
+                ctx.stroke();
+            }
+
+            // 9 Furos de fixação ATX com anéis dourados
+            const holes = [
+                [140, 140], [1024, 140], [1900, 140],
+                [140, 1024], [1024, 1024], [1900, 1024],
+                [140, 1900], [1024, 1900], [1900, 1900]
+            ];
+            holes.forEach(([hx, hy]) => {
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.arc(hx, hy, 32, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(hx, hy, 14, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Serigrafia Técnica Branca e Dourada de Alta Nitidez
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 38px "JetBrains Mono", monospace';
+            ctx.fillText('Z790-ATX ARCHITECT // REV 4.0', 980, 960);
+
+            ctx.font = 'bold 28px "JetBrains Mono", monospace';
+            ctx.fillText('CPU_PWR (EPS 8P)', 310, 105);
+            ctx.fillText('VRM 14+1+1 PHASES', 120, 380);
+            ctx.fillText('SOCKET LGA 1700', 610, 275);
+            ctx.fillText('DDR5_A1 A2 B1 B2', 1260, 210);
+            ctx.fillText('ATX_PWR 24-PIN', 1580, 680);
+
+            ctx.fillStyle = '#93c5fd';
+            ctx.fillText('M2_1 (PCIe 4.0 x4 NVMe — 7.88 GB/s)', 520, 795);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('PCIEX16_1 (PCIe 5.0 x16 — 64 GB/s)', 340, 1085);
+            ctx.fillText('PCIEX4_1 (PCIe 4.0 x4 — 8 GB/s)', 340, 1495);
+
+            ctx.fillStyle = '#fef08a';
+            ctx.fillText('PCI_1 (32-BIT LEGACY — 133 MB/s)', 340, 1785);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('USB3_19P', 1640, 1290);
+            ctx.fillText('SATA6G_1..4', 1610, 1520);
+            ctx.fillText('Z790 PCH (DMI 4.0)', 1350, 1880);
+            ctx.fillText('F_PANEL', 1680, 1960);
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 8;
+            return tex;
+        }
+
+        function makeLGA1700SocketPinsTexture() {
+            // Textura realista dos 1.700 pinos dourados do Socket LGA1700 quando a CPU é removida
+            const c = document.createElement('canvas');
+            c.width = 512;
+            c.height = 512;
+            const ctx = c.getContext('2d');
+
+            ctx.fillStyle = '#33270c';
+            ctx.fillRect(0, 0, 512, 512);
+
+            // Matriz de 1.700 contatos dourados em dois bancos simétricos
+            ctx.fillStyle = '#facc15';
+            for (let row = 0; row < 44; row++) {
+                for (let col = 0; col < 38; col++) {
+                    // Cavidade central para capacitores SMD da CPU
+                    if (row > 15 && row < 28 && col > 13 && col < 24) continue;
+                    const px = 22 + col * 12.4;
+                    const py = 18 + row * 10.8;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Cavidade central verde/dourada
+            ctx.fillStyle = '#14532d';
+            ctx.fillRect(195, 190, 122, 132);
+            ctx.strokeStyle = '#eab308';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(195, 190, 122, 132);
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        function makeCPUIHSTexture() {
+            const c = document.createElement('canvas');
+            c.width = 512;
+            c.height = 512;
+            const ctx = c.getContext('2d');
+
+            // Níquel prateado escovado
+            const grad = ctx.createLinearGradient(0, 0, 512, 512);
+            grad.addColorStop(0, '#f1f5f9');
+            grad.addColorStop(0.5, '#cbd5e1');
+            grad.addColorStop(1, '#e2e8f0');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 512);
+
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(10, 10, 492, 492);
+
+            // Gravação a laser no IHS
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 42px "JetBrains Mono", monospace';
+            ctx.fillText('INTEL CORE i9', 84, 155);
+            ctx.font = 'bold 34px "JetBrains Mono", monospace';
+            ctx.fillStyle = '#0284c7';
+            ctx.fillText('14900K // 5.60 GHz', 76, 220);
+
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 28px "JetBrains Mono", monospace';
+            ctx.fillText('SOCKET LGA 1700', 115, 305);
+            ctx.font = '22px "JetBrains Mono", monospace';
+            ctx.fillText('24 CORES • 36MB CACHE', 108, 355);
+
+            // Triângulo dourado de alinhamento no canto inferior esquerdo
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath();
+            ctx.moveTo(28, 484);
+            ctx.lineTo(78, 484);
+            ctx.lineTo(28, 434);
+            ctx.closePath();
+            ctx.fill();
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        function makeNVMeHeatsinkTexture() {
+            const c = document.createElement('canvas');
+            c.width = 512;
+            c.height = 256;
+            const ctx = c.getContext('2d');
+
+            ctx.fillStyle = '#1d4ed8';
+            ctx.fillRect(0, 0, 512, 256);
+
+            // Faixa prata metálica
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(18, 22, 476, 212);
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(18, 22, 165, 212);
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 36px "JetBrains Mono", monospace';
+            ctx.fillText('NVMe', 38, 105);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 26px "JetBrains Mono", monospace';
+            ctx.fillText('M.2 2280', 34, 155);
+
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 34px "JetBrains Mono", monospace';
+            ctx.fillText('2TB PCIe 4.0 x4', 202, 105);
+            ctx.fillStyle = '#0369a1';
+            ctx.font = 'bold 24px "JetBrains Mono", monospace';
+            ctx.fillText('7.450 MB/s READ', 202, 158);
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        function makePSUGoldTexture() {
+            const c = document.createElement('canvas');
+            c.width = 512;
+            c.height = 256;
+            const ctx = c.getContext('2d');
+
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, 512, 256);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(0, 0, 512, 54);
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 25px "JetBrains Mono", monospace';
+            ctx.fillText('850W 80+ GOLD // ATX 3.0', 22, 36);
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(18, 70, 476, 164);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 16px "JetBrains Mono", monospace';
+            ctx.fillText('RAIL      +3.3V     +5V      +12V     +5VSB', 30, 102);
+
+            ctx.beginPath();
+            ctx.moveTo(18, 115);
+            ctx.lineTo(494, 115);
+            ctx.stroke();
+
+            ctx.fillStyle = '#fde047';
+            ctx.fillText('CURRENT    20A      20A     70.8A     3.0A', 30, 148);
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText('POWER       150W           850W      15W', 30, 182);
+
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = '13px "JetBrains Mono", monospace';
+            ctx.fillText('FULL MODULAR • 100% JAPANESE CAPACITORS', 30, 218);
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        function makeESDMatTexture() {
+            const c = document.createElement('canvas');
+            c.width = 1880;
+            c.height = 1840;
+            const ctx = c.getContext('2d');
+
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(0, 0, c.width, c.height);
+
+            ctx.strokeStyle = 'rgba(203, 213, 225, 0.14)';
+            ctx.lineWidth = 2;
+            for (let x = 0; x <= c.width; x += 100) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, c.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= c.height; y += 100) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(c.width, y);
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 8;
+            ctx.strokeRect(12, 12, c.width - 24, c.height - 24);
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 26px "JetBrains Mono", monospace';
+            ctx.fillText('BANCADA ANTI-ESTÁTICA ESD // ZONAS DE ORGANIZAÇÃO DE HARDWARE', 36, 46);
+
+            const toPxX = wx => wx * 20;
+            const toPxY = wz => (wz + 48) * 20;
+
+            const zones = [
+                [12.0, -34.0, 17.0, 16.0, '01. FONTE 850W'],
+                [32.0, -34.0, 15.0, 16.0, '02. COOLER TORRE'],
+                [50.0, -34.0, 16.0, 13.0, '03. HD SATA 3.5"'],
+                [67.0, -34.0, 11.0, 13.0, '04. SSD 2.5"'],
+                [86.0, -24.0, 7.0, 46.0, '16. VIDRO 4MM'],
+
+                [17.0, -10.0, 26.5, 32.5, '05. PLACA-MÃE ATX Z790'],
+                [49.0, -10.0, 30.0, 13.5, '06. PLACA DE VÍDEO GPU'],
+                [73.0, -8.0, 14.5, 14.5, '07. FANS (4x)'],
+
+                [10.0, 14.0, 8.0, 8.0, '08. CPU'],
+                [26.0, 14.0, 16.0, 9.5, '09. RAM DDR5'],
+                [44.0, 14.0, 12.0, 6.5, '10. SSD M.2'],
+
+                [10.0, 32.0, 13.0, 13.0, '11. ATX 24-PIN'],
+                [27.0, 32.0, 13.0, 13.0, '12. CPU 8-PIN'],
+                [44.0, 32.0, 13.0, 13.0, '13. GPU 12VHPWR'],
+                [61.0, 32.0, 13.0, 13.0, '14. CABO SATA'],
+                [78.0, 32.0, 13.0, 13.0, '15. USB 3.0 / IO']
+            ];
+
+            zones.forEach(([wx, wz, wCm, dCm, text]) => {
+                const px = toPxX(wx - wCm / 2);
+                const py = toPxY(wz - dCm / 2);
+                const pw = wCm * 20;
+                const ph = dCm * 20;
+
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+                ctx.fillRect(px, py, pw, ph);
+
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([10, 6]);
+                ctx.strokeRect(px, py, pw, ph);
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = 'bold 17px "JetBrains Mono", monospace';
+                ctx.fillText(text, px + 8, py + ph - 10);
+            });
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = 8;
+            return tex;
+        }
+
+        function makeChipLabelTexture(bgHex, title, subtitle, textHex = '#ffffff') {
+            const c = document.createElement('canvas');
+            c.width = 256;
+            c.height = 128;
+            const ctx = c.getContext('2d');
+
+            ctx.fillStyle = bgHex;
+            ctx.fillRect(0, 0, 256, 128);
+            ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(4, 4, 248, 120);
+
+            ctx.fillStyle = textHex;
+            ctx.font = 'bold 22px "JetBrains Mono", monospace';
+            ctx.fillText(title, 18, 54);
+            ctx.font = '15px "JetBrains Mono", monospace';
+            ctx.fillText(subtitle, 18, 86);
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        function makeBraidedCableTexture(colorA, colorB) {
+            const c = document.createElement('canvas');
+            c.width = 128;
+            c.height = 128;
+            const ctx = c.getContext('2d');
+
+            ctx.fillStyle = colorA;
+            ctx.fillRect(0, 0, 128, 128);
+
+            ctx.fillStyle = colorB;
+            for (let i = -128; i < 256; i += 32) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i + 16, 0);
+                ctx.lineTo(i + 144, 128);
+                ctx.lineTo(i + 128, 128);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(16, 2);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        /**
+         * =========================================================================
+         * 5. ESTADO GLOBAL DO SIMULADOR
+         * =========================================================================
+         */
+        const state = {
+            mode: 'free', // 'free' | 'challenge'
+            busMode: false, // true = Modo Barramentos (10) com linhas-guia 3D e badges sem sobreposição
+            inspectorTab: 'inspector', // 'inspector' | 'buses'
+            selectedType: 'part', // 'part' | 'bus'
+            selectedId: 'mobo',
+            hoveredTarget: null, // { type: 'part'|'bus', id: string }
+            installed: {},
+            exploded: false,
+            poweredOn: false,
+            challengeIndex: 0,
+            score: 0
+        };
+
+        // Inicia montado (exceto vidro na bancada para manipulação imediata)
+        HARDWARE_CATALOG.forEach(item => {
+            state.installed[item.id] = item.id !== 'glass_panel';
+        });
+
+        /**
+         * =========================================================================
+         * 6. CENA 3D, ILUMINAÇÃO CLARA DE ESTÚDIO & GABINETE BRANCO/PRATA
+         * =========================================================================
+         */
+        let scene, camera, renderer, controls, raycaster, pointer;
+        let caseGroup;
+        const partGroups = {};
+        const partTargets = {};
+        const cableMeshes = {};
+        const busMeshes = {};
+        const busLeaderLines = {};
+        const busCalloutDOMs = {};
+        const pickableMeshes = [];
+        const spinningFans = [];
+        const poweredGlowMaterials = [];
+        let targetGhostMesh = null;
+
+        const CAMERA_PRESETS = {
+            overview: { pos: new THREE.Vector3(18, 66, 102), target: new THREE.Vector3(14, 16, -4) },
+            interior: { pos: new THREE.Vector3(-22, 32, 42), target: new THREE.Vector3(-36, 26, -10) },
+            cpu_nvme: { pos: new THREE.Vector3(-34, 34, 18), target: new THREE.Vector3(-44, 32, -14) },
+            pci_buses: { pos: new THREE.Vector3(-28, 28, 36), target: new THREE.Vector3(-42, 26, -12) },
+            bench: { pos: new THREE.Vector3(47, 64, 68), target: new THREE.Vector3(47, 2, -2) }
+        };
+        let camTweenPos = null;
+        let camTweenTarget = null;
+
+        const MAT = {};
+
+        function createMaterials() {
+            MAT.caseWhite = new THREE.MeshStandardMaterial({
+                color: 0xf1f5f9,
+                metalness: 0.14,
+                roughness: 0.42
+            });
+            MAT.caseSilver = new THREE.MeshStandardMaterial({
+                color: 0xcbd5e1,
+                metalness: 0.65,
+                roughness: 0.28
+            });
+            MAT.caseGraphite = new THREE.MeshStandardMaterial({
+                color: 0x334155,
+                metalness: 0.45,
+                roughness: 0.45
+            });
+            MAT.darkPlastic = new THREE.MeshStandardMaterial({
+                color: 0x1e293b,
+                metalness: 0.12,
+                roughness: 0.65
+            });
+            MAT.silverAluminum = new THREE.MeshStandardMaterial({
+                color: 0xe2e8f0,
+                metalness: 0.85,
+                roughness: 0.20
+            });
+            MAT.titaniumGray = new THREE.MeshStandardMaterial({
+                color: 0x94a3b8,
+                metalness: 0.78,
+                roughness: 0.25
+            });
+            MAT.copper = new THREE.MeshStandardMaterial({
+                color: 0xd97706,
+                metalness: 0.90,
+                roughness: 0.18
+            });
+            MAT.gold = new THREE.MeshStandardMaterial({
+                color: 0xfacc15,
+                metalness: 0.92,
+                roughness: 0.18
+            });
+            MAT.pciIvory = new THREE.MeshStandardMaterial({
+                color: 0xfef3c7,
+                metalness: 0.08,
+                roughness: 0.55
+            });
+            MAT.pcbGreen = new THREE.MeshStandardMaterial({
+                color: 0x146c43,
+                metalness: 0.20,
+                roughness: 0.45
+            });
+            MAT.pcbBlue = new THREE.MeshStandardMaterial({
+                color: 0x1d4ed8,
+                metalness: 0.20,
+                roughness: 0.42
+            });
+            MAT.ramRed = new THREE.MeshStandardMaterial({
+                color: 0xdc2626,
+                metalness: 0.65,
+                roughness: 0.26
+            });
+            MAT.usbBlue = new THREE.MeshStandardMaterial({
+                color: 0x0284c7,
+                metalness: 0.20,
+                roughness: 0.40
+            });
+            MAT.sataRed = new THREE.MeshStandardMaterial({
+                color: 0xdc2626,
+                metalness: 0.15,
+                roughness: 0.45
+            });
+            MAT.glass = new THREE.MeshPhysicalMaterial({
+                color: 0x94a3b8,
+                metalness: 0.05,
+                roughness: 0.08,
+                transparent: true,
+                opacity: 0.22,
+                reflectivity: 0.85,
+                depthWrite: false
+            });
+        }
+
+        function initThreeScene() {
+            const container = document.getElementById('viewport-3d');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xdbe4ee);
+
+            camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 1, 600);
+            camera.position.copy(CAMERA_PRESETS.overview.pos);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.24;
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            const pmrem = new THREE.PMREMGenerator(renderer);
+            scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+            scene.environmentIntensity = 0.75;
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.target.copy(CAMERA_PRESETS.overview.target);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.07;
+            controls.minDistance = 14;
+            controls.maxDistance = 240;
+            controls.maxPolarAngle = Math.PI * 0.485;
+
+            raycaster = new THREE.Raycaster();
+            pointer = new THREE.Vector2();
+
+            createMaterials();
+            setupBrightStudioLighting();
+            buildWorkbenchAndWhiteCase();
+            buildAll16Components();
+            buildBusCalloutLinesAndBadges();
+            createChallengeGhostIndicator();
+            setupCanvasEvents(renderer.domElement);
+
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        function setupBrightStudioLighting() {
+            const hemi = new THREE.HemisphereLight(0xffffff, 0x94a3b8, 1.45);
+            scene.add(hemi);
+
+            const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+            keyLight.position.set(35, 110, 85);
+            keyLight.castShadow = true;
+            keyLight.shadow.mapSize.width = 2048;
+            keyLight.shadow.mapSize.height = 2048;
+            keyLight.shadow.camera.near = 10;
+            keyLight.shadow.camera.far = 260;
+            const d = 100;
+            keyLight.shadow.camera.left = -d;
+            keyLight.shadow.camera.right = d;
+            keyLight.shadow.camera.top = d;
+            keyLight.shadow.camera.bottom = -d;
+            keyLight.shadow.bias = -0.0005;
+            scene.add(keyLight);
+
+            const interiorFillLight = new THREE.DirectionalLight(0xffffff, 1.65);
+            interiorFillLight.position.set(-15, 36, 95);
+            interiorFillLight.target.position.set(-36, 26, -10);
+            scene.add(interiorFillLight);
+            scene.add(interiorFillLight.target);
+
+            const casePointLight = new THREE.PointLight(0xffffff, 1.35, 120, 1.2);
+            casePointLight.position.set(-28, 30, 8);
+            scene.add(casePointLight);
+        }
+
+        function buildWorkbenchAndWhiteCase() {
+            const benchTop = new THREE.Mesh(
+                new THREE.BoxGeometry(190, 4, 116),
+                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.62, metalness: 0.05 })
+            );
+            benchTop.position.set(18, -2.0, -2);
+            benchTop.receiveShadow = true;
+            scene.add(benchTop);
+
+            const benchTrim = new THREE.Mesh(
+                new THREE.BoxGeometry(192, 4.4, 2),
+                new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5 })
+            );
+            benchTrim.position.set(18, -2.0, 56.5);
+            scene.add(benchTrim);
+
+            // Tapete Anti-Estático (ESD) azul-ardósia com 16 zonas demarcadas
+            const esdTex = makeESDMatTexture();
+            const esdMat = new THREE.MeshStandardMaterial({ map: esdTex, roughness: 0.78, metalness: 0.05 });
+            const esdPad = new THREE.Mesh(new THREE.BoxGeometry(94, 0.3, 92), esdMat);
+            esdPad.position.set(47, 0.15, -2);
+            esdPad.receiveShadow = true;
+            scene.add(esdPad);
+
+            // Suporte vertical para Tampa de Vidro na Zona 16
+            const glassStandBase = new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.8, 45), MAT.caseGraphite);
+            glassStandBase.position.set(86, 0.55, -24);
+            scene.add(glassStandBase);
+
+            // Suporte vertical para Placa de Vídeo na Zona 06
+            const gpuStandBase = new THREE.Mesh(new THREE.BoxGeometry(28.5, 0.8, 8.5), MAT.caseGraphite);
+            gpuStandBase.position.set(49, 0.55, -10);
+            scene.add(gpuStandBase);
+
+            // =====================================================================
+            // GABINETE ATX MID-TOWER BRANCO FOSCO & PRATA ESCOVADO
+            // =====================================================================
+            caseGroup = new THREE.Group();
+            caseGroup.position.set(-36, 0, -10);
+            caseGroup.rotation.y = 0.22;
+            scene.add(caseGroup);
+
+            [[-18, -8.5], [18, -8.5], [-18, 8.5], [18, 8.5]].forEach(([fx, fz]) => {
+                const foot = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 2.0, 1.5, 20), MAT.caseSilver);
+                foot.position.set(fx, 0.75, fz);
+                caseGroup.add(foot);
+            });
+
+            const floor = new THREE.Mesh(new THREE.BoxGeometry(46, 0.5, 23), MAT.caseWhite);
+            floor.position.set(0, 1.75, 0);
+            caseGroup.add(floor);
+
+            const roof = new THREE.Mesh(new THREE.BoxGeometry(46, 0.5, 23), MAT.caseWhite);
+            roof.position.set(0, 47.25, 0);
+            caseGroup.add(roof);
+
+            const topIO = new THREE.Mesh(new THREE.BoxGeometry(9.5, 0.4, 5.2), MAT.caseSilver);
+            topIO.position.set(17, 47.6, 5.2);
+            caseGroup.add(topIO);
+
+            const pwrBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.3, 20), MAT.silverAluminum);
+            pwrBtn.position.set(19.5, 47.8, 5.2);
+            caseGroup.add(pwrBtn);
+
+            [4.0, 6.4].forEach(zUsb => {
+                const usb = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.3, 0.7), MAT.usbBlue);
+                usb.position.set(15.5, 47.8, zUsb);
+                caseGroup.add(usb);
+            });
+
+            const rightSide = new THREE.Mesh(new THREE.BoxGeometry(46, 46, 0.4), MAT.caseWhite);
+            rightSide.position.set(0, 24.5, -11.3);
+            caseGroup.add(rightSide);
+
+            const frontFrame = new THREE.Mesh(new THREE.BoxGeometry(0.6, 46, 23), MAT.caseWhite);
+            frontFrame.position.set(22.8, 24.5, 0);
+            caseGroup.add(frontFrame);
+
+            const frontMesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 42, 19.5), MAT.caseSilver);
+            frontMesh.position.set(22.95, 24.5, 0);
+            caseGroup.add(frontMesh);
+
+            const rearTop = new THREE.Mesh(new THREE.BoxGeometry(0.4, 3.0, 23), MAT.caseWhite);
+            rearTop.position.set(-22.8, 46.0, 0);
+            caseGroup.add(rearTop);
+
+            const rearLeftRail = new THREE.Mesh(new THREE.BoxGeometry(0.4, 43.0, 4.6), MAT.caseWhite);
+            rearLeftRail.position.set(-22.8, 23.0, -9.2);
+            caseGroup.add(rearLeftRail);
+
+            const rearRightRail = new THREE.Mesh(new THREE.BoxGeometry(0.4, 43.0, 4.6), MAT.caseWhite);
+            rearRightRail.position.set(-22.8, 23.0, 9.2);
+            caseGroup.add(rearRightRail);
+
+            for (let i = 0; i < 7; i++) {
+                const bar = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.35, 13.8), MAT.caseSilver);
+                bar.position.set(-22.8, 13.5 + i * 2.0, 0);
+                caseGroup.add(bar);
+            }
+
+            const moboTray = new THREE.Mesh(new THREE.BoxGeometry(36.0, 35.5, 0.35), MAT.caseGraphite);
+            moboTray.position.set(-3.5, 28.8, -7.75);
+            caseGroup.add(moboTray);
+
+            [-19.2, -8.5, +2.2].forEach(sx => {
+                [15.2, 29.0, 42.8].forEach(sy => {
+                    const standoff = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.8, 12), MAT.gold);
+                    standoff.rotation.x = Math.PI / 2;
+                    standoff.position.set(sx, sy, -7.25);
+                    caseGroup.add(standoff);
+                });
+            });
+
+            [36.5, 26.5, 17.5].forEach(gy => {
+                const grommet = new THREE.Mesh(new THREE.BoxGeometry(2.6, 5.5, 0.6), MAT.darkPlastic);
+                grommet.position.set(10.0, gy, -7.75);
+                caseGroup.add(grommet);
+            });
+
+            const shroudDeck = new THREE.Mesh(new THREE.BoxGeometry(38.0, 0.4, 22.2), MAT.caseWhite);
+            shroudDeck.position.set(-3.8, 11.4, 0);
+            caseGroup.add(shroudDeck);
+
+            const shroudMidWall = new THREE.Mesh(new THREE.BoxGeometry(16.0, 9.2, 0.4), MAT.caseWhite);
+            shroudMidWall.position.set(1.5, 6.6, 10.9);
+            caseGroup.add(shroudMidWall);
+
+            caseGroup.traverse(obj => {
+                if (obj.isMesh) {
+                    obj.castShadow = true;
+                    obj.receiveShadow = true;
+                }
+            });
+
+            caseGroup.updateMatrixWorld(true);
+        }
+
+        function createDetailed120mmFan(diameterCm = 12.0, withRing = true) {
+            const fan = new THREE.Group();
+            const r = diameterCm / 2;
+
+            const frame = new THREE.Mesh(new THREE.BoxGeometry(diameterCm, diameterCm, 2.5), MAT.caseWhite);
+            const innerRing = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.92, r * 0.92, 2.55, 28), MAT.caseGraphite);
+            innerRing.rotation.x = Math.PI / 2;
+            fan.add(frame, innerRing);
+
+            if (withRing) {
+                const ledMat = new THREE.MeshStandardMaterial({
+                    color: 0xcbd5e1,
+                    emissive: 0x000000,
+                    emissiveIntensity: 0
+                });
+                poweredGlowMaterials.push(ledMat);
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(r * 0.88, 0.16, 8, 32), ledMat);
+                ring.position.z = 1.28;
+                fan.add(ring);
+            }
+
+            const rotor = new THREE.Group();
+            const hub = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.30, r * 0.30, 2.6, 20), MAT.silverAluminum);
+            hub.rotation.x = Math.PI / 2;
+            rotor.add(hub);
+
+            const bladeMat = new THREE.MeshStandardMaterial({
+                color: 0xe2e8f0,
+                metalness: 0.25,
+                roughness: 0.32
+            });
+
+            for (let i = 0; i < 9; i++) {
+                const holder = new THREE.Group();
+                holder.rotation.z = (i / 9) * Math.PI * 2;
+                const blade = new THREE.Mesh(new THREE.BoxGeometry(r * 0.28, r * 0.62, 0.18), bladeMat);
+                blade.position.set(0, r * 0.58, 0);
+                blade.rotation.y = 0.48;
+                holder.add(blade);
+                rotor.add(holder);
+            }
+
+            fan.add(rotor);
+            spinningFans.push({ mesh: rotor, axis: 'z', speed: 0.22 });
+            return fan;
+        }
+
+        function computeTargetTransform(id) {
+            const spec = HARDWARE_CATALOG.find(item => item.id === id);
+            if (!spec) return null;
+
+            if (state.installed[id]) {
+                const off = state.exploded ? spec.explodeLocalOffset : { x: 0, y: 0, z: 0 };
+                const localPos = new THREE.Vector3(
+                    spec.installedLocalPos.x + off.x,
+                    spec.installedLocalPos.y + off.y,
+                    spec.installedLocalPos.z + off.z
+                );
+                const localQuat = new THREE.Quaternion().setFromEuler(
+                    new THREE.Euler(spec.installedLocalRot.x, spec.installedLocalRot.y, spec.installedLocalRot.z)
+                );
+
+                caseGroup.updateMatrixWorld(true);
+                const worldPos = localPos.applyMatrix4(caseGroup.matrixWorld);
+                const caseQuat = new THREE.Quaternion().setFromRotationMatrix(caseGroup.matrixWorld);
+                const worldQuat = caseQuat.multiply(localQuat);
+
+                return { pos: worldPos, quat: worldQuat };
+            } else {
+                return {
+                    pos: new THREE.Vector3(spec.benchWorldPos.x, spec.benchWorldPos.y, spec.benchWorldPos.z),
+                    quat: new THREE.Quaternion().setFromEuler(
+                        new THREE.Euler(spec.benchWorldRot.x, spec.benchWorldRot.y, spec.benchWorldRot.z)
+                    )
+                };
+            }
+        }
+
+        function registerComponent(id, group) {
+            partGroups[id] = group;
+            const initial = computeTargetTransform(id);
+            partTargets[id] = initial;
+
+            group.position.copy(initial.pos);
+            group.quaternion.copy(initial.quat);
+
+            group.traverse(child => {
+                if (child.isMesh) {
+                    if (!child.userData.busId) {
+                        child.userData.partId = id;
+                    }
+                    if (id !== 'glass_panel' && !child.userData.isHitbox) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                    pickableMeshes.push(child);
+                }
+            });
+
+            scene.add(group);
+        }
+
+        function buildAll16Components() {
+            // 1. FONTE ATX 850W 80+ GOLD MODULAR
+            {
+                const g = new THREE.Group();
+                const housing = new THREE.Mesh(new THREE.BoxGeometry(15.0, 8.6, 14.0), MAT.caseGraphite);
+                g.add(housing);
+
+                const psuTex = makePSUGoldTexture();
+                const label = new THREE.Mesh(
+                    new THREE.PlaneGeometry(13.8, 7.2),
+                    new THREE.MeshStandardMaterial({ map: psuTex, roughness: 0.4 })
+                );
+                label.position.set(0, 0, 7.02);
+                g.add(label);
+
+                const modularSockets = [
+                    { mat: MAT.darkPlastic, w: 0.5, h: 1.6, d: 3.4, y: 1.2, z: -2.3 },
+                    { mat: MAT.usbBlue, w: 0.5, h: 1.6, d: 2.0, y: 1.2, z: 0.7 },
+                    { mat: MAT.ramRed, w: 0.5, h: 1.6, d: 2.6, y: 1.2, z: 4.0 },
+                    { mat: MAT.gold, w: 0.5, h: 1.4, d: 2.2, y: -1.8, z: 2.7 }
+                ];
+                modularSockets.forEach(s => {
+                    const sock = new THREE.Mesh(new THREE.BoxGeometry(s.w, s.h, s.d), s.mat);
+                    sock.position.set(7.52, s.y, s.z);
+                    g.add(sock);
+                });
+
+                registerComponent('psu', g);
+            }
+
+            // 2. PLACA-MÃE ATX Z790 PRO + 10 BARRAMENTOS FÍSICOS INTERATIVOS
+            {
+                const g = new THREE.Group();
+                const moboTex = makeDetailedEmeraldMoboTexture();
+                const moboMat = new THREE.MeshStandardMaterial({
+                    map: moboTex,
+                    roughness: 0.42,
+                    metalness: 0.18
+                });
+                const pcb = new THREE.Mesh(new THREE.BoxGeometry(24.4, 30.5, 0.25), moboMat);
+                g.add(pcb);
+
+                // Painel I/O Traseiro Completo (-X = -11.9)
+                const rearIoBlock = new THREE.Mesh(new THREE.BoxGeometry(1.4, 15.5, 3.6), MAT.silverAluminum);
+                rearIoBlock.position.set(-11.6, 6.2, 1.9);
+                g.add(rearIoBlock);
+
+                [-1.5, 0.5, 2.5].forEach(yPort => {
+                    const usbBlock = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.2, 1.6), MAT.usbBlue);
+                    usbBlock.position.set(-12.35, 5.5 + yPort, 1.8);
+                    g.add(usbBlock);
+                });
+                [MAT.pcbGreen, MAT.usbBlue, MAT.ramRed].forEach((jMat, idx) => {
+                    const jack = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.4, 12), jMat);
+                    jack.rotation.z = Math.PI / 2;
+                    jack.position.set(-12.35, 1.0 + idx * 0.85, 1.8);
+                    g.add(jack);
+                });
+
+                // --- 01: CIRCUITO VRM 14+1+1 FASES (bus_vrm) ---
+                const vrmGroup = new THREE.Group();
+                const vrmLeft = new THREE.Mesh(new THREE.BoxGeometry(3.0, 11.2, 2.3), MAT.silverAluminum);
+                vrmLeft.position.set(-9.4, 8.2, 1.25);
+                const vrmTop = new THREE.Mesh(new THREE.BoxGeometry(10.0, 2.5, 2.1), MAT.silverAluminum);
+                vrmTop.position.set(-3.2, 13.6, 1.15);
+                vrmGroup.add(vrmLeft, vrmTop);
+
+                for (let i = 0; i < 8; i++) {
+                    const choke = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.85, 0.7), MAT.caseGraphite);
+                    choke.position.set(-7.2, 3.4 + i * 1.22, 0.48);
+                    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.85, 12), MAT.silverAluminum);
+                    cap.rotation.x = Math.PI / 2;
+                    cap.position.set(-6.1, 3.4 + i * 1.22, 0.55);
+                    vrmGroup.add(choke, cap);
+                }
+                registerBusVisual('bus_vrm', vrmGroup, g);
+
+                // --- 02: SOCKET LGA 1700 COM 1.700 PINOS DOURADOS & TRAVA ILM (bus_socket_cpu) ---
+                const socketGroup = new THREE.Group();
+                const pinsTex = makeLGA1700SocketPinsTexture();
+                const pinsBed = new THREE.Mesh(
+                    new THREE.BoxGeometry(3.8, 4.5, 0.18),
+                    new THREE.MeshStandardMaterial({ map: pinsTex, metalness: 0.75, roughness: 0.25 })
+                );
+                pinsBed.position.set(-3.5, 7.8, 0.22);
+
+                const socketFrame = new THREE.Mesh(new THREE.BoxGeometry(4.6, 5.4, 0.34), MAT.silverAluminum);
+                socketFrame.position.set(-3.5, 7.8, 0.26);
+
+                // Alavanca de retenção lateral do Socket LGA1700
+                const loadLever = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 5.2, 10), MAT.silverAluminum);
+                loadLever.position.set(-0.95, 7.8, 0.32);
+
+                socketGroup.add(pinsBed, socketFrame, loadLever);
+                registerBusVisual('bus_socket_cpu', socketGroup, g);
+
+                // --- 06: 4 SLOTS DDR5 DIMM DUAL-CHANNEL (bus_ddr5) ---
+                const ddr5Group = new THREE.Group();
+                [3.2, 4.2, 5.2, 6.2].forEach((sx, idx) => {
+                    const slotMat = idx % 2 === 1 ? MAT.silverAluminum : MAT.darkPlastic;
+                    const slot = new THREE.Mesh(new THREE.BoxGeometry(0.55, 13.8, 0.85), slotMat);
+                    slot.position.set(sx, 7.2, 0.52);
+                    ddr5Group.add(slot);
+
+                    [-7.1, 7.1].forEach(yLatch => {
+                        const latch = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, 1.05), MAT.caseWhite);
+                        latch.position.set(sx, 7.2 + yLatch, 0.62);
+                        ddr5Group.add(latch);
+                    });
+                });
+                registerBusVisual('bus_ddr5', ddr5Group, g);
+
+                // --- 03: SLOT M.2 KEY-M NVME (bus_m2_nvme) NO CANAL ABERTO Y = +2.0 ---
+                const m2Group = new THREE.Group();
+                const m2Socket = new THREE.Mesh(new THREE.BoxGeometry(0.85, 2.4, 0.55), MAT.darkPlastic);
+                m2Socket.position.set(-6.2, 2.0, 0.38);
+                const m2Standoff = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.4, 12), MAT.gold);
+                m2Standoff.rotation.x = Math.PI / 2;
+                m2Standoff.position.set(1.8, 2.0, 0.3);
+                m2Group.add(m2Socket, m2Standoff);
+                registerBusVisual('bus_m2_nvme', m2Group, g);
+
+                // --- 04: BARRAMENTO PCI EXPRESS 5.0 x16 BLINDADO (bus_pcie_x16) EM Y = -2.0 ---
+                const pcie16Group = new THREE.Group();
+                const pcieMain = new THREE.Mesh(new THREE.BoxGeometry(12.2, 0.98, 1.15), MAT.silverAluminum);
+                pcieMain.position.set(-3.2, -2.0, 0.65);
+                const pcie16Groove = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.32, 0.2), MAT.gold);
+                pcie16Groove.position.set(-3.2, -2.0, 1.22);
+                const pcie16Latch = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.2, 1.1), MAT.caseWhite);
+                pcie16Latch.position.set(3.2, -2.0, 0.65);
+                pcie16Group.add(pcieMain, pcie16Groove, pcie16Latch);
+                registerBusVisual('bus_pcie_x16', pcie16Group, g);
+
+                // --- 08: BARRAMENTO PCI EXPRESS 4.0 x4 (bus_pcie_x4) EM Y = -8.2 ---
+                const pcie4Group = new THREE.Group();
+                const pcieSec = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.9, 1.0), MAT.darkPlastic);
+                pcieSec.position.set(-4.6, -8.2, 0.60);
+                const pcie4Pins = new THREE.Mesh(new THREE.BoxGeometry(7.8, 0.28, 0.2), MAT.gold);
+                pcie4Pins.position.set(-4.6, -8.2, 1.10);
+                pcie4Group.add(pcieSec, pcie4Pins);
+                registerBusVisual('bus_pcie_x4', pcie4Group, g);
+
+                // --- 05: BARRAMENTO PCI LEGADO 32-BIT (bus_pci_legacy) EM Y = -12.4 ---
+                const pciLegacyGroup = new THREE.Group();
+                const pciSlot = new THREE.Mesh(new THREE.BoxGeometry(9.2, 0.95, 1.05), MAT.pciIvory);
+                pciSlot.position.set(-4.2, -12.4, 0.62);
+                const pciPins = new THREE.Mesh(new THREE.BoxGeometry(8.6, 0.30, 0.2), MAT.gold);
+                pciPins.position.set(-4.2, -12.4, 1.15);
+                const pciKey = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.98, 1.12), MAT.darkPlastic);
+                pciKey.position.set(-1.4, -12.4, 0.64);
+                pciLegacyGroup.add(pciSlot, pciPins, pciKey);
+                registerBusVisual('bus_pci_legacy', pciLegacyGroup, g);
+
+                // --- 09: CHIPSET INTEL Z790 & DMI 4.0 (bus_chipset_dmi) ---
+                const pchGroup = new THREE.Group();
+                const pch = new THREE.Mesh(new THREE.BoxGeometry(6.5, 6.2, 0.9), MAT.silverAluminum);
+                pch.position.set(6.3, -9.5, 0.55);
+                const cmos = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.3, 20), MAT.silverAluminum);
+                cmos.rotation.x = Math.PI / 2;
+                cmos.position.set(-0.2, -5.2, 0.28);
+                pchGroup.add(pch, cmos);
+                registerBusVisual('bus_chipset_dmi', pchGroup, g);
+
+                // --- 10: PORTAS SATA III 6.0 GBPS (bus_sata) ---
+                const sataGroup = new THREE.Group();
+                const sataHeader = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.8, 1.2), MAT.darkPlastic);
+                sataHeader.position.set(11.3, -11.0, 0.68);
+                sataGroup.add(sataHeader);
+                registerBusVisual('bus_sata', sataGroup, g);
+
+                // --- 07: ENERGIA ATX 24P + EPS 8P + USB 3.2 (bus_power_io) ---
+                const pwrIoGroup = new THREE.Group();
+                const atxHeader = new THREE.Mesh(new THREE.BoxGeometry(1.2, 5.2, 1.3), MAT.darkPlastic);
+                atxHeader.position.set(11.4, 3.0, 0.75);
+                const epsHeader = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.2, 1.3), MAT.darkPlastic);
+                epsHeader.position.set(-7.4, 14.3, 0.75);
+                const usbHeader = new THREE.Mesh(new THREE.BoxGeometry(1.1, 2.6, 1.2), MAT.usbBlue);
+                usbHeader.position.set(11.4, -6.0, 0.7);
+                pwrIoGroup.add(atxHeader, epsHeader, usbHeader);
+                registerBusVisual('bus_power_io', pwrIoGroup, g);
+
+                registerComponent('mobo', g);
+            }
+
+            // 3. PROCESSADOR CORE i9 (IHS NÍQUEL PRATEADO, TRIÂNGULO DOURADO & CAPACITORES SMD)
+            {
+                const g = new THREE.Group();
+                const sub = new THREE.Mesh(new THREE.BoxGeometry(3.75, 4.5, 0.22), MAT.pcbGreen);
+                g.add(sub);
+
+                const pins = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.9, 0.08), MAT.gold);
+                pins.position.z = -0.14;
+                g.add(pins);
+
+                const ihsTex = makeCPUIHSTexture();
+                const ihsMat = new THREE.MeshStandardMaterial({
+                    map: ihsTex,
+                    metalness: 0.82,
+                    roughness: 0.22
+                });
+                const ihs = new THREE.Mesh(new THREE.BoxGeometry(3.15, 3.85, 0.26), ihsMat);
+                ihs.position.z = 0.22;
+                g.add(ihs);
+
+                // Capacitores SMD dourados na borda do substrato
+                [-1.68, 1.68].forEach(xSmd => {
+                    [-1.2, -0.4, 0.4, 1.2].forEach(ySmd => {
+                        const smd = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.26, 0.14), MAT.gold);
+                        smd.position.set(xSmd, ySmd, 0.16);
+                        g.add(smd);
+                    });
+                });
+
+                registerComponent('cpu', g);
+            }
+
+            // 4. COOLER TORRE CPU (BASE COBRE, 4 HEATPIPES U, ALETAS PRATA + FAN 120MM)
+            // Altura de 8.4 cm (Y: -4.2 a +4.2 local) -> deixa canal do SSD M.2 NVMe 100% livre abaixo!
+            {
+                const g = new THREE.Group();
+                const base = new THREE.Mesh(new THREE.BoxGeometry(4.0, 4.2, 0.8), MAT.copper);
+                base.position.set(0, 0, 0.4);
+                g.add(base);
+
+                [-1.35, -0.45, 0.45, 1.35].forEach(yOff => {
+                    const curve = new THREE.CatmullRomCurve3([
+                        new THREE.Vector3(-1.2, yOff, 13.0),
+                        new THREE.Vector3(-1.2, yOff, 2.0),
+                        new THREE.Vector3(-0.75, yOff, 0.4),
+                        new THREE.Vector3(0.75, yOff, 0.4),
+                        new THREE.Vector3(1.2, yOff, 2.0),
+                        new THREE.Vector3(1.2, yOff, 13.0)
+                    ]);
+                    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 36, 0.23, 10, false), MAT.copper);
+                    g.add(tube);
+                });
+
+                const finCount = 26;
+                const finGeo = new THREE.BoxGeometry(7.2, 8.4, 0.09);
+                const finInst = new THREE.InstancedMesh(finGeo, MAT.silverAluminum, finCount);
+                const dummy = new THREE.Object3D();
+                for (let i = 0; i < finCount; i++) {
+                    dummy.position.set(0, 0, 2.3 + i * 0.40);
+                    dummy.updateMatrix();
+                    finInst.setMatrixAt(i, dummy.matrix);
+                }
+                finInst.castShadow = true;
+                finInst.receiveShadow = true;
+                g.add(finInst);
+
+                const cap = new THREE.Mesh(new THREE.BoxGeometry(7.4, 8.6, 0.35), MAT.caseGraphite);
+                cap.position.set(0, 0, 12.8);
+                g.add(cap);
+
+                const fan = createDetailed120mmFan(8.2, false);
+                fan.rotation.y = Math.PI / 2;
+                fan.position.set(4.85, 0, 7.6);
+                g.add(fan);
+
+                registerComponent('cooler', g);
+            }
+
+            // 5. MEMÓRIA RAM DDR5 (2x16GB VERMELHO METÁLICO DUAL-CHANNEL A2 & B2)
+            {
+                const g = new THREE.Group();
+                const rgbMat = new THREE.MeshStandardMaterial({
+                    color: 0xffffff,
+                    emissive: 0x000000,
+                    emissiveIntensity: 0
+                });
+                poweredGlowMaterials.push(rgbMat);
+
+                [-1.0, 1.0].forEach(xStick => {
+                    const stick = new THREE.Group();
+
+                    const pcb = new THREE.Mesh(new THREE.BoxGeometry(0.18, 13.3, 3.0), MAT.darkPlastic);
+                    stick.add(pcb);
+
+                    const goldPins = new THREE.Mesh(new THREE.BoxGeometry(0.22, 12.8, 0.55), MAT.gold);
+                    goldPins.position.z = -1.35;
+                    stick.add(goldPins);
+
+                    const heatspreader = new THREE.Mesh(new THREE.BoxGeometry(0.46, 13.5, 2.8), MAT.ramRed);
+                    heatspreader.position.z = 0.25;
+                    stick.add(heatspreader);
+
+                    const lightBar = new THREE.Mesh(new THREE.BoxGeometry(0.42, 13.3, 0.42), rgbMat);
+                    lightBar.position.z = 1.75;
+                    stick.add(lightBar);
+
+                    stick.position.x = xStick;
+                    g.add(stick);
+                });
+
+                registerComponent('ram', g);
+            }
+
+            // 6. SSD M.2 2280 NVME (DISSIPADOR AZUL/PRATA, CONTROLADOR & CONTATOS KEY-M OURO)
+            {
+                const g = new THREE.Group();
+                const pcb = new THREE.Mesh(new THREE.BoxGeometry(8.0, 2.2, 0.22), MAT.pcbBlue);
+                g.add(pcb);
+
+                // Contatos dourados M-Key bem visíveis na ponta esquerda
+                const mKey = new THREE.Mesh(new THREE.BoxGeometry(0.65, 2.0, 0.28), MAT.gold);
+                mKey.position.x = -3.85;
+                g.add(mKey);
+
+                // Chip controlador prateado
+                const ctrl = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.35, 0.34), MAT.silverAluminum);
+                ctrl.position.set(-2.55, 0, 0.22);
+                g.add(ctrl);
+
+                // Dissipador térmico azul/prata detalhado sobre os chips NAND
+                const nvmeTex = makeNVMeHeatsinkTexture();
+                const heatsinkMat = new THREE.MeshStandardMaterial({
+                    map: nvmeTex,
+                    metalness: 0.55,
+                    roughness: 0.28
+                });
+                const heatsink = new THREE.Mesh(new THREE.BoxGeometry(5.2, 2.05, 0.42), heatsinkMat);
+                heatsink.position.set(0.85, 0, 0.28);
+                g.add(heatsink);
+
+                // Parafuso de fixação na ponta direita
+                const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.36, 14), MAT.silverAluminum);
+                screw.rotation.x = Math.PI / 2;
+                screw.position.set(3.85, 0, 0.22);
+                g.add(screw);
+
+                registerComponent('ssd_m2', g);
+            }
+
+            // 7. PLACA DE VÍDEO TRIPLE-FAN 16GB (PRATA TITÂNIO & GRAFITE)
+            {
+                const g = new THREE.Group();
+
+                const pciePins = new THREE.Mesh(new THREE.BoxGeometry(11.4, 0.4, 1.1), MAT.gold);
+                pciePins.position.set(-3.5, 0, 0.3);
+                g.add(pciePins);
+
+                const gpuPcb = new THREE.Mesh(new THREE.BoxGeometry(27.5, 0.35, 11.4), MAT.darkPlastic);
+                gpuPcb.position.set(0.2, 0.9, 6.2);
+                g.add(gpuPcb);
+
+                const backplate = new THREE.Mesh(new THREE.BoxGeometry(28.2, 0.3, 11.8), MAT.silverAluminum);
+                backplate.position.set(0.3, 1.35, 6.3);
+                g.add(backplate);
+
+                const heatsink = new THREE.Mesh(new THREE.BoxGeometry(26.8, 2.2, 11.0), MAT.silverAluminum);
+                heatsink.position.set(0.3, -0.35, 6.3);
+                g.add(heatsink);
+
+                const shroudFront = new THREE.Mesh(new THREE.BoxGeometry(28.5, 3.6, 0.7), MAT.titaniumGray);
+                shroudFront.position.set(0.4, -0.35, 12.2);
+                g.add(shroudFront);
+
+                const stripe = new THREE.Mesh(new THREE.BoxGeometry(24.0, 0.55, 0.2), MAT.usbBlue);
+                stripe.position.set(0.8, 0.45, 12.58);
+                g.add(stripe);
+
+                [-8.1, 0.5, 9.1].forEach(xFan => {
+                    const fan = createDetailed120mmFan(8.2, false);
+                    fan.rotation.x = Math.PI / 2;
+                    fan.position.set(xFan, -1.9, 6.4);
+                    g.add(fan);
+                });
+
+                const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.35, 4.6, 11.8), MAT.silverAluminum);
+                bracket.position.set(-14.0, -0.3, 5.8);
+                g.add(bracket);
+
+                const pwrSock = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.2, 1.5), MAT.darkPlastic);
+                pwrSock.position.set(3.4, 2.0, 10.9);
+                g.add(pwrSock);
+
+                registerComponent('gpu', g);
+            }
+
+            // 8. SSD SATA III 2.5" (AZUL COBALTO)
+            {
+                const g = new THREE.Group();
+                const tex = makeChipLabelTexture('#2563eb', 'SSD 2TB', 'SATA III 6Gbps', '#ffffff');
+                const mat = new THREE.MeshStandardMaterial({ map: tex, metalness: 0.4, roughness: 0.35 });
+                const body = new THREE.Mesh(new THREE.BoxGeometry(7.0, 10.0, 0.7), mat);
+                g.add(body);
+
+                const dataPins = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.4, 0.35), MAT.gold);
+                dataPins.position.set(-1.5, -5.05, 0);
+                g.add(dataPins);
+
+                const pwrPins = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.4, 0.35), MAT.gold);
+                pwrPins.position.set(1.2, -5.05, 0);
+                g.add(pwrPins);
+
+                registerComponent('ssd_sata', g);
+            }
+
+            // 9. HD SATA 3.5" (AÇO ESCOVADO PRATA)
+            {
+                const g = new THREE.Group();
+                const body = new THREE.Mesh(new THREE.BoxGeometry(14.6, 2.6, 10.2), MAT.caseGraphite);
+                g.add(body);
+
+                const topTex = makeChipLabelTexture('#e2e8f0', 'HDD 4TB', '7200RPM SATA 6G', '#0f172a');
+                const topPlate = new THREE.Mesh(
+                    new THREE.PlaneGeometry(13.6, 9.2),
+                    new THREE.MeshStandardMaterial({ map: topTex, metalness: 0.75, roughness: 0.25 })
+                );
+                topPlate.rotation.x = -Math.PI / 2;
+                topPlate.position.y = 1.32;
+                g.add(topPlate);
+
+                const pcbBot = new THREE.Mesh(new THREE.BoxGeometry(10.0, 0.2, 7.5), MAT.pcbGreen);
+                pcbBot.position.y = -1.35;
+                g.add(pcbBot);
+
+                registerComponent('hdd_sata', g);
+            }
+
+            // 10. KIT 4 VENTOINHAS 120MM PWM
+            {
+                const g = new THREE.Group();
+                [15.5, 28.0, 40.5].forEach(yFan => {
+                    const f = createDetailed120mmFan(12.0, true);
+                    f.rotation.y = Math.PI / 2;
+                    f.position.set(21.2, yFan, 0);
+                    g.add(f);
+                });
+
+                const rearFan = createDetailed120mmFan(12.0, true);
+                rearFan.rotation.y = Math.PI / 2;
+                rearFan.position.set(-21.4, 36.0, 0.5);
+                g.add(rearFan);
+
+                registerComponent('case_fans', g);
+            }
+
+            // 11..15. CABOS MODULARES COM ROTA INSTALADA & FORMA ENROLADA NA BANCADA
+            createCableComponent(
+                'cable_24pin',
+                makeBraidedCableTexture('#dc2626', '#eab308'),
+                0.68,
+                [
+                    new THREE.Vector3(-7.0, 7.7, -3.5),
+                    new THREE.Vector3(-1.5, 7.7, -8.8),
+                    new THREE.Vector3(10.0, 16.5, -9.2),
+                    new THREE.Vector3(10.0, 32.0, -8.6),
+                    new THREE.Vector3(5.0, 32.0, -6.0),
+                    new THREE.Vector3(2.9, 32.0, -6.0)
+                ],
+                { size: [1.3, 5.2, 1.4], pos: [-7.0, 7.7, -3.5] },
+                { size: [1.3, 5.2, 1.4], pos: [2.9, 32.0, -6.0] }
+            );
+
+            createCableComponent(
+                'cable_eps',
+                makeBraidedCableTexture('#eab308', '#1e293b'),
+                0.48,
+                [
+                    new THREE.Vector3(-7.0, 7.7, -0.5),
+                    new THREE.Vector3(-2.0, 9.8, -9.2),
+                    new THREE.Vector3(-15.9, 26.5, -9.6),
+                    new THREE.Vector3(-15.9, 45.2, -8.8),
+                    new THREE.Vector3(-15.9, 44.8, -6.0),
+                    new THREE.Vector3(-15.9, 43.3, -6.0)
+                ],
+                { size: [1.3, 1.6, 2.0], pos: [-7.0, 7.7, -0.5] },
+                { size: [2.4, 1.3, 1.4], pos: [-15.9, 43.3, -6.0] }
+            );
+
+            createCableComponent(
+                'cable_pcie',
+                makeBraidedCableTexture('#0284c7', '#1e293b'),
+                0.52,
+                [
+                    new THREE.Vector3(-7.0, 7.7, 2.8),
+                    new THREE.Vector3(-2.8, 8.4, 4.0),
+                    new THREE.Vector3(-2.8, 14.5, 4.8),
+                    new THREE.Vector3(-4.8, 23.0, 5.6),
+                    new THREE.Vector3(-4.8, 30.8, 4.8),
+                    new THREE.Vector3(-4.8, 29.8, 4.6)
+                ],
+                { size: [1.3, 1.6, 2.6], pos: [-7.0, 7.7, 2.8] },
+                { size: [2.6, 1.3, 1.5], pos: [-4.8, 29.8, 4.6] }
+            );
+
+            createCableComponent(
+                'cable_sata',
+                null,
+                0.28,
+                [
+                    new THREE.Vector3(2.8, 18.0, -6.1),
+                    new THREE.Vector3(7.2, 18.0, -5.2),
+                    new THREE.Vector3(11.0, 21.5, -5.6),
+                    new THREE.Vector3(11.0, 24.5, -7.0)
+                ],
+                { size: [1.2, 1.4, 1.2], pos: [2.8, 18.0, -6.1] },
+                { size: [1.4, 1.0, 0.8], pos: [11.0, 24.5, -7.0] },
+                MAT.sataRed
+            );
+
+            createCableComponent(
+                'cable_front_io',
+                makeBraidedCableTexture('#2563eb', '#1e293b'),
+                0.42,
+                [
+                    new THREE.Vector3(17.0, 46.8, 4.8),
+                    new THREE.Vector3(15.0, 42.5, -8.8),
+                    new THREE.Vector3(13.0, 23.0, -8.8),
+                    new THREE.Vector3(5.2, 23.0, -6.0),
+                    new THREE.Vector3(2.9, 23.0, -6.0)
+                ],
+                { size: [1.4, 1.2, 1.4], pos: [17.0, 46.8, 4.8] },
+                { size: [1.2, 2.6, 1.3], pos: [2.9, 23.0, -6.0] },
+                null,
+                MAT.usbBlue
+            );
+
+            // 16. TAMPA LATERAL DE VIDRO TEMPERADO 4MM
+            {
+                const g = new THREE.Group();
+                const pane = new THREE.Mesh(new THREE.BoxGeometry(45.2, 45.2, 0.4), MAT.glass);
+                g.add(pane);
+
+                const topB = new THREE.Mesh(new THREE.BoxGeometry(45.2, 1.4, 0.44), MAT.darkPlastic);
+                topB.position.y = 21.9;
+                const botB = new THREE.Mesh(new THREE.BoxGeometry(45.2, 1.4, 0.44), MAT.darkPlastic);
+                botB.position.y = -21.9;
+                const leftB = new THREE.Mesh(new THREE.BoxGeometry(1.4, 45.2, 0.44), MAT.darkPlastic);
+                leftB.position.x = -21.9;
+                const rightB = new THREE.Mesh(new THREE.BoxGeometry(1.4, 45.2, 0.44), MAT.darkPlastic);
+                rightB.position.x = 21.9;
+                g.add(topB, botB, leftB, rightB);
+
+                [[-20.8, -20.8], [20.8, -20.8], [-20.8, 20.8], [20.8, 20.8]].forEach(([sx, sy]) => {
+                    const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.8, 16), MAT.silverAluminum);
+                    screw.rotation.x = Math.PI / 2;
+                    screw.position.set(sx, sy, 0.35);
+                    g.add(screw);
+                });
+
+                registerComponent('glass_panel', g);
+            }
+        }
+
+        function registerBusVisual(busId, visualGroup, moboGroup) {
+            const spec = MOTHERBOARD_BUSES.find(b => b.id === busId);
+            if (!spec) return;
+
+            visualGroup.traverse(child => {
+                if (child.isMesh) {
+                    child.userData.busId = busId;
+                    child.userData.partId = 'mobo';
+                }
+            });
+
+            const hitGeo = new THREE.BoxGeometry(spec.moboHitSize.w, spec.moboHitSize.h, spec.moboHitSize.d);
+            const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+            const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+            hitMesh.position.set(spec.moboLocalPos.x, spec.moboLocalPos.y, spec.moboLocalPos.z);
+            hitMesh.userData.busId = busId;
+            hitMesh.userData.partId = 'mobo';
+            hitMesh.userData.isHitbox = true;
+
+            visualGroup.add(hitMesh);
+            moboGroup.add(visualGroup);
+            busMeshes[busId] = visualGroup;
+        }
+
+        /**
+         * =========================================================================
+         * 6B. LINHAS-GUIA 3D (THREE.Line) & BADGES EM DUAS COLUNAS (MODO BARRAMENTOS)
+         * =========================================================================
+         */
+        function buildBusCalloutLinesAndBadges() {
+            const layer = document.getElementById('bus-callouts-layer');
+            layer.innerHTML = '';
+
+            MOTHERBOARD_BUSES.forEach(bus => {
+                // Linha-guia 3D conectando o slot na placa-mãe ao ponto âncora lateral
+                const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(0, 0, 0)
+                ]);
+                const lineMat = new THREE.LineBasicMaterial({
+                    color: 0xd97706,
+                    linewidth: 2
+                });
+                const line = new THREE.Line(lineGeo, lineMat);
+                line.visible = false;
+                line.frustumCulled = false;
+                scene.add(line);
+                busLeaderLines[bus.id] = line;
+
+                // Badge DOM interativo posicionado nas colunas laterais sem sobreposição
+                const badge = document.createElement('button');
+                badge.type = 'button';
+                badge.className = 'bus-callout-badge pointer-events-auto absolute px-2.5 py-1.5 rounded-lg bg-slate-900/95 text-white border border-amber-400/80 shadow-xl flex items-center gap-2 text-left max-w-[195px]';
+                badge.innerHTML = `
+                    <span class="w-5 h-5 rounded-md bg-amber-400 text-slate-950 font-mono-tech font-bold text-[10px] flex items-center justify-center shrink-0">
+                        ${bus.num}
+                    </span>
+                    <div class="min-w-0">
+                        <div class="text-[10px] font-bold leading-tight truncate">${bus.name.replace('Barramento ', '')}</div>
+                        <div class="text-[9px] font-mono-tech text-amber-300 truncate">${bus.bandwidth.split('(')[0].trim()}</div>
+                    </div>
+                `;
+                badge.addEventListener('click', () => {
+                    selectBus(bus.id, false);
+                });
+
+                layer.appendChild(badge);
+                busCalloutDOMs[bus.id] = badge;
+            });
+        }
+
+        function updateBusCalloutsProjection() {
+            const layer = document.getElementById('bus-callouts-layer');
+            const moboGrp = partGroups.mobo;
+
+            if (!state.busMode || !moboGrp) {
+                layer.classList.add('hidden');
+                Object.values(busLeaderLines).forEach(l => (l.visible = false));
+                return;
+            }
+
+            layer.classList.remove('hidden');
+            moboGrp.updateMatrixWorld(true);
+
+            const viewport = document.getElementById('viewport-3d');
+            const vw = viewport.clientWidth;
+            const vh = viewport.clientHeight;
+
+            const leftItems = [];
+            const rightItems = [];
+
+            MOTHERBOARD_BUSES.forEach(bus => {
+                const startLocal = new THREE.Vector3(bus.moboLocalPos.x, bus.moboLocalPos.y, bus.moboLocalPos.z + 0.5);
+                const endLocal = new THREE.Vector3(bus.calloutLocalPos.x, bus.calloutLocalPos.y, bus.calloutLocalPos.z);
+                const elbowLocal = new THREE.Vector3(
+                    bus.col === 'left' ? -13.5 : 13.5,
+                    bus.calloutLocalPos.y,
+                    bus.calloutLocalPos.z
+                );
+
+                const startWorld = startLocal.applyMatrix4(moboGrp.matrixWorld);
+                const elbowWorld = elbowLocal.applyMatrix4(moboGrp.matrixWorld);
+                const endWorld = endLocal.applyMatrix4(moboGrp.matrixWorld);
+
+                const line = busLeaderLines[bus.id];
+                if (line) {
+                    line.visible = true;
+                    const posAttr = line.geometry.attributes.position;
+                    posAttr.setXYZ(0, startWorld.x, startWorld.y, startWorld.z);
+                    posAttr.setXYZ(1, elbowWorld.x, elbowWorld.y, elbowWorld.z);
+                    posAttr.setXYZ(2, endWorld.x, endWorld.y, endWorld.z);
+                    posAttr.needsUpdate = true;
+
+                    const isSel = state.selectedType === 'bus' && state.selectedId === bus.id;
+                    line.material.color.setHex(isSel ? 0x0284c7 : 0xd97706);
+                }
+
+                // Projeta ponto âncora para 2D
+                const proj = endWorld.clone().project(camera);
+                const sx = (proj.x * 0.5 + 0.5) * vw;
+                const sy = (-proj.y * 0.5 + 0.5) * vh;
+
+                const entry = { bus, sx, sy };
+                if (bus.col === 'left') leftItems.push(entry);
+                else rightItems.push(entry);
+            });
+
+            // Garante espaçamento vertical mínimo entre badges de cada coluna (ZERO sobreposição!)
+            const relaxColumn = (colList, isLeft) => {
+                colList.sort((a, b) => a.sy - b.sy);
+                const minGap = 44;
+                for (let i = 1; i < colList.length; i++) {
+                    if (colList[i].sy - colList[i - 1].sy < minGap) {
+                        colList[i].sy = colList[i - 1].sy + minGap;
+                    }
+                }
+                const maxBottom = vh - 58;
+                if (colList.length > 0 && colList[colList.length - 1].sy > maxBottom) {
+                    const shift = colList[colList.length - 1].sy - maxBottom;
+                    colList.forEach(item => (item.sy -= shift));
+                }
+                if (colList.length > 0 && colList[0].sy < 12) {
+                    const shift = 12 - colList[0].sy;
+                    colList.forEach(item => (item.sy += shift));
+                }
+
+                colList.forEach(({ bus, sx, sy }) => {
+                    const badge = busCalloutDOMs[bus.id];
+                    if (!badge) return;
+
+                    const bw = badge.offsetWidth || 185;
+                    let leftPx = isLeft ? sx - bw - 4 : sx + 4;
+                    leftPx = Math.max(8, Math.min(vw - bw - 8, leftPx));
+
+                    badge.style.left = `${leftPx}px`;
+                    badge.style.top = `${sy - 18}px`;
+
+                    const isSel = state.selectedType === 'bus' && state.selectedId === bus.id;
+                    badge.className = isSel
+                        ? 'bus-callout-badge pointer-events-auto absolute px-2.5 py-1.5 rounded-lg bg-sky-600 text-white border-2 border-white shadow-2xl flex items-center gap-2 text-left max-w-[195px] z-30'
+                        : 'bus-callout-badge pointer-events-auto absolute px-2.5 py-1.5 rounded-lg bg-slate-900/95 text-white border border-amber-400/80 shadow-xl flex items-center gap-2 text-left max-w-[195px]';
+                });
+            };
+
+            relaxColumn(leftItems, true);
+            relaxColumn(rightItems, false);
+        }
+
+        function createCableComponent(id, tex, radius, routePts, plugStart, plugEnd, overrideMat = null, endPlugMat = null) {
+            const g = new THREE.Group();
+            const sleeveMat = overrideMat || new THREE.MeshStandardMaterial({
+                map: tex,
+                roughness: 0.65,
+                metalness: 0.12
+            });
+
+            const installedSub = new THREE.Group();
+            const curve = new THREE.CatmullRomCurve3(routePts);
+            const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 36, radius, 10, false), sleeveMat);
+            installedSub.add(tube);
+
+            const pA = new THREE.Mesh(new THREE.BoxGeometry(...plugStart.size), MAT.darkPlastic);
+            pA.position.set(...plugStart.pos);
+            const pB = new THREE.Mesh(new THREE.BoxGeometry(...plugEnd.size), endPlugMat || MAT.darkPlastic);
+            pB.position.set(...plugEnd.pos);
+            installedSub.add(pA, pB);
+
+            const benchSub = new THREE.Group();
+            const coilPts = [];
+            const loops = 2.25;
+            const steps = 64;
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const ang = t * Math.PI * 2 * loops;
+                const rCoil = 3.8 + t * 0.8;
+                coilPts.push(new THREE.Vector3(Math.cos(ang) * rCoil, -0.4 + t * 0.7, Math.sin(ang) * rCoil));
+            }
+            const coilCurve = new THREE.CatmullRomCurve3(coilPts);
+            const coilMesh = new THREE.Mesh(new THREE.TubeGeometry(coilCurve, 48, radius, 10, false), sleeveMat);
+            benchSub.add(coilMesh);
+
+            const bPlugA = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.3, 2.2), MAT.darkPlastic);
+            bPlugA.position.set(3.8, -0.3, 0);
+            const bPlugB = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.3, 2.2), endPlugMat || MAT.darkPlastic);
+            bPlugB.position.set(0, 0.3, 4.5);
+            benchSub.add(bPlugA, bPlugB);
+
+            installedSub.visible = state.installed[id];
+            benchSub.visible = !state.installed[id];
+
+            g.add(installedSub, benchSub);
+            cableMeshes[id] = { installedSub, benchSub };
+            registerComponent(id, g);
+        }
+
+        function createChallengeGhostIndicator() {
+            const mat = new THREE.MeshBasicMaterial({
+                color: 0x0284c7,
+                transparent: true,
+                opacity: 0.35
+            });
+            targetGhostMesh = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 8), mat);
+            targetGhostMesh.visible = false;
+            scene.add(targetGhostMesh);
+        }
+
+        /**
+         * =========================================================================
+         * 7. PRIORIDADE DE RAYCAST INTELIGENTE & FLOATING PILL NO HOVER
+         * =========================================================================
+         */
+        function resolveHitTarget(hits) {
+            if (!hits || hits.length === 0) return null;
+
+            // Ignora a tampa de vidro transparente se houver peças/slots atrás dela
+            const nonGlass = hits.filter(h => h.object.userData.partId !== 'glass_panel');
+            const list = nonGlass.length > 0 ? nonGlass : hits;
+
+            // No Modo Barramentos (10), prioriza os barramentos da placa-mãe
+            if (state.busMode) {
+                const busHit = list.find(h => h.object.userData.busId);
+                if (busHit) return { type: 'bus', id: busHit.object.userData.busId };
+            }
+
+            // PRIORIDADE ABSOLUTA 1 (Modo Normal): Componentes instalados/bancada e cabos (CPU, SSD M.2 NVMe, Cooler, RAM, GPU, etc.)
+            // Nunca um hitbox de barramento da placa-mãe bloqueia o clique no SSD M.2 NVMe ou na CPU!
+            const componentHit = list.find(
+                h => h.object.userData.partId && h.object.userData.partId !== 'mobo' && h.object.userData.partId !== 'glass_panel'
+            );
+            if (componentHit) {
+                return { type: 'part', id: componentHit.object.userData.partId };
+            }
+
+            // PRIORIDADE 2: Se o cursor estiver sobre um barramento exposto da placa-mãe (ex: Socket LGA1700 sem CPU, PCIe x4, PCI Legado, etc.)
+            const busHit = list.find(h => h.object.userData.busId);
+            if (busHit) {
+                return { type: 'bus', id: busHit.object.userData.busId };
+            }
+
+            // PRIORIDADE 3: Placa-mãe ou Tampa de Vidro
+            return { type: 'part', id: list[0].object.userData.partId };
+        }
+
+        function updateHoverPillPosition(clientX, clientY) {
+            const pill = document.getElementById('hover-pill');
+            const pad = 16;
+            const pillRect = pill.getBoundingClientRect();
+            const w = pillRect.width || 240;
+            const h = pillRect.height || 46;
+
+            let left = clientX + 16;
+            let top = clientY - h - 10;
+
+            if (left + w > window.innerWidth - pad) {
+                left = clientX - w - 16;
+            }
+            if (left < pad) left = pad;
+            if (top < pad) top = clientY + 18;
+            if (top + h > window.innerHeight - pad) top = window.innerHeight - h - pad;
+
+            pill.style.left = `${left}px`;
+            pill.style.top = `${top}px`;
+        }
+
+        function showHoverPill(target, clientX, clientY) {
+            const pill = document.getElementById('hover-pill');
+            const badge = document.getElementById('hover-pill-badge');
+            const title = document.getElementById('hover-pill-title');
+            const sub = document.getElementById('hover-pill-sub');
+
+            if (target.type === 'bus') {
+                const bus = MOTHERBOARD_BUSES.find(b => b.id === target.id);
+                if (!bus) return;
+                badge.textContent = `BARRAMENTO ${bus.num}`;
+                badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono-tech font-bold uppercase tracking-wider bg-amber-400 text-slate-950 shrink-0';
+                title.textContent = bus.name;
+                sub.textContent = `${bus.bandwidth} • Clique para inspecionar`;
+            } else {
+                const part = HARDWARE_CATALOG.find(p => p.id === target.id);
+                if (!part) return;
+                const isCable = part.category === 'cabling_buses';
+                badge.textContent = isCable ? 'CABO / BUS' : 'HARDWARE';
+                badge.className = isCable
+                    ? 'px-2 py-0.5 rounded-full text-[9px] font-mono-tech font-bold uppercase tracking-wider bg-emerald-400 text-slate-950 shrink-0'
+                    : 'px-2 py-0.5 rounded-full text-[9px] font-mono-tech font-bold uppercase tracking-wider bg-sky-400 text-slate-950 shrink-0';
+                title.textContent = part.name;
+
+                if (part.id === 'cooler' && state.installed.cooler) {
+                    sub.textContent = 'Duplo-clique para remover Cooler e liberar CPU';
+                } else {
+                    sub.textContent = state.installed[part.id]
+                        ? 'Instalado • Clique: detalhes | Duplo-clique: desplugar'
+                        : 'Na Bancada ESD • Clique: detalhes | Duplo-clique: plugar';
+                }
+            }
+
+            pill.classList.remove('opacity-0');
+            updateHoverPillPosition(clientX, clientY);
+        }
+
+        function hideHoverPill() {
+            const pill = document.getElementById('hover-pill');
+            pill.classList.add('opacity-0');
+        }
+
+        function setupCanvasEvents(dom) {
+            let downPt = { x: 0, y: 0 };
+
+            dom.addEventListener('pointerdown', e => {
+                downPt = { x: e.clientX, y: e.clientY };
+            });
+
+            dom.addEventListener('pointermove', e => {
+                const rect = dom.getBoundingClientRect();
+                pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                raycaster.setFromCamera(pointer, camera);
+                const hits = raycaster.intersectObjects(pickableMeshes, false);
+                const target = resolveHitTarget(hits);
+
+                if (target) {
+                    state.hoveredTarget = target;
+                    dom.style.cursor = 'pointer';
+                    showHoverPill(target, e.clientX, e.clientY);
+                } else {
+                    state.hoveredTarget = null;
+                    dom.style.cursor = 'grab';
+                    hideHoverPill();
+                }
+            });
+
+            dom.addEventListener('pointerleave', () => {
+                state.hoveredTarget = null;
+                hideHoverPill();
+            });
+
+            dom.addEventListener('pointerup', e => {
+                const dist = Math.hypot(e.clientX - downPt.x, e.clientY - downPt.y);
+                if (dist > 5) return;
+
+                const rect = dom.getBoundingClientRect();
+                pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                raycaster.setFromCamera(pointer, camera);
+                const hits = raycaster.intersectObjects(pickableMeshes, false);
+                const target = resolveHitTarget(hits);
+
+                if (target) {
+                    if (target.type === 'bus') {
+                        selectBus(target.id, false);
+                    } else {
+                        selectComponent(target.id);
+                        if (state.mode === 'challenge' && !state.installed[target.id]) {
+                            toggleInstallState(target.id);
+                        }
+                    }
+                }
+            });
+
+            dom.addEventListener('dblclick', e => {
+                const rect = dom.getBoundingClientRect();
+                pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                raycaster.setFromCamera(pointer, camera);
+                const hits = raycaster.intersectObjects(pickableMeshes, false);
+                const target = resolveHitTarget(hits);
+
+                if (target && target.type === 'part') {
+                    selectComponent(target.id);
+                    toggleInstallState(target.id);
+                }
+            });
+        }
+
+        /**
+         * =========================================================================
+         * 8. LÓGICA DE MONTAGEM, DESMONTAGEM & DESBLOQUEIO INTUITIVO DA CPU
+         * =========================================================================
+         */
+        function refreshAllPartTargets() {
+            HARDWARE_CATALOG.forEach(item => {
+                partTargets[item.id] = computeTargetTransform(item.id);
+                if (cableMeshes[item.id]) {
+                    cableMeshes[item.id].installedSub.visible = state.installed[item.id];
+                    cableMeshes[item.id].benchSub.visible = !state.installed[item.id];
+                }
+            });
+        }
+
+        function toggleInstallState(id) {
+            const spec = HARDWARE_CATALOG.find(item => item.id === id);
+            if (!spec) return;
+
+            if (state.poweredOn) {
+                setPowerState(false);
+                showToast('Sistema desligado por segurança antes de manipular o hardware.', 'warn');
+            }
+
+            const isCurrentlyInstalled = state.installed[id];
+
+            if (!isCurrentlyInstalled) {
+                if (state.mode === 'challenge') {
+                    const expected = HARDWARE_CATALOG[state.challengeIndex];
+                    if (expected && expected.id !== id) {
+                        sfx.error();
+                        state.score = Math.max(0, state.score - 20);
+                        updateChallengeHUD();
+                        showToast(`Ordem incorreta! Instale primeiro: ${expected.name}.`, 'error');
+                        return;
+                    }
+                }
+
+                const missing = spec.requires.filter(req => !state.installed[req]);
+                if (missing.length > 0) {
+                    const names = missing.map(r => HARDWARE_CATALOG.find(x => x.id === r).name).join(' + ');
+                    sfx.error();
+                    showToast(`Acoplamento impossível: instale antes ${names}.`, 'error');
+                    return;
+                }
+
+                state.installed[id] = true;
+                refreshAllPartTargets();
+                sfx.click(true);
+                showToast(`${spec.name} acoplado no gabinete.`, 'ok');
+
+                if (state.mode === 'challenge') {
+                    state.score += 100;
+                    state.challengeIndex++;
+                    updateChallengeHUD();
+                }
+            } else {
+                if (state.mode === 'challenge') {
+                    showToast('Conclua o Modo Desafio antes de desmontar peças.', 'warn');
+                    return;
+                }
+
+                if (id !== 'glass_panel' && state.installed.glass_panel) {
+                    sfx.error();
+                    showToast('Remova a Tampa Lateral de Vidro Temperado antes de acessar o interior!', 'error');
+                    selectComponent('glass_panel');
+                    return;
+                }
+
+                const dependents = HARDWARE_CATALOG.filter(
+                    other => state.installed[other.id] && other.requires.includes(id)
+                );
+                if (dependents.length > 0) {
+                    const names = dependents.map(d => d.name).join(', ');
+                    sfx.error();
+                    showToast(`Desplugue antes as peças acopladas: ${names}.`, 'error');
+                    return;
+                }
+
+                state.installed[id] = false;
+                refreshAllPartTargets();
+                sfx.click(false);
+
+                if (id === 'cooler') {
+                    showToast('Cooler Torre removido! Processador (CPU) agora está exposto no Socket LGA 1700.', 'ok');
+                } else if (id === 'cpu') {
+                    showToast('Processador removido! Veja os 1.700 pinos dourados do Socket LGA 1700.', 'info');
+                } else {
+                    showToast(`${spec.name} movido para sua zona na bancada ESD.`, 'info');
+                }
+            }
+
+            syncAllUI();
+        }
+
+        function disassembleAll() {
+            if (state.poweredOn) setPowerState(false);
+            state.exploded = false;
+            document.getElementById('btn-exploded').classList.remove('border-sky-600', 'bg-sky-50', 'text-sky-800');
+
+            HARDWARE_CATALOG.forEach(item => {
+                state.installed[item.id] = false;
+            });
+            refreshAllPartTargets();
+            sfx.click(false);
+            syncAllUI();
+            showToast('Todas as 16 peças organizadas nas zonas demarcadas da bancada ESD.', 'info');
+        }
+
+        function assembleAll() {
+            HARDWARE_CATALOG.forEach(item => {
+                state.installed[item.id] = item.id !== 'glass_panel';
+            });
+            refreshAllPartTargets();
+            sfx.click(true);
+            syncAllUI();
+            showToast('Hardware completo montado no gabinete ATX (lateral aberta).', 'ok');
+        }
+
+        /**
+         * =========================================================================
+         * 9. TESTE POST & DIAGNÓSTICO DE BARRAMENTOS
+         * =========================================================================
+         */
+        function handlePowerButton() {
+            if (state.poweredOn) {
+                setPowerState(false);
+                showToast('Computador desligado (ACPI S5).', 'info');
+                return;
+            }
+
+            const checks = [
+                { id: 'psu', code: 'ERR 0x00', msg: 'Sem alimentação AC/DC: Fonte ATX 850W não instalada.' },
+                { id: 'mobo', code: 'ERR 0x01', msg: 'Placa-Mãe ATX não está instalada no gabinete.' },
+                { id: 'cable_24pin', code: 'ERR 0x02', msg: 'Cabo ATX 24-Pinos desconectado (sem sinal PS_ON#).' },
+                { id: 'cpu', code: 'CPU LED 0x10', msg: 'Processador não detectado no Socket LGA 1700.' },
+                { id: 'cable_eps', code: 'CPU LED 0x12', msg: 'Cabo CPU EPS 8-Pinos desconectado do VRM.' },
+                { id: 'cooler', code: 'THERM TRIP', msg: 'Cooler Torre da CPU ausente — proteção térmica acionada.' },
+                { id: 'ram', code: 'DRAM LED 0x53', msg: 'Memória RAM DDR5 não detectada nos slots A2/B2.' },
+                { id: 'gpu', code: 'VGA LED 0x97', msg: 'Placa de Vídeo não detectada no slot PCIEX16_1.' },
+                { id: 'cable_pcie', code: 'VGA LED 0x99', msg: 'Cabo PCIe 12VHPWR da Placa de Vídeo desconectado.' }
+            ];
+
+            const fail = checks.find(c => !state.installed[c.id]);
+            const badge = document.getElementById('post-code-badge');
+            const diag = document.getElementById('post-diagnostic-msg');
+
+            if (fail) {
+                sfx.post(false);
+                badge.textContent = fail.code;
+                badge.className = 'text-[10px] font-mono-tech text-rose-400 font-bold';
+                diag.textContent = fail.msg;
+                diag.className = 'text-[11px] font-mono-tech text-rose-300 leading-snug';
+                showToast(`FALHA POST (${fail.code}): ${fail.msg}`, 'error');
+                return;
+            }
+
+            setPowerState(true);
+            sfx.post(true);
+
+            const driveMsg = state.installed.ssd_m2 || state.installed.ssd_sata || state.installed.hdd_sata
+                ? 'Unidades NVMe/SATA reconhecidas — Boot concluído.'
+                : 'Nenhuma unidade de armazenamento detectada (Setup UEFI).';
+
+            badge.textContent = 'POST OK (AA)';
+            badge.className = 'text-[10px] font-mono-tech text-emerald-400 font-bold';
+            diag.textContent = `Barramentos PCIe 5.0, DDR5 Dual-Channel e PWM ativos. ${driveMsg}`;
+            diag.className = 'text-[11px] font-mono-tech text-emerald-300 leading-snug';
+
+            if (state.mode === 'challenge' && state.challengeIndex >= HARDWARE_CATALOG.length) {
+                state.score += 300;
+                updateChallengeHUD();
+                showToast('PARABÉNS! Montagem completa validada no POST (+300 pts).', 'ok');
+            } else {
+                showToast('POST OK (1 Bipe): Sistema ligado, ventoinhas PWM e LEDs ativos!', 'ok');
+            }
+        }
+
+        function setPowerState(on) {
+            state.poweredOn = on;
+            const led = document.getElementById('power-led');
+            const lbl = document.getElementById('power-label');
+            const btn = document.getElementById('btn-power');
+
+            if (on) {
+                led.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]';
+                lbl.textContent = 'Desligar PC';
+                btn.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-[11px] font-semibold text-white shadow-sm transition';
+            } else {
+                led.className = 'w-2 h-2 rounded-full bg-slate-400';
+                lbl.textContent = 'Ligar PC (POST)';
+                btn.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-[11px] font-semibold text-white shadow-sm transition';
+                document.getElementById('post-code-badge').textContent = 'STANDBY';
+                document.getElementById('post-code-badge').className = 'text-[10px] font-mono-tech text-sky-400 font-bold';
+            }
+        }
+
+        /**
+         * =========================================================================
+         * 10. INTERFACE LATERAL, INSPETOR INTELIGENTE & MODO BARRAMENTOS (10)
+         * =========================================================================
+         */
+        function toggleBusMode(forceState = null) {
+            state.busMode = forceState !== null ? forceState : !state.busMode;
+            const btn = document.getElementById('btn-bus-overlay');
+
+            if (state.busMode) {
+                btn.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-amber-400 font-bold text-[11px] shadow-md border border-amber-400 transition';
+                setInspectorTab('buses');
+                moveCameraPreset('pci_buses');
+                showToast('Modo Barramentos (10) ativo: clique nos badges ou linhas-guia da Placa-Mãe.', 'info');
+            } else {
+                btn.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px] shadow-sm border border-amber-600/40 transition';
+                showToast('Modo Barramentos desativado.', 'info');
+            }
+        }
+
+        function setInspectorTab(tabName) {
+            state.inspectorTab = tabName;
+            const tabInsp = document.getElementById('tab-inspector');
+            const tabBuses = document.getElementById('tab-buses');
+            const viewInsp = document.getElementById('view-inspector');
+            const viewBuses = document.getElementById('view-buses');
+
+            if (tabName === 'buses') {
+                tabBuses.className = 'flex-1 py-1 px-2 rounded-md text-[11px] font-bold transition bg-white text-sky-700 shadow-sm';
+                tabInsp.className = 'flex-1 py-1 px-2 rounded-md text-[11px] font-bold transition text-slate-600 hover:text-slate-900';
+                viewBuses.classList.remove('hidden');
+                viewInsp.classList.add('hidden');
+            } else {
+                tabInsp.className = 'flex-1 py-1 px-2 rounded-md text-[11px] font-bold transition bg-white text-sky-700 shadow-sm';
+                tabBuses.className = 'flex-1 py-1 px-2 rounded-md text-[11px] font-bold transition text-slate-600 hover:text-slate-900';
+                viewInsp.classList.remove('hidden');
+                viewBuses.classList.add('hidden');
+            }
+        }
+
+        function selectComponent(id) {
+            state.selectedType = 'part';
+            state.selectedId = id;
+            setInspectorTab('inspector');
+            syncAllUI();
+            if (window.innerWidth < 1024) {
+                document.getElementById('right-drawer').classList.remove('translate-x-full');
+            }
+        }
+
+        function selectBus(busId, focusCamera = true) {
+            state.selectedType = 'bus';
+            state.selectedId = busId;
+            setInspectorTab('inspector');
+            syncAllUI();
+
+            if (focusCamera) {
+                focusCameraOnBus(busId);
+            }
+            if (window.innerWidth < 1024) {
+                document.getElementById('right-drawer').classList.remove('translate-x-full');
+            }
+        }
+
+        function focusCameraOnBus(busId) {
+            const bus = MOTHERBOARD_BUSES.find(b => b.id === busId);
+            const moboGrp = partGroups.mobo;
+            if (!bus || !moboGrp) return;
+
+            moboGrp.updateMatrixWorld(true);
+            const localPt = new THREE.Vector3(bus.moboLocalPos.x, bus.moboLocalPos.y, bus.moboLocalPos.z);
+            const worldTarget = localPt.applyMatrix4(moboGrp.matrixWorld);
+
+            if (state.installed.mobo) {
+                camTweenTarget = worldTarget.clone();
+                camTweenPos = worldTarget.clone().add(new THREE.Vector3(14, 4, 25));
+            } else {
+                camTweenTarget = worldTarget.clone();
+                camTweenPos = worldTarget.clone().add(new THREE.Vector3(0, 22, 16));
+            }
+        }
+
+        function syncAllUI() {
+            renderComponentsSidebar();
+            renderInspectorPanel();
+            renderBusesCatalogTab();
+        }
+
+        function renderComponentsSidebar() {
+            const list = document.getElementById('components-list');
+            list.innerHTML = '';
+
+            const installedCount = Object.values(state.installed).filter(Boolean).length;
+            document.getElementById('count-installed').textContent = installedCount;
+
+            CATEGORIES.forEach(cat => {
+                const items = HARDWARE_CATALOG.filter(p => p.category === cat.id);
+                const section = document.createElement('div');
+                section.className = 'space-y-1';
+
+                const header = document.createElement('div');
+                header.className = 'text-[10px] font-mono-tech uppercase tracking-wider text-slate-500 font-bold px-1';
+                header.textContent = cat.label;
+                section.appendChild(header);
+
+                items.forEach(item => {
+                    const isInst = state.installed[item.id];
+                    const isSel = state.selectedType === 'part' && state.selectedId === item.id;
+
+                    const card = document.createElement('div');
+                    card.className = `px-2.5 py-2 rounded-lg border text-xs flex items-center justify-between gap-2 cursor-pointer transition ${
+                        isSel
+                            ? 'bg-sky-50 border-sky-500 text-slate-900 shadow-sm'
+                            : 'bg-white/90 border-slate-200 hover:border-slate-400 text-slate-700'
+                    }`;
+
+                    card.addEventListener('click', e => {
+                        if (e.target.closest('button')) return;
+                        selectComponent(item.id);
+                    });
+
+                    const textWrap = document.createElement('div');
+                    textWrap.className = 'min-w-0 flex-1';
+                    textWrap.innerHTML = `
+                        <div class="font-semibold text-[11px] truncate">${item.name}</div>
+                        <div class="text-[9px] font-mono-tech text-slate-500 truncate">${item.bus.split('/')[0]}</div>
+                    `;
+
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.className = `px-2 py-1 rounded text-[9px] font-mono-tech font-bold shrink-0 transition ${
+                        isInst
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-rose-100 hover:text-rose-800 hover:border-rose-300'
+                            : 'bg-amber-100 text-amber-800 border border-amber-300 hover:bg-sky-100 hover:text-sky-800 hover:border-sky-300'
+                    }`;
+                    toggleBtn.textContent = isInst ? 'Instalado' : 'Bancada';
+                    toggleBtn.addEventListener('click', () => {
+                        selectComponent(item.id);
+                        toggleInstallState(item.id);
+                    });
+
+                    card.appendChild(textWrap);
+                    card.appendChild(toggleBtn);
+                    section.appendChild(card);
+                });
+
+                list.appendChild(section);
+            });
+        }
+
+        function renderInspectorPanel() {
+            const pill = document.getElementById('insp-state-pill');
+            const btn = document.getElementById('btn-toggle-part');
+
+            if (state.selectedType === 'bus') {
+                const bus = MOTHERBOARD_BUSES.find(b => b.id === state.selectedId) || MOTHERBOARD_BUSES[0];
+                document.getElementById('insp-category').textContent = `BARRAMENTO ${bus.num} • PLACA-MÃE`;
+                document.getElementById('insp-title').textContent = bus.name;
+                document.getElementById('insp-subtitle').textContent = bus.shortTag;
+                document.getElementById('insp-bus').textContent = `${bus.name} (${bus.shortTag})`;
+                document.getElementById('insp-bandwidth').textContent = bus.bandwidth;
+                document.getElementById('insp-power').textContent = bus.topology;
+                document.getElementById('insp-deps-label').textContent = 'Conexão na Arquitetura & Energia';
+                document.getElementById('insp-deps').textContent = `${bus.prereqText} • ${bus.powerSpec}`;
+                document.getElementById('insp-arch').textContent = bus.arch;
+
+                pill.textContent = 'INTERFACE PCB ATIVA';
+                pill.className = 'px-2 py-0.5 rounded-md text-[10px] font-mono-tech font-bold bg-amber-100 text-amber-900 border border-amber-300';
+
+                btn.textContent = 'Focar Câmera neste Barramento 3D';
+                btn.className = 'mt-3 w-full py-2.5 px-3 rounded-lg text-xs font-bold transition bg-sky-600 hover:bg-sky-700 text-white shadow-sm';
+                return;
+            }
+
+            const spec = HARDWARE_CATALOG.find(p => p.id === state.selectedId) || HARDWARE_CATALOG[1];
+            const catLabel = CATEGORIES.find(c => c.id === spec.category)?.label || 'Hardware';
+            const isInst = state.installed[spec.id];
+
+            document.getElementById('insp-category').textContent = catLabel;
+            document.getElementById('insp-title').textContent = spec.name;
+            document.getElementById('insp-subtitle').textContent = spec.subtitle;
+            document.getElementById('insp-bus').textContent = spec.bus;
+            document.getElementById('insp-bandwidth').textContent = spec.bandwidth;
+            document.getElementById('insp-power').textContent = spec.power;
+            document.getElementById('insp-deps-label').textContent = 'Pré-Requisitos de Acoplamento';
+            document.getElementById('insp-arch').textContent = spec.arch;
+
+            document.getElementById('insp-deps').textContent = spec.requires.length > 0
+                ? spec.requires.map(r => HARDWARE_CATALOG.find(x => x.id === r).name).join(' + ')
+                : 'Acoplamento direto no chassi ATX';
+
+            if (isInst) {
+                pill.textContent = 'INSTALADO NO GABINETE';
+                pill.className = 'px-2 py-0.5 rounded-md text-[10px] font-mono-tech font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+
+                // Botões intuitivos dedicados para Cooler e CPU!
+                if (spec.id === 'cooler') {
+                    btn.textContent = 'Remover Cooler (Libera CPU)';
+                    btn.className = 'mt-3 w-full py-2.5 px-3 rounded-lg text-xs font-bold transition bg-rose-600 hover:bg-rose-700 text-white shadow-sm';
+                } else if (spec.id === 'cpu' && state.installed.cooler) {
+                    btn.textContent = 'Remover Cooler Torre para liberar CPU';
+                    btn.className = 'mt-3 w-full py-2.5 px-3 rounded-lg text-xs font-bold transition bg-amber-600 hover:bg-amber-700 text-white shadow-sm';
+                } else {
+                    btn.textContent = 'Remover para Bancada';
+                    btn.className = 'mt-3 w-full py-2.5 px-3 rounded-lg text-xs font-bold transition bg-rose-600 hover:bg-rose-700 text-white shadow-sm';
+                }
+            } else {
+                pill.textContent = 'NA BANCADA ESD';
+                pill.className = 'px-2 py-0.5 rounded-md text-[10px] font-mono-tech font-bold bg-amber-100 text-amber-800 border border-amber-300';
+                btn.textContent = 'Plugar no Gabinete';
+                btn.className = 'mt-3 w-full py-2.5 px-3 rounded-lg text-xs font-bold transition bg-sky-600 hover:bg-sky-700 text-white shadow-sm';
+            }
+        }
+
+        function renderBusesCatalogTab() {
+            const container = document.getElementById('buses-list-container');
+            container.innerHTML = '';
+
+            MOTHERBOARD_BUSES.forEach(bus => {
+                const isSel = state.selectedType === 'bus' && state.selectedId === bus.id;
+                const card = document.createElement('div');
+                card.className = `p-2.5 rounded-xl border transition cursor-pointer ${
+                    isSel
+                        ? 'bg-amber-50 border-amber-500 shadow-sm'
+                        : 'bg-white border-slate-200 hover:border-sky-400'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-400 font-mono-tech font-bold text-[9px] shrink-0">${bus.num}</span>
+                            <span class="text-xs font-bold text-slate-900 leading-tight truncate">${bus.name}</span>
+                        </div>
+                        <span class="text-[9px] font-mono-tech font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-300 shrink-0">
+                            ${bus.shortTag.split('•')[0].trim()}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono-tech text-slate-600 mt-1">
+                        <span>${bus.topology}</span>
+                        <span class="font-bold text-emerald-700">${bus.bandwidth}</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mt-1.5">
+                        <div class="h-full bg-sky-600 rounded-full" style="width: ${bus.bandPercent}%"></div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    selectBus(bus.id, true);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function setGameMode(newMode) {
+            state.mode = newMode;
+            const btnFree = document.getElementById('btn-mode-free');
+            const btnChal = document.getElementById('btn-mode-challenge');
+            const hud = document.getElementById('challenge-hud');
+            const scoreBox = document.getElementById('challenge-score-box');
+
+            if (newMode === 'challenge') {
+                if (state.busMode) toggleBusMode(false);
+                btnChal.className = 'px-2.5 py-1 rounded-md text-[11px] font-semibold transition bg-sky-600 text-white shadow-sm';
+                btnFree.className = 'px-2.5 py-1 rounded-md text-[11px] font-semibold transition text-slate-600 hover:text-slate-900';
+                hud.classList.remove('hidden');
+                scoreBox.classList.remove('hidden');
+
+                state.challengeIndex = 0;
+                state.score = 0;
+                disassembleAll();
+                moveCameraPreset('overview');
+                updateChallengeHUD();
+                showToast('Modo Desafio iniciado: siga as etapas no gabinete!', 'info');
+            } else {
+                btnFree.className = 'px-2.5 py-1 rounded-md text-[11px] font-semibold transition bg-sky-600 text-white shadow-sm';
+                btnChal.className = 'px-2.5 py-1 rounded-md text-[11px] font-semibold transition text-slate-600 hover:text-slate-900';
+                hud.classList.add('hidden');
+                scoreBox.classList.add('hidden');
+                if (targetGhostMesh) targetGhostMesh.visible = false;
+                showToast('Modo Exploração Livre ativo.', 'info');
+            }
+            syncAllUI();
+        }
+
+        function updateChallengeHUD() {
+            document.getElementById('score-value').textContent = state.score;
+            const total = HARDWARE_CATALOG.length;
+
+            if (state.challengeIndex >= total) {
+                document.getElementById('challenge-counter').textContent = '16 / 16 Concluído';
+                document.getElementById('challenge-step-title').textContent = 'Montagem Completa — Execute o Teste POST!';
+                document.getElementById('challenge-step-desc').textContent = 'Clique em "Ligar PC (POST)" na barra superior para validar o sistema.';
+                document.getElementById('challenge-bar').style.width = '100%';
+                if (targetGhostMesh) targetGhostMesh.visible = false;
+                return;
+            }
+
+            const step = HARDWARE_CATALOG[state.challengeIndex];
+            document.getElementById('challenge-counter').textContent = `Etapa ${state.challengeIndex + 1} / ${total}`;
+            document.getElementById('challenge-step-title').textContent = `Etapa ${state.challengeIndex + 1}: ${step.name}`;
+            document.getElementById('challenge-step-desc').textContent = step.guide;
+            document.getElementById('challenge-bar').style.width = `${Math.max(6, (state.challengeIndex / total) * 100)}%`;
+
+            if (targetGhostMesh) {
+                const localTarget = new THREE.Vector3(
+                    step.installedLocalPos.x,
+                    step.installedLocalPos.y,
+                    step.installedLocalPos.z
+                );
+                if (step.id === 'case_fans') localTarget.set(21.2, 28.0, 0);
+                if (step.id.startsWith('cable_')) localTarget.set(2.9, 26.0, -6.0);
+
+                targetGhostMesh.position.copy(localTarget.applyMatrix4(caseGroup.matrixWorld));
+                targetGhostMesh.visible = true;
+            }
+        }
+
+        function moveCameraPreset(key) {
+            const p = CAMERA_PRESETS[key];
+            if (!p) return;
+            camTweenPos = p.pos.clone();
+            camTweenTarget = p.target.clone();
+        }
+
+        let toastTimer = null;
+        function showToast(msg, type = 'info') {
+            const box = document.getElementById('system-toast');
+            const txt = document.getElementById('toast-text');
+            const dot = document.getElementById('toast-dot');
+
+            txt.textContent = msg;
+            const colors = {
+                ok: 'bg-emerald-400',
+                error: 'bg-rose-500',
+                warn: 'bg-amber-400',
+                info: 'bg-sky-400'
+            };
+            dot.className = `w-2.5 h-2.5 rounded-full shrink-0 ${colors[type] || colors.info}`;
+
+            box.classList.remove('opacity-0');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => box.classList.add('opacity-0'), 3600);
+        }
+
+        /**
+         * =========================================================================
+         * 11. EVENTOS DE BOTÕES & LOOP DE ANIMAÇÃO
+         * =========================================================================
+         */
+        function setupUIButtons() {
+            document.getElementById('btn-mode-free').addEventListener('click', () => setGameMode('free'));
+            document.getElementById('btn-mode-challenge').addEventListener('click', () => setGameMode('challenge'));
+            document.getElementById('btn-bus-overlay').addEventListener('click', () => toggleBusMode());
+
+            document.querySelectorAll('.cam-btn').forEach(btn => {
+                btn.addEventListener('click', () => moveCameraPreset(btn.dataset.cam));
+            });
+
+            document.getElementById('tab-inspector').addEventListener('click', () => setInspectorTab('inspector'));
+            document.getElementById('tab-buses').addEventListener('click', () => setInspectorTab('buses'));
+
+            document.getElementById('btn-exploded').addEventListener('click', e => {
+                state.exploded = !state.exploded;
+                e.currentTarget.classList.toggle('border-sky-600', state.exploded);
+                e.currentTarget.classList.toggle('bg-sky-50', state.exploded);
+                e.currentTarget.classList.toggle('text-sky-800', state.exploded);
+                refreshAllPartTargets();
+                showToast(state.exploded ? 'Visão Explodida ativada no gabinete.' : 'Visão Explodida desativada.', 'info');
+            });
+
+            document.getElementById('btn-power').addEventListener('click', handlePowerButton);
+
+            document.getElementById('btn-toggle-part').addEventListener('click', () => {
+                if (state.selectedType === 'bus') {
+                    focusCameraOnBus(state.selectedId);
+                } else if (state.selectedId === 'cpu' && state.installed.cpu && state.installed.cooler) {
+                    // Ação direta intuitiva: remove o Cooler Torre para liberar a CPU e seleciona a CPU!
+                    toggleInstallState('cooler');
+                    selectComponent('cpu');
+                } else if (state.selectedId) {
+                    toggleInstallState(state.selectedId);
+                }
+            });
+
+            document.getElementById('btn-strip-all').addEventListener('click', disassembleAll);
+            document.getElementById('btn-build-all').addEventListener('click', assembleAll);
+
+            // Gavetas Mobile
+            document.getElementById('btn-open-left').addEventListener('click', () => {
+                document.getElementById('left-drawer').classList.remove('-translate-x-full');
+            });
+            document.getElementById('btn-close-left').addEventListener('click', () => {
+                document.getElementById('left-drawer').classList.add('-translate-x-full');
+            });
+            document.getElementById('btn-open-right').addEventListener('click', () => {
+                document.getElementById('right-drawer').classList.remove('translate-x-full');
+            });
+            document.getElementById('btn-close-right').addEventListener('click', () => {
+                document.getElementById('right-drawer').classList.add('translate-x-full');
+            });
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('viewport-3d');
+            if (!container || !renderer || !camera) return;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsed = clock.getElapsedTime();
+
+            // 1. Interpolação suave de posição e rotação das 16 peças + destaque de seleção/hover
+            Object.keys(partGroups).forEach(id => {
+                const grp = partGroups[id];
+                const tgt = partTargets[id];
+                if (grp && tgt) {
+                    grp.position.lerp(tgt.pos, 0.14);
+                    grp.quaternion.slerp(tgt.quat, 0.14);
+                }
+
+                if (id === 'glass_panel') return;
+                const isSelected = state.selectedType === 'part' && state.selectedId === id;
+                const isHovered = state.hoveredTarget?.type === 'part' && state.hoveredTarget?.id === id;
+
+                grp.traverse(child => {
+                    if (
+                        child.isMesh &&
+                        child.material &&
+                        !child.userData.busId &&
+                        !poweredGlowMaterials.includes(child.material)
+                    ) {
+                        if (!child.userData.baseEmissive) {
+                            child.userData.baseEmissive = child.material.emissive.clone();
+                        }
+                        if (isSelected) {
+                            child.material.emissive.setHex(0x0369a1);
+                            child.material.emissiveIntensity = 0.32;
+                        } else if (isHovered) {
+                            child.material.emissive.setHex(0x0284c7);
+                            child.material.emissiveIntensity = 0.22;
+                        } else {
+                            child.material.emissive.copy(child.userData.baseEmissive);
+                            child.material.emissiveIntensity = 0;
+                        }
+                    }
+                });
+            });
+
+            // 2. Destaque emissivo específico para os 10 Barramentos da Placa-Mãe
+            Object.keys(busMeshes).forEach(busId => {
+                const busGrp = busMeshes[busId];
+                const isBusSelected = state.selectedType === 'bus' && state.selectedId === busId;
+                const isBusHovered = state.hoveredTarget?.type === 'bus' && state.hoveredTarget?.id === busId;
+
+                busGrp.traverse(child => {
+                    if (child.isMesh && !child.userData.isHitbox && child.material) {
+                        if (!child.userData.baseEmissive) {
+                            child.userData.baseEmissive = child.material.emissive.clone();
+                        }
+                        if (isBusSelected) {
+                            child.material.emissive.setHex(0xd97706);
+                            child.material.emissiveIntensity = 0.65;
+                        } else if (isBusHovered) {
+                            child.material.emissive.setHex(0xf59e0b);
+                            child.material.emissiveIntensity = 0.48;
+                        } else {
+                            child.material.emissive.copy(child.userData.baseEmissive);
+                            child.material.emissiveIntensity = 0;
+                        }
+                    }
+                });
+            });
+
+            // 3. Animação de ventoinhas e iluminação RGB/LED quando PC ligado
+            if (state.poweredOn) {
+                spinningFans.forEach(item => {
+                    item.mesh.rotation.z += item.speed;
+                });
+                poweredGlowMaterials.forEach(mat => {
+                    mat.emissive.setHex(0x0ea5e9);
+                    mat.emissiveIntensity = 1.2;
+                });
+            } else {
+                poweredGlowMaterials.forEach(mat => {
+                    mat.emissive.setHex(0x000000);
+                    mat.emissiveIntensity = 0;
+                });
+            }
+
+            // 4. Pulso do indicador de destino no Modo Desafio
+            if (targetGhostMesh && targetGhostMesh.visible) {
+                targetGhostMesh.material.opacity = 0.22 + Math.sin(elapsed * 5) * 0.14;
+            }
+
+            // 5. Transição suave de câmera
+            if (camTweenPos && camTweenTarget) {
+                camera.position.lerp(camTweenPos, 0.08);
+                controls.target.lerp(camTweenTarget, 0.08);
+                if (camera.position.distanceTo(camTweenPos) < 0.2) {
+                    camTweenPos = null;
+                    camTweenTarget = null;
+                }
+            }
+
+            controls.update();
+            updateBusCalloutsProjection();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initThreeScene();
+            setupUIButtons();
+            syncAllUI();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 18 — Configuração de Computadores e Periféricos",
+  "descricao": "Conexão segura de periféricos, ajustes de teclado, mouse, monitores, áudio e impressoras, drivers e diagnóstico pelo Gerenciador de Dispositivos.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 18"
+    },
+    "resumo-aula-18.pdf": {
+      "titulo": "Resumo da aula 18"
+    }
+  }
+}

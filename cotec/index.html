@@ -120,7 +120,46 @@ input,select{font:inherit;color:inherit}
 .stat b{color:var(--fg);font-weight:600}
 
 /* ============================================================
-   5. BARRA DE CONTROLES
+   5. DESTAQUE EXTRA
+   ============================================================ */
+.destaque-extra{position:relative;z-index:2;padding:8px 0 2px}
+.destaque-card{
+  position:relative;display:flex;align-items:center;gap:20px;padding:22px 24px;
+  border:1px solid rgba(207,255,94,.34);border-radius:var(--radius);overflow:hidden;
+  background:
+    radial-gradient(520px 200px at 88% -20%,rgba(207,255,94,.16),transparent 65%),
+    linear-gradient(135deg,rgba(207,255,94,.08),rgba(139,124,255,.09)),
+    var(--bg-elev);
+  transition:transform .28s var(--ease),border-color .28s var(--ease),background .28s var(--ease);
+}
+.destaque-card::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(360px 120px at 92% 120%,rgba(139,124,255,.14),transparent 70%);
+}
+.destaque-card:hover{transform:translateY(-2px);border-color:rgba(207,255,94,.62)}
+.destaque-icone{
+  position:relative;z-index:1;flex:none;width:58px;height:58px;display:grid;place-items:center;
+  border-radius:16px;background:var(--acc);color:#0A0B0D;font-size:1.7rem;
+  box-shadow:0 10px 30px rgba(207,255,94,.18);
+}
+.destaque-corpo{position:relative;z-index:1;flex:1;min-width:0}
+.destaque-rotulo{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:5px;
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);
+}
+.destaque-card h2{
+  font-family:var(--font-display);font-size:1.35rem;font-weight:800;letter-spacing:-.02em;line-height:1.15;
+}
+.destaque-card p{color:var(--fg-mid);font-size:.92rem;max-width:72ch;margin-top:4px}
+.destaque-acao{
+  position:relative;z-index:1;flex:none;display:inline-flex;align-items:center;gap:7px;
+  padding:10px 15px;border-radius:999px;background:var(--acc);color:#0A0B0D;
+  font-size:.84rem;font-weight:700;white-space:nowrap;
+}
+.destaque-card:hover .destaque-acao{filter:brightness(1.06)}
+
+/* ============================================================
+   6. BARRA DE CONTROLES
    ============================================================ */
 .toolbar{
   position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:12px;align-items:center;
@@ -179,7 +218,7 @@ input,select{font:inherit;color:inherit}
 .chip small{font-family:var(--font-mono);font-size:.7rem;opacity:.65}
 
 /* ============================================================
-   6. MIGALHAS
+   7. MIGALHAS
    ============================================================ */
 .crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:26px 0 0;font-size:.86rem;position:relative;z-index:2}
 .crumbs a,.crumbs span{color:var(--fg-dim);display:inline-flex;align-items:center;gap:6px}
@@ -188,7 +227,7 @@ input,select{font:inherit;color:inherit}
 .crumbs .atual{color:var(--fg);font-weight:500}
 
 /* ============================================================
-   7. CONTEUDO
+   8. CONTEUDO
    ============================================================ */
 main{position:relative;z-index:1;padding:22px 0 80px;min-height:46vh}
 .secao-titulo{
@@ -345,14 +384,14 @@ main{position:relative;z-index:1;padding:22px 0 80px;min-height:46vh}
 .torrada.ver{transform:translate(-50%,0);opacity:1;visibility:visible}
 
 /* ============================================================
-   8. RODAPE
+   9. RODAPE
    ============================================================ */
 footer{border-top:1px solid var(--line);padding:26px 0 36px;position:relative;z-index:1}
 .foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;color:var(--fg-dim);font-size:.82rem}
 .foot a:hover{color:var(--acc)}
 
 /* ============================================================
-   9. RESPONSIVO
+   10. RESPONSIVO
    ============================================================ */
 @media (max-width:760px){
   .shell{padding:0 18px}
@@ -365,6 +404,12 @@ footer{border-top:1px solid var(--line);padding:26px 0 36px;position:relative;z-
   .seg button{padding:8px 11px;font-size:.8rem;gap:6px}
   .ordem{padding:10px 32px 10px 12px;font-size:.8rem;background-position:right 11px center}
   .grid-pastas,.esqueleto{grid-template-columns:1fr}
+  .destaque-extra{padding-top:2px}
+  .destaque-card{flex-wrap:wrap;gap:14px;padding:18px}
+  .destaque-icone{width:46px;height:46px;border-radius:13px;font-size:1.35rem}
+  .destaque-card h2{font-size:1.15rem}
+  .destaque-card p{font-size:.86rem}
+  .destaque-acao{width:100%;justify-content:center}
   .arq{gap:11px;padding:11px 13px}
   .arq-icone{width:38px;height:38px;font-size:1.12rem}
   .arq-acoes .rotulo{display:none}
@@ -405,6 +450,20 @@ footer{border-top:1px solid var(--line);padding:26px 0 36px;position:relative;z-
     <h1>Arquivos do <em>COTEC</em></h1>
     <p>Tudo que eu uso em aula fica aqui, organizado por data. Slide abre direto no navegador; documento baixa com um clique.</p>
     <div class="stats" id="stats"></div>
+  </div>
+</section>
+
+<section class="destaque-extra" aria-labelledby="destaque-titulo">
+  <div class="shell">
+    <a class="destaque-card" href="simulador-3d/" target="_blank" rel="noopener" title="Abrir o simulador 3D em nova aba">
+      <span class="destaque-icone"><i class="ri-computer-line" aria-hidden="true"></i></span>
+      <div class="destaque-corpo">
+        <span class="destaque-rotulo"><i class="ri-flashlight-line" aria-hidden="true"></i> Extra · interativo</span>
+        <h2 id="destaque-titulo">Simulador 3D de Hardware</h2>
+        <p>Monte um PC peça por peça, gire o gabinete e explore os barramentos em uma atividade 3D que roda direto no navegador.</p>
+      </div>
+      <span class="destaque-acao">Abrir simulador 3D <i class="ri-arrow-right-up-line" aria-hidden="true"></i></span>
+    </a>
   </div>
 </section>
 
@@ -862,7 +921,7 @@ function renderTudo() {
 
 function renderStats() {
   if (E.carregando) return;
-  const aulas = E.pastas.filter((p) => !(p.pai ?? p.caminho.split('/').slice(0, -1).join('/'))).length;
+  const aulas = E.pastas.filter((p) => !(p.pai ?? p.caminho.split('/').slice(0, -1).join('/')) && p.caminho !== 'simulador-3d').length;
   const slides = E.arquivos.filter((a) => tipoDe(a.ext).g === 'slide').length;
   const ultima = E.arquivos.map((a) => a.publicado_em).filter(Boolean).sort().pop();
   const partes = [
@@ -945,7 +1004,7 @@ function renderConteudo() {
     return;
   }
 
-  const sub = filhasDe(E.rota);
+  const sub = filhasDe(E.rota).filter((p) => !(E.rota === '' && p.caminho === 'simulador-3d'));
   let soltos = ordenar(filtrar(soltosEm(E.rota)));
   if (E.rota && E.ordem === 'data-desc') {
     soltos = [...soltos].sort((a, b) => (tipoDe(b.ext).g === 'slide') - (tipoDe(a.ext).g === 'slide'));

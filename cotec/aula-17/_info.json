@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 17 — Montagem de Computadores",
+  "descricao": "Preparação segura, ESD, instalação de CPU, memória, fonte, discos e placas de expansão — a sequência prática para montar um PC sem danificar componentes.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 17"
+    },
+    "resumo-aula-17.pdf": {
+      "titulo": "Resumo da aula 17"
+    }
+  }
+}

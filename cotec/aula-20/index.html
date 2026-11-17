@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 20 - Diagnóstico Básico e Encerramento | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+            --alert: #f43f5e;
+            --warning: #facc15;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #000;
+        }
+
+        .blob {
+            position: absolute; filter: blur(80px); opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%; transition: width 0.4s ease-out; z-index: 100;
+        }
+
+        .slide-container {
+            width: 90%; max-width: 1300px; height: 80vh;
+            position: relative; perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); border-radius: 30px;
+            padding: 3.5rem 5rem; display: flex; flex-direction: column;
+            justify-content: center; opacity: 0; visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg); transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: translateZ(0) rotateX(0); }
+        .slide > * { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .slide.active > * { opacity: 1; transform: translateY(0); }
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        h1 {
+            font-size: 4rem; font-weight: 800; background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; line-height: 1.1; letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.6rem; font-weight: 600; color: #fff;
+            margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.8rem; letter-spacing: -0.5px;
+        }
+
+        p, li { font-size: 1.4rem; line-height: 1.6; color: var(--text-sec); }
+        
+        ul, ol { margin-top: 1rem; padding-left: 2rem; }
+        ul { list-style: none; }
+        ul li { margin-bottom: 0.85rem; position: relative; }
+        ul li::before {
+            content: ""; position: absolute; left: -1.5rem; top: 0.6rem;
+            width: 8px; height: 8px; background: var(--accent-1);
+            border-radius: 50%; box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+        .alert { color: var(--alert); font-weight: 600; }
+        .warning { color: var(--warning); font-weight: 600; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.2rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1.2rem; }
+        
+        .card {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 1.6rem; transition: transform 0.3s;
+        }
+
+        .center { text-align: center; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 1.2rem; color: #fff; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border: 1px solid var(--glass-border); }
+        th { background: rgba(56, 189, 248, 0.2); color: var(--accent-1); }
+
+        .footer {
+            position: fixed; bottom: 20px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 50px;
+            font-size: 1rem; color: #52525b; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); font-size: 0.9rem; color: #52525b;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+/* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* tabelas largas precisam caber na tela sem rolar para o lado */
+            table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            th, td {
+                padding: 0.45rem 0.3rem;
+                font-size: 0.8em;
+                overflow-wrap: break-word;
+                hyphens: auto;
+            }
+
+            .tabela-especificacoes th:first-child,
+            .tabela-especificacoes td:first-child {
+                width: 28%;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+
+        /* Em telas muito estreitas, os cards de 3 colunas viram uma coluna. */
+        @media (max-width: 380px) {
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 4.6rem;">O Detetive de Hardware</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 20: Diagnóstico Básico e Encerramento do Módulo</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador (20 de 20)</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Retomada -->
+        <div class="slide">
+            <h2>Quando a Prevenção Não Basta...</h2>
+            <p>Mesmo em um ambiente limpo, ventilado e organizado, computadores falham. A diferença entre um amador e um profissional é a <strong>reação diante do erro</strong>.</p>
+            <div class="card" style="margin-top: 1.5rem; border-color: var(--accent-2);">
+                <h3 class="highlight-2">O que é Diagnóstico de Computadores?</h3>
+                <p style="margin-top: 0.8rem;">É o processo lógico de <strong>observar sintomas</strong>, levantar hipóteses de <strong>causas</strong> e realizar <strong>testes seguros</strong> para descobrir a origem real do problema — sem sair trocando peças no escuro.</p>
+            </div>
+        </div>
+
+        <!-- BLOCO 1: FUNDAMENTOS DO DIAGNÓSTICO -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-1);">1. SINTOMA, CAUSA E SOLUÇÃO</h1>
+            <p class="center highlight-1" style="font-size: 2rem; margin-top: 1rem;">(A Lógica da Investigação Técnica)</p>
+        </div>
+
+        <!-- Slide 4: Tríade do Diagnóstico -->
+        <div class="slide">
+            <h2>Não Confunda o Efeito com a Origem</h2>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">1. Sintoma</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O que o usuário vê ou reclama.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.8rem; color: #fff;"><em>Ex: "O computador está sem som."</em></p>
+                </div>
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">2. Causa</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O fator técnico que gerou a falha.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.8rem; color: #fff;"><em>Ex: Saída de áudio trocada para o monitor HDMI.</em></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">3. Solução</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">A ação exata que corrige a causa.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.8rem; color: #fff;"><em>Ex: Selecionar os fones/caixas nas configurações.</em></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Mapa de Sintomas -->
+        <div class="slide">
+            <h2>Um Sintoma, Várias Hipóteses</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Sintoma Relatado</th>
+                        <th style="width: 70%;">Possíveis Causas a Investigar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Monitor sem imagem</strong></td>
+                        <td>Monitor desligado, entrada HDMI errada, cabo solto ou falha no PC.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Computador lento</strong></td>
+                        <td>Muitos programas abertos, RAM cheia, disco lotado ou superaquecimento.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sem áudio</strong></td>
+                        <td>Volume mutado, dispositivo de saída errado, cabo mal encaixado ou driver.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mouse não funciona</strong></td>
+                        <td>Porta USB com folga, pilha fraca (sem fio), sensor sujo ou defeito físico.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sem internet</strong></td>
+                        <td>Cabo de rede desconectado, Wi-Fi desligado, roteador ou provedor fora do ar.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 6: Sequência Lógica -->
+        <div class="slide">
+            <h2>Os 7 Passos do Diagnóstico Seguro</h2>
+            <p>Sempre comece pelo mais simples, barato e seguro:</p>
+            <ol style="font-size: 1.35rem; line-height: 1.75;">
+                <li><strong>Ouvir o relato:</strong> Entender o que o usuário estava fazendo.</li>
+                <li><strong>Observar o sintoma real:</strong> Reproduzir ou verificar o comportamento.</li>
+                <li><strong>Checar o básico:</strong> Energia elétrica, botões e cabos externos.</li>
+                <li><strong>Levantar hipóteses:</strong> Listar causas possíveis (conexão, config, software, peça).</li>
+                <li><strong>Testar uma coisa por vez:</strong> Isolar a variável sem bagunçar o sistema.</li>
+                <li><strong>Registrar o atendimento:</strong> Anotar sintomas, testes e resultados.</li>
+                <li><strong>Resolver ou encaminhar:</strong> Se envolver risco elétrico ou abertura, acionar especialista.</li>
+            </ol>
+        </div>
+
+        <!-- Slide 7: Missão Prática 1 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Missão Prática 1: Levantamento de Hipóteses</h2>
+            <p>Analisem os cenários abaixo e definam <strong>2 causas possíveis</strong> e a <strong>1ª verificação</strong> para cada:</p>
+            <div class="card" style="margin-top: 1.2rem; background: rgba(0,0,0,0.5);">
+                <ol style="font-size: 1.35rem; line-height: 1.85;">
+                    <li>O gabinete acende as luzes, mas a tela permanece totalmente preta.</li>
+                    <li>O cursor do mouse mexe na tela, mas o botão esquerdo não clica.</li>
+                    <li>O vídeo roda no navegador, mas não sai nenhum som.</li>
+                    <li>O computador demora muito para abrir qualquer pasta ou programa.</li>
+                    <li>O ícone de Wi-Fi mostra conectado, mas nenhum site abre.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- BLOCO 2: DIAGNÓSTICO DE PROBLEMAS COMUNS -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-2);">2. FALHAS DO COTIDIANO</h1>
+            <p class="center highlight-2" style="font-size: 2rem; margin-top: 1rem;">(Energia, Inicialização, Periféricos e Rede)</p>
+        </div>
+
+        <!-- Slide 9: "O PC Não Liga" -->
+        <div class="slide">
+            <h2>Desvendando o "Computador Não Liga"</h2>
+            <p>Para o usuário leigo, tudo é "não liga". Para o técnico, existem 3 cenários distintos:</p>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Cenário 1: Morto</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.6rem;">Sem luzes, sem bipes, sem ventoinha girando.</p>
+                    <p style="font-size: 1.1rem; margin-top: 0.6rem; color: #fff;">Checar tomada, filtro de linha, cabo de força e chave da fonte. <em>Nunca abrir a fonte!</em></p>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Cenário 2: Sem Vídeo</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.6rem;">Gabinete liga e faz barulho, mas monitor diz "Sem sinal".</p>
+                    <p style="font-size: 1.1rem; margin-top: 0.6rem; color: #fff;">Checar energia do monitor, cabo HDMI/VGA e canal de entrada (Source).</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Cenário 3: Trava no Boot</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.6rem;">Aparece imagem inicial, mas o Windows não carrega.</p>
+                    <p style="font-size: 1.1rem; margin-top: 0.6rem; color: #fff;">Falha de sistema, disco ou configuração. Encaminhar para suporte técnico.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Periféricos e Display -->
+        <div class="slide">
+            <h2>Teclado, Mouse e Monitor</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Teclado e Mouse</h3>
+                    <ul style="font-size: 1.2rem; margin-top: 0.6rem;">
+                        <li><strong>Periférico sem fio:</strong> Verifique pilhas/bateria, botão ON/OFF embaixo e o receptor USB.</li>
+                        <li><strong>Teclas trocadas:</strong> Confira o idioma/layout (ABNT2) na barra de tarefas antes de condenar o teclado.</li>
+                        <li><strong>Ponteiro pulando:</strong> Limpe o sensor óptico e teste sobre um mousepad opaco.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">Monitor e Exibição</h3>
+                    <ul style="font-size: 1.2rem; margin-top: 0.6rem;">
+                        <li><strong>Imagem esticada ou embaçada:</strong> Ajuste a resolução para a opção <em>(Recomendável)</em>.</li>
+                        <li><strong>Área de trabalho sumiu:</strong> Pressione <strong>Win + P</strong> para verificar se não está em <em>Estender</em> ou <em>Somente segunda tela</em>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Áudio e Rede -->
+        <div class="slide">
+            <h2>Diagnóstico de Áudio e Rede</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Áudio Mudo</h3>
+                    <p style="font-size: 1.25rem; margin-top: 0.6rem;">Verifique 4 pontos em ordem:</p>
+                    <ol style="font-size: 1.2rem; margin-top: 0.5rem;">
+                        <li>Ícone de volume perto do relógio (está no mudo?).</li>
+                        <li>Dispositivo de saída ativo em <em>Sistema > Som</em>.</li>
+                        <li>Plugue P2 (verde) ou USB bem encaixado.</li>
+                        <li>Volume físico na própria caixa de som.</li>
+                    </ol>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Rede Local vs. Internet</h3>
+                    <p style="font-size: 1.25rem; margin-top: 0.6rem;">Estar conectado ao roteador <strong>não garante</strong> internet.</p>
+                    <ul style="font-size: 1.2rem; margin-top: 0.5rem;">
+                        <li><strong>Sem rede local:</strong> Cabo Ethernet solto, Wi-Fi desativado ou Modo Avião ligado.</li>
+                        <li><strong>Rede sem internet:</strong> Falha no modem/roteador ou queda externa do provedor.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Missão Prática 2 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Missão Prática 2: Qual é a Primeira Verificação?</h2>
+            <p>Para cada problema, definam <strong>1ª verificação</strong>, <strong>2ª verificação</strong> e <strong>quando encaminhar</strong>:</p>
+            <div class="card" style="margin-top: 1.2rem; background: rgba(0,0,0,0.5);">
+                <ul style="font-size: 1.35rem; line-height: 1.75;">
+                    <li><strong>Problema A:</strong> PC ligado, mas monitor exibe "Sem sinal".</li>
+                    <li><strong>Problema B:</strong> Mouse sem fio recém-conectado não move o ponteiro.</li>
+                    <li><strong>Problema C:</strong> Som sai no monitor, mas não no fone de ouvido plugado.</li>
+                    <li><strong>Problema D:</strong> Teclado digita símbolos estranhos no lugar dos acentos.</li>
+                    <li><strong>Problema E:</strong> Cabo de rede conectado, mas navegador não abre sites.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- BLOCO 3: FERRAMENTAS DO WINDOWS -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-3);">3. FERRAMENTAS DO WINDOWS</h1>
+            <p class="center highlight-3" style="font-size: 2rem; margin-top: 1rem;">(Coletando Evidências sem Abrir o Gabinete)</p>
+        </div>
+
+        <!-- Slide 14: Gerenciador de Tarefas -->
+        <div class="slide">
+            <h2>Gerenciador de Tarefas (Ctrl + Shift + Esc)</h2>
+            <p>O painel de controle em tempo real para investigar lentidão e travamentos:</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Aba Processos</h3>
+                    <p style="font-size: 1.25rem; margin-top: 0.6rem;">Mostra exatamente qual aplicativo está devorando <strong>CPU</strong>, <strong>Memória RAM</strong>, <strong>Disco</strong> ou <strong>Rede</strong>. Permite finalizar programas travados.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Aba Desempenho</h3>
+                    <p style="font-size: 1.25rem; margin-top: 0.6rem;">Exibe gráficos em tempo real, tempo de atividade do sistema (Uptime), capacidade total de RAM e tipo de disco (SSD ou HDD).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Gerenciador de Dispositivos -->
+        <div class="slide">
+            <h2>Gerenciador de Dispositivos (Revisão Prática)</h2>
+            <p>Botão direito no <strong>Iniciar > Gerenciador de Dispositivos</strong>.</p>
+            <div class="card" style="margin-top: 1.2rem; border-color: var(--accent-3);">
+                <p style="font-size: 1.35rem;">Permite confirmar se o Windows reconheceu as peças e se há alertas de driver:</p>
+                <ul style="font-size: 1.25rem; margin-top: 0.8rem;">
+                    <li><strong>Triângulo Amarelo (!):</strong> Falha de driver ou conflito no dispositivo.</li>
+                    <li><strong>Seta para Baixo:</strong> Dispositivo desabilitado manualmente.</li>
+                    <li><strong>Dispositivo Desconhecido:</strong> Falta controlador para identificar a peça.</li>
+                </ul>
+                <p style="font-size: 1.2rem; margin-top: 0.8rem; color: var(--warning);"><em>Regra de laboratório: apenas consulte e anote; não desinstale drivers!</em></p>
+            </div>
+        </div>
+
+        <!-- Slide 16: Sistema e Armazenamento -->
+        <div class="slide">
+            <h2>Especificações e Armazenamento</h2>
+            <p>Caminho: <strong>Configurações > Sistema > Sobre</strong> e <strong>Armazenamento</strong>.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Sobre (Identidade do PC)</h3>
+                    <p style="font-size: 1.25rem; margin-top: 0.6rem;">Mostra o modelo exato do <strong>Processador</strong>, quantidade de <strong>Memória RAM instalada</strong>, arquitetura (64 bits) e edição do <strong>Windows</strong>.</p>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Disco Cheio ≠ Disco Quebrado</h3>
+                    <p style="font-size: 1.25rem; margin-top: 0.6rem;">Falta de espaço livre deixa o sistema lento e impede atualizações, mas não é defeito físico. <strong>Nunca apague pastas do sistema</strong> para liberar espaço!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Missão Prática 3 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Missão Prática 3: Coleta de Dados no Windows</h2>
+            <p><strong>Executem agora no computador de vocês e anotem:</strong></p>
+            <div class="card" style="margin-top: 1.2rem; background: rgba(0,0,0,0.5);">
+                <ol style="font-size: 1.35rem; line-height: 1.8;">
+                    <li>Pressionem <strong>Ctrl + Shift + Esc</strong>, abram um navegador e observem a variação de <strong>CPU</strong> e <strong>Memória</strong>.</li>
+                    <li>Abram <strong>Configurações > Sistema > Sobre</strong> e anotem o modelo da CPU e a RAM instalada.</li>
+                    <li>Acessem <strong>Sistema > Armazenamento</strong> e verifiquem a capacidade total e o espaço livre do disco C:.</li>
+                    <li>No <strong>Gerenciador de Dispositivos</strong>, localizem o nome do Adaptador de Vídeo e do Adaptador de Rede.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- BLOCO 4: ATIVIDADE INTEGRADORA E ENCERRAMENTO -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--warning);">4. ATIVIDADE INTEGRADORA</h1>
+            <p class="center warning" style="font-size: 2rem; margin-top: 1rem;">(Atendimento Técnico e Fechamento do Módulo)</p>
+        </div>
+
+        <!-- Slide 19: Ficha de Atendimento Técnico -->
+        <div class="slide">
+            <h2>Missão Final: Ficha de Verificação Técnica</h2>
+            <p>Assumam o papel de técnicos responsáveis pela auditoria dos computadores da empresa:</p>
+            <div class="card" style="margin-top: 1.2rem; border-color: var(--accent-2);">
+                <ol style="font-size: 1.35rem; line-height: 1.85;">
+                    <li>Preencham toda a <strong>Ficha de Verificação do Computador</strong> na folha impressa com os dados reais da máquina de vocês.</li>
+                    <li>Testem todos os periféricos (teclado, mouse, monitor, som e rede).</li>
+                    <li>Registrem nas observações se há algum alerta ou melhoria preventiva recomendada.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 20: Estudos de Caso Finais 1-3 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Banca de Certificação: Casos Reais (1/2)</h2>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Caso 01</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O computador está ligado, mas o monitor mostra <em>"Sem sinal"</em>.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Quais verificações iniciais realizar?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Caso 02</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O computador fica muito lento sempre que o usuário abre vários programas.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual ferramenta mostra o gargalo?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Caso 03</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">Um vídeo está tocando na tela, mas nenhum som é ouvido.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Quais configurações checar?</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Estudos de Caso Finais 4-6 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Banca de Certificação: Casos Reais (2/2)</h2>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Caso 04</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O Windows avisa que há pouco espaço disponível no disco principal.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>O SSD está quebrado? Explique.</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Caso 05</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O Gerenciador de Dispositivos exibe um <em>"Dispositivo desconhecido"</em>.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>O que isso indica?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Caso 06</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O cabo de força do PC está descascado com fios expostos.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual a conduta segura imediata?</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: Linha do Tempo das 10 Aulas -->
+        <div class="slide">
+            <h2>Nossa Jornada em Noções de Hardware</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Aulas 11 a 15: A Base</h3>
+                    <ul style="font-size: 1.2rem; margin-top: 0.6rem;">
+                        <li>Hardware vs. Software e Arquitetura.</li>
+                        <li>Placa-mãe, CPU, Memória RAM, HD/SSD e Fonte.</li>
+                        <li>Periféricos de Entrada, Saída e Híbridos.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Aulas 16 a 20: A Prática</h3>
+                    <ul style="font-size: 1.2rem; margin-top: 0.6rem;">
+                        <li>Interfaces (USB, HDMI, Áudio, Ethernet).</li>
+                        <li>Montagem segura e Configuração no Windows.</li>
+                        <li>Manutenção Preventiva e Diagnóstico Lógico.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 23: Perguntas Finais do Módulo (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Desafio Final do Módulo</h2>
+            <p>Respondam em plenária para fechar o componente curricular:</p>
+            <ol style="font-size: 1.4rem; line-height: 1.85; margin-top: 0.8rem;">
+                <li>Qual é a diferença entre Memória RAM e Armazenamento (HD/SSD)?</li>
+                <li>Para que servem os drivers no sistema operacional?</li>
+                <li>Por que a manutenção preventiva economiza tempo e dinheiro?</li>
+                <li>O que devemos verificar antes de afirmar que uma peça está queimada?</li>
+                <li><strong>Depoimento rápido:</strong> Qual aprendizado das 20 aulas você já vai aplicar no dia a dia?</li>
+            </ol>
+        </div>
+
+        <!-- Slide 24: Encerramento Oficial -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.5rem;">Componente Concluído!</h1>
+            <p class="center" style="font-size: 1.9rem; color: #fff; margin-top: 2rem;">Um bom Operador de Computador não apenas usa programas: ele entende a máquina, previne falhas e investiga problemas com método e segurança.</p>
+            <p class="center highlight-2" style="font-size: 1.6rem; margin-top: 3rem;">Parabéns pela dedicação nas 20 aulas! Sucesso na jornada profissional.</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 24</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>

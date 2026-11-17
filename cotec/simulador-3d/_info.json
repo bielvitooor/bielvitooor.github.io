@@ -1,0 +1,10 @@
+{
+  "titulo": "Simulador 3D ? Montagem de PC",
+  "descricao": "Explore um PC em 3D, monte pe?a por pe?a e veja os barramentos em uma atividade interativa que roda direto no navegador.",
+  "destaque": true,
+  "arquivos": {
+    "index.html": {
+      "titulo": "Abrir simulador 3D"
+    }
+  }
+}
