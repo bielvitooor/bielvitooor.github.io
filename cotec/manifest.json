@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "gerado_em": "2026-11-17T21:39:33+00:00",
+  "gerado_em": "2026-11-18T22:10:19+00:00",
   "raiz": "cotec",
-  "commit": "22c2b75",
-  "total_arquivos": 37,
-  "total_pastas": 20,
+  "commit": "014c2ad",
+  "total_arquivos": 39,
+  "total_pastas": 21,
   "pastas": [
     {
       "caminho": "aula-1",
@@ -189,6 +189,20 @@
       "atualizado_em": "2026-11-17T18:16:27-03:00"
     },
     {
+      "caminho": "aula-21",
+      "nome": "aula-21",
+      "pai": "",
+      "titulo": "Aula 21 — Noções de Software: Fundamentos e Classificação",
+      "descricao": "Hardware x software, as três categorias de programas, exploração do Windows, levantamento de softwares no laboratório e estudos de caso.",
+      "data": null,
+      "ordem": null,
+      "destaque": false,
+      "qtd_arquivos": 2,
+      "bytes": 268954,
+      "publicado_em": "2026-11-18T19:10:06-03:00",
+      "atualizado_em": "2026-11-18T19:10:06-03:00"
+    },
+    {
       "caminho": "aula-3",
       "nome": "aula-3",
       "pai": "",
@@ -288,6 +302,30 @@
     }
   ],
   "arquivos": [
+    {
+      "caminho": "aula-21/resumo-aula-21.pdf",
+      "nome": "resumo-aula-21.pdf",
+      "pasta": "aula-21",
+      "ext": "pdf",
+      "bytes": 235377,
+      "publicado_em": "2026-11-18T19:10:06-03:00",
+      "atualizado_em": "2026-11-18T19:10:06-03:00",
+      "versionado": true,
+      "titulo": "Resumo da aula 21",
+      "descricao": null
+    },
+    {
+      "caminho": "aula-21/index.html",
+      "nome": "index.html",
+      "pasta": "aula-21",
+      "ext": "html",
+      "bytes": 33577,
+      "publicado_em": "2026-11-18T19:10:06-03:00",
+      "atualizado_em": "2026-11-18T19:10:06-03:00",
+      "versionado": true,
+      "titulo": "Slide da aula 21",
+      "descricao": null
+    },
     {
       "caminho": "simulador-3d/index.html",
       "nome": "index.html",
