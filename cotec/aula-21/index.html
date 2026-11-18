@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 21 - Fundamentos e Classificação de Software | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #a1a1aa;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+            --alert: #f43f5e;
+            --warning: #facc15;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #000;
+        }
+
+        .blob {
+            position: absolute; filter: blur(80px); opacity: 0.5;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%; transition: width 0.4s ease-out; z-index: 100;
+        }
+
+        .slide-container {
+            width: 90%; max-width: 1300px; height: 80vh;
+            position: relative; perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); border-radius: 30px;
+            padding: 3.5rem 5rem; display: flex; flex-direction: column;
+            justify-content: center; opacity: 0; visibility: hidden;
+            transform: translateZ(-100px) rotateX(5deg); transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: translateZ(0) rotateX(0); }
+        .slide > * { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .slide.active > * { opacity: 1; transform: translateY(0); }
+        .slide.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.5s; }
+
+        h1 {
+            font-size: 4rem; font-weight: 800; background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; line-height: 1.1; letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.6rem; font-weight: 600; color: #fff;
+            margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.8rem; letter-spacing: -0.5px;
+        }
+
+        p, li { font-size: 1.4rem; line-height: 1.6; color: var(--text-sec); }
+        
+        ul, ol { margin-top: 1rem; padding-left: 2rem; }
+        ul { list-style: none; }
+        ul li { margin-bottom: 0.85rem; position: relative; }
+        ul li::before {
+            content: ""; position: absolute; left: -1.5rem; top: 0.6rem;
+            width: 8px; height: 8px; background: var(--accent-1);
+            border-radius: 50%; box-shadow: 0 0 10px var(--accent-1);
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 600; }
+        .highlight-2 { color: var(--accent-2); font-weight: 600; }
+        .highlight-3 { color: var(--accent-3); font-weight: 600; }
+        .alert { color: var(--alert); font-weight: 600; }
+        .warning { color: var(--warning); font-weight: 600; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.2rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1.2rem; }
+        
+        .card {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 1.6rem; transition: transform 0.3s;
+        }
+
+        .center { text-align: center; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 1.2rem; color: #fff; }
+        th, td { padding: 0.7rem 1rem; text-align: left; border: 1px solid var(--glass-border); }
+        th { background: rgba(56, 189, 248, 0.2); color: var(--accent-1); }
+
+        .footer {
+            position: fixed; bottom: 20px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 50px;
+            font-size: 1rem; color: #52525b; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); font-size: 0.9rem; color: #52525b;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+/* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* tabelas largas precisam caber na tela sem rolar para o lado */
+            table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            th, td {
+                padding: 0.45rem 0.3rem;
+                font-size: 0.8em;
+                overflow-wrap: break-word;
+                hyphens: auto;
+            }
+
+            .tabela-especificacoes th:first-child,
+            .tabela-especificacoes td:first-child {
+                width: 28%;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+
+        /* Em telas muito estreitas, os cards de 3 colunas viram uma coluna. */
+        @media (max-width: 380px) {
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 4.6rem;">A Inteligência da Máquina</h1>
+            <p class="center" style="font-size: 2rem; color: var(--accent-1);">Aula 21: Fundamentos e Classificação de Software</p>
+            <p class="center" style="margin-top: 2rem;">Qualificação Profissional em Operador de Computador (Aula 21 / Dia 01)</p>
+            <div class="controls-hint">Use as setas ou clique na tela para avançar</div>
+        </div>
+
+        <!-- Slide 2: Novo Módulo -->
+        <div class="slide">
+            <h2>Bem-vindos a Noções de Software!</h2>
+            <p>Nos últimos 10 encontros dominamos o corpo físico da máquina. Agora começa a jornada pela <strong>parte lógica</strong> que dá vida ao computador:</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Aulas 21 a 25</h3>
+                    <ul style="font-size: 1.2rem; margin-top: 0.6rem;">
+                        <li>Conceito e classificação dos softwares.</li>
+                        <li>Relação entre hardware e software.</li>
+                        <li>Sistemas Operacionais e Gerenciamento de Arquivos.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Aulas 26 a 30</h3>
+                    <ul style="font-size: 1.2rem; margin-top: 0.6rem;">
+                        <li>Editores de texto, planilhas e apresentações.</li>
+                        <li>Instalação e gerenciamento de programas.</li>
+                        <li>Navegadores, e-mail e comunicação digital.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOCO 1: FUNDAMENTOS DE SOFTWARE -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-1);">1. O QUE É SOFTWARE?</h1>
+            <p class="center highlight-1" style="font-size: 2rem; margin-top: 1rem;">(Da Estrutura Física às Instruções Lógicas)</p>
+        </div>
+
+        <!-- Slide 4: Provocação Hardware x Software -->
+        <div class="slide">
+            <h2>Uma Máquina Poderosa... Sem Programas</h2>
+            <div class="card" style="margin-top: 1.2rem; border-color: var(--warning);">
+                <p style="font-size: 1.45rem; color: #fff;">Imagine um computador recém-montado com processador de última geração, 16 GB de RAM, SSD rápido, monitor 4K, teclado e mouse.</p>
+                <p style="font-size: 1.4rem; margin-top: 1.2rem; color: var(--warning);"><strong>Pergunta:</strong> Só com essas peças físicas, como o usuário consegue redigir um ofício, calcular uma folha de pagamento ou acessar um site?</p>
+            </div>
+            <p style="margin-top: 1.5rem;">O <strong>hardware</strong> é a estrutura física; o <strong>software</strong> fornece as instruções que transformam peças eletrônicas em ferramentas de trabalho.</p>
+        </div>
+
+        <!-- Slide 5: Conceito e Comparação -->
+        <div class="slide">
+            <h2>Hardware vs. Software</h2>
+            <p><strong>Software</strong> é o conjunto de programas, instruções e dados que controlam os recursos do computador e executam tarefas para o usuário.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Hardware (Parte Física)</th>
+                        <th style="width: 50%;">Software (Parte Lógica)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Pode ser tocado fisicamente</td>
+                        <td>Formado por instruções, códigos e dados</td>
+                    </tr>
+                    <tr>
+                        <td>Executa operações elétricas e mecânicas</td>
+                        <td>Define o que fazer e como operar</td>
+                    </tr>
+                    <tr>
+                        <td>Exemplo: Teclado</td>
+                        <td>Exemplo: Editor de Texto</td>
+                    </tr>
+                    <tr>
+                        <td>Exemplo: Monitor / Impressora</td>
+                        <td>Exemplo: Sistema Operacional / Driver</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 6: Desafio Oral Hardware ou Software (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Desafio Rápido: Hardware ou Software?</h2>
+            <p>Classifiquem oralmente cada item abaixo:</p>
+            <div class="grid-2">
+                <div class="card" style="background: rgba(0,0,0,0.5);">
+                    <ol style="font-size: 1.45rem; line-height: 1.9;">
+                        <li>Mouse óptico</li>
+                        <li>Microsoft Windows</li>
+                        <li>Processador (CPU)</li>
+                        <li>Google Chrome</li>
+                        <li>Monitor LED</li>
+                    </ol>
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.5);">
+                    <ol start="6" style="font-size: 1.45rem; line-height: 1.9;">
+                        <li>Microsoft Word</li>
+                        <li>Memória RAM</li>
+                        <li>Paint</li>
+                        <li>Impressora</li>
+                        <li>Calculadora do Windows</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Softwares no Cotidiano e Missão 1 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Missão Prática 1: Softwares no Nosso Dia a Dia</h2>
+            <p>Softwares estão em computadores, celulares, smart TVs, caixas de supermercado e bancos. Registrem no caderno <strong>5 softwares que vocês já conhecem ou usam</strong> informando:</p>
+            <div class="card" style="margin-top: 1.2rem; background: rgba(0,0,0,0.5);">
+                <ol style="font-size: 1.4rem; line-height: 1.9;">
+                    <li><strong>Nome do software</strong> (ex: WhatsApp, Chrome, Word, Excel...).</li>
+                    <li><strong>Em qual dispositivo</strong> ele é utilizado (PC, celular, caixa...).</li>
+                    <li><strong>Qual é a principal função</strong> desse programa.</li>
+                    <li><strong>Em qual situação</strong> pessoal ou profissional ele é usado.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- BLOCO 2: CLASSIFICAÇÃO DOS SOFTWARES -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-2);">2. AS 3 CATEGORIAS</h1>
+            <p class="center highlight-2" style="font-size: 2rem; margin-top: 1rem;">(Sistema, Aplicativo e Utilitário)</p>
+        </div>
+
+        <!-- Slide 9: Visão Geral das 3 Categorias -->
+        <div class="slide">
+            <h2>Classificação Segundo a Função</h2>
+            <p>Existem milhares de programas, mas eles se dividem em três grandes grupos funcionais:</p>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">1. Sistema</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.7rem;">Gerencia o hardware e cria a base para outros programas rodarem.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.7rem; color: #fff;"><em>Ex: Windows, Linux, Android, Drivers.</em></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">2. Aplicativo</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.7rem;">Permite ao usuário realizar tarefas específicas do dia a dia.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.7rem; color: #fff;"><em>Ex: Word, Excel, Chrome, VLC, Paint.</em></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">3. Utilitário</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.7rem;">Apoia a proteção, limpeza, organização e diagnóstico do sistema.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.7rem; color: #fff;"><em>Ex: Antivírus, 7-Zip, Limpeza de Disco.</em></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Software de Sistema -->
+        <div class="slide">
+            <h2>1. Software de Sistema (A Base de Tudo)</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Sistemas Operacionais (SO)</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.6rem;">Exemplos: <strong>Windows, Linux, macOS, Android, iOS</strong>.</p>
+                    <ul style="font-size: 1.15rem; margin-top: 0.6rem;">
+                        <li>Controla CPU, memória RAM e armazenamento.</li>
+                        <li>Organiza arquivos, pastas e permissões.</li>
+                        <li>Oferece a interface visual (Área de Trabalho, janelas) para o usuário.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">Drivers de Dispositivo</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.6rem;">São pequenos softwares que ensinam o sistema operacional a conversar com cada peça de hardware.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.8rem; color: #fff;">Ex: Driver de vídeo, áudio, rede Wi-Fi e impressora.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Software Aplicativo -->
+        <div class="slide">
+            <h2>2. Software Aplicativo (Ferramentas do Usuário)</h2>
+            <p>São os programas que abrimos para estudar, trabalhar, criar e comunicar:</p>
+            <div class="grid-3">
+                <div class="card">
+                    <h3 class="highlight-2">Escritório</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.5rem;"><strong>Textos:</strong> Word, Writer, Docs.<br><strong>Planilhas:</strong> Excel, Calc, Sheets.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-1">Web e Comunicação</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.5rem;"><strong>Navegadores:</strong> Chrome, Edge, Firefox.<br><strong>Reuniões:</strong> Teams, Zoom, WhatsApp.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">Mídia e Imagem</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.5rem;"><strong>Imagens:</strong> Paint, GIMP, Photoshop.<br><strong>Vídeos/Áudio:</strong> VLC, Media Player.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Software Utilitário -->
+        <div class="slide">
+            <h2>3. Software Utilitário (Apoio e Manutenção)</h2>
+            <p>Focados em manter o computador seguro, organizado e funcionando bem:</p>
+            <ul style="font-size: 1.35rem; line-height: 1.8;">
+                <li><strong>Antivírus:</strong> Protege contra malwares e ameaças digitais (ex: <em>Microsoft Defender</em>).</li>
+                <li><strong>Compactadores:</strong> Reduzem tamanho e agrupam arquivos (ex: <em>7-Zip, WinRAR</em>).</li>
+                <li><strong>Limpeza de Armazenamento:</strong> Remove arquivos temporários desnecessários (ex: <em>Limpeza de Disco</em>).</li>
+                <li><strong>Ferramentas de Backup e Diagnóstico:</strong> Criam cópias de segurança e monitoram o sistema.</li>
+            </ul>
+        </div>
+
+        <!-- Slide 13: Desafio de Classificação (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Desafio: Sistema, Aplicativo ou Utilitário?</h2>
+            <p>Classifiquem cada programa abaixo e justifiquem sua escolha:</p>
+            <div class="grid-2">
+                <div class="card" style="background: rgba(0,0,0,0.5);">
+                    <ol style="font-size: 1.4rem; line-height: 1.85;">
+                        <li>Windows 11</li>
+                        <li>Microsoft Word</li>
+                        <li>Google Chrome</li>
+                        <li>Microsoft Defender Antivirus</li>
+                        <li>Linux</li>
+                    </ol>
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.5);">
+                    <ol start="6" style="font-size: 1.4rem; line-height: 1.85;">
+                        <li>Paint</li>
+                        <li>7-Zip</li>
+                        <li>Driver de impressora</li>
+                        <li>Microsoft Excel</li>
+                        <li>Ferramenta de backup</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOCO 3: IDENTIFICAÇÃO NO WINDOWS -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--accent-3);">3. EXPLORANDO O WINDOWS</h1>
+            <p class="center highlight-3" style="font-size: 2rem; margin-top: 1rem;">(Reconhecendo Programas na Prática)</p>
+        </div>
+
+        <!-- Slide 15: Onde Encontrar os Softwares -->
+        <div class="slide">
+            <h2>Mapeando o que Está Instalado</h2>
+            <p>No ambiente Windows, podemos inspecionar os softwares instalados em três locais principais:</p>
+            <div class="grid-3">
+                <div class="card">
+                    <h3 class="highlight-1">Menu Iniciar</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.6rem;">Lista alfabética de todos os aplicativos e barra de pesquisa rápida.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-2">Sistema > Sobre</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.6rem;">Mostra a edição e versão exata do Sistema Operacional instalado.</p>
+                </div>
+                <div class="card">
+                    <h3 class="highlight-3">Gerenciador de Tarefas</h3>
+                    <p style="font-size: 1.15rem; margin-top: 0.6rem;">Atalho <strong>Ctrl + Shift + Esc</strong>: revela aplicativos abertos e processos em segundo plano.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Missão Prática 2 (Laboratório) -->
+        <div class="slide">
+            <h2>Missão Prática 2: Testando Aplicativos Nativos</h2>
+            <p><strong>Executem agora no computador de vocês:</strong></p>
+            <div class="card" style="margin-top: 1.2rem; background: rgba(0,0,0,0.5);">
+                <ol style="font-size: 1.35rem; line-height: 1.8;">
+                    <li>Abram o <strong>Bloco de Notas</strong>, digitem <em>"Estou aprendendo os fundamentos de software."</em>, observem os menus e fechem sem salvar.</li>
+                    <li>Abram a <strong>Calculadora</strong> e realizem três operações matemáticas diferentes.</li>
+                    <li>Abram o <strong>Paint</strong> e façam um desenho simples usando pelo menos duas ferramentas.</li>
+                    <li>Pressionem <strong>Ctrl + Shift + Esc</strong> e observem na aba <em>Processos</em> os programas em execução.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- BLOCO 4: ATIVIDADE INTEGRADORA E ENCERRAMENTO -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 5rem; color: var(--warning);">4. AUDITORIA DE SOFTWARE</h1>
+            <p class="center warning" style="font-size: 2rem; margin-top: 1rem;">(Levantamento Profissional e Estudos de Caso)</p>
+        </div>
+
+        <!-- Slide 18: Atividade Integradora na Ficha -->
+        <div class="slide">
+            <h2>Missão Final: Levantamento na Empresa</h2>
+            <p>Uma empresa montou novos postos administrativos e precisa mapear os softwares disponíveis antes de iniciar o expediente.</p>
+            <div class="card" style="margin-top: 1.2rem; border-color: var(--accent-2);">
+                <ol style="font-size: 1.35rem; line-height: 1.85;">
+                    <li>Explorem o computador do laboratório e preencham a <strong>Ficha de Levantamento de Softwares</strong> na folha impressa.</li>
+                    <li>Completem o <strong>Quadro Comparativo</strong> das 3 categorias com definições, exemplos próprios e aplicações.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 19: Situações-Problema 1-3 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Casos Práticos: Qual Software Escolher? (1/2)</h2>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Caso 01</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">Um funcionário precisa redigir um relatório formal para a gerência.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual categoria usar? Cite um exemplo.</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Caso 02</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">O setor financeiro precisa lançar despesas, somar totais e gerar tabelas.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual tipo de programa é o ideal?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Caso 03</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">Há suspeita de arquivo malicioso em um pen drive conectado ao PC.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual categoria de software atua aqui?</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Situações-Problema 4-6 (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Casos Práticos: Qual Software Escolher? (2/2)</h2>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Caso 04</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">Um PC novo tem todas as peças físicas, mas está com o SSD vazio.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual software falta instalar primeiro?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Caso 05</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">Um atendente precisa consultar o portal da prefeitura na web.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual programa abrir e qual sua categoria?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Caso 06</h3>
+                    <p style="font-size: 1.2rem; margin-top: 0.8rem;">Chegou por e-mail um arquivo compactado no formato <code>.7z</code>.</p>
+                    <p style="font-size: 1.15rem; margin-top: 1rem; color: #fff;"><strong>Qual utilitário permite extrair os dados?</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Revisão Oral (SEM RESPOSTA) -->
+        <div class="slide">
+            <h2>Revisão Rápida de Encerramento</h2>
+            <ol style="font-size: 1.4rem; line-height: 1.85; margin-top: 0.8rem;">
+                <li>Qual é a diferença fundamental entre hardware e software?</li>
+                <li>Por que o computador precisa de um Sistema Operacional para funcionar?</li>
+                <li>O Google Chrome pertence a qual categoria de software?</li>
+                <li>Qual é a função principal de um software utilitário?</li>
+                <li><strong>Participação final:</strong> Cite um software que você usa muito, sua função e sua categoria.</li>
+            </ol>
+        </div>
+
+        <!-- Slide 22: Próxima Aula -->
+        <div class="slide">
+            <h2>Próxima Parada: Aula 22 de Software</h2>
+            <p>Hoje mapeamos o que são os programas e como eles se dividem.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.1); border-color: var(--accent-1);">
+                <h3 class="highlight-1">Na Próxima Aula...</h3>
+                <p style="margin-top: 1rem;">Vamos aprofundar <strong>como Hardware e Software trabalham juntos</strong> por trás dos bastidores e explorar as principais aplicações da informática no mundo profissional.</p>
+            </div>
+            <p class="center highlight-2" style="margin-top: 2.5rem;">Excelente início de módulo a todos!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 22</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>
