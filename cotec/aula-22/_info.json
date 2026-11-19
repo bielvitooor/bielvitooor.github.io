@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 22 — Hardware + Software em Ação",
+  "descricao": "Integração entre hardware e software, ciclo da informação, RAM x SSD, sistema operacional e drivers, informática no cotidiano e consultoria de TI.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 22"
+    },
+    "resumo-aula-22.pdf": {
+      "titulo": "Resumo da aula 22"
+    }
+  }
+}
