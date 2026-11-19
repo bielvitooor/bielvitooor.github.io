@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "gerado_em": "2026-11-18T22:10:19+00:00",
+  "gerado_em": "2026-11-19T21:12:05+00:00",
   "raiz": "cotec",
-  "commit": "014c2ad",
-  "total_arquivos": 39,
-  "total_pastas": 21,
+  "commit": "26a9337",
+  "total_arquivos": 41,
+  "total_pastas": 22,
   "pastas": [
     {
       "caminho": "aula-1",
@@ -203,6 +203,20 @@
       "atualizado_em": "2026-11-18T19:10:06-03:00"
     },
     {
+      "caminho": "aula-22",
+      "nome": "aula-22",
+      "pai": "",
+      "titulo": "Aula 22 — Hardware + Software em Ação",
+      "descricao": "Integração entre hardware e software, ciclo da informação, RAM x SSD, sistema operacional e drivers, informática no cotidiano e consultoria de TI.",
+      "data": null,
+      "ordem": null,
+      "destaque": false,
+      "qtd_arquivos": 2,
+      "bytes": 270019,
+      "publicado_em": "2026-11-19T18:11:56-03:00",
+      "atualizado_em": "2026-11-19T18:11:56-03:00"
+    },
+    {
       "caminho": "aula-3",
       "nome": "aula-3",
       "pai": "",
@@ -302,6 +316,30 @@
     }
   ],
   "arquivos": [
+    {
+      "caminho": "aula-22/resumo-aula-22.pdf",
+      "nome": "resumo-aula-22.pdf",
+      "pasta": "aula-22",
+      "ext": "pdf",
+      "bytes": 236946,
+      "publicado_em": "2026-11-19T18:11:56-03:00",
+      "atualizado_em": "2026-11-19T18:11:56-03:00",
+      "versionado": true,
+      "titulo": "Resumo da aula 22",
+      "descricao": null
+    },
+    {
+      "caminho": "aula-22/index.html",
+      "nome": "index.html",
+      "pasta": "aula-22",
+      "ext": "html",
+      "bytes": 33073,
+      "publicado_em": "2026-11-19T18:11:56-03:00",
+      "atualizado_em": "2026-11-19T18:11:56-03:00",
+      "versionado": true,
+      "titulo": "Slide da aula 22",
+      "descricao": null
+    },
     {
       "caminho": "aula-21/resumo-aula-21.pdf",
       "nome": "resumo-aula-21.pdf",
