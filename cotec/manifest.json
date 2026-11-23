@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "gerado_em": "2026-11-23T21:23:15+00:00",
+  "gerado_em": "2026-11-23T21:42:38+00:00",
   "raiz": "cotec",
-  "commit": "eee7d01",
+  "commit": "10532a7",
   "total_arquivos": 43,
   "total_pastas": 23,
   "pastas": [
@@ -220,15 +220,15 @@
       "caminho": "aula-23",
       "nome": "aula-23",
       "pai": "",
-      "titulo": "Aula 23 — Sistemas Operacionais: O Gerente do Computador",
-      "descricao": "Conceito e funções do SO, famílias e compatibilidade, processo de boot, processos e multitarefa, drivers, arquivos, usuários e prática de suporte.",
+      "titulo": "Aula 23 — Sistemas Operacionais",
+      "descricao": "Conceito e funções do SO, famílias e compatibilidade, processo de boot, processos e multitarefa, memória RAM, drivers, arquivos, permissões e prática de suporte.",
       "data": null,
       "ordem": null,
       "destaque": false,
       "qtd_arquivos": 2,
-      "bytes": 319608,
+      "bytes": 323582,
       "publicado_em": "2026-11-23T18:23:04-03:00",
-      "atualizado_em": "2026-11-23T18:23:04-03:00"
+      "atualizado_em": "2026-11-23T18:42:23-03:00"
     },
     {
       "caminho": "aula-3",
@@ -337,7 +337,7 @@
       "ext": "pdf",
       "bytes": 284885,
       "publicado_em": "2026-11-23T18:23:04-03:00",
-      "atualizado_em": "2026-11-23T18:23:04-03:00",
+      "atualizado_em": "2026-11-23T18:42:23-03:00",
       "versionado": true,
       "titulo": "Resumo da aula 23",
       "descricao": null
@@ -347,9 +347,9 @@
       "nome": "index.html",
       "pasta": "aula-23",
       "ext": "html",
-      "bytes": 34723,
+      "bytes": 38697,
       "publicado_em": "2026-11-23T18:23:04-03:00",
-      "atualizado_em": "2026-11-23T18:23:04-03:00",
+      "atualizado_em": "2026-11-23T18:42:23-03:00",
       "versionado": true,
       "titulo": "Slide da aula 23",
       "descricao": null
