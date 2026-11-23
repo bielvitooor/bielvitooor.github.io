@@ -482,7 +482,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 36px;position:relative;z-
     </div>
     <label class="sr" for="ordem">Ordenar por</label>
     <select class="ordem" id="ordem">
-      <option value="data-desc">Mais recentes</option>
+      <option value="data-desc" selected>Mais recentes</option>
       <option value="data-asc">Mais antigos</option>
       <option value="nome-asc">Nome (A–Z)</option>
       <option value="tipo">Tipo</option>
@@ -641,7 +641,20 @@ function relativo(iso) {
   const a = Math.floor(dias / 365);
   return `há ${a} ${a === 1 ? 'ano' : 'anos'}`;
 }
-const ehNovo = (iso) => { const d = data(iso); return d ? diasAte(d) <= 7 : false; };
+function inicioDaSemana() {
+  const agora = new Date();
+  const d = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // segunda-feira
+  return d;
+}
+function ehNovo(iso) {
+  const d = data(iso);
+  if (!d) return false;
+  const dia = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const hoje = new Date();
+  const hojeDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  return dia >= inicioDaSemana() && dia <= hojeDia;
+}
 const chaveDia = (iso) => { const d = data(iso); return d ? d.toISOString().slice(0, 10) : '0000-00-00'; };
 
 function bonito(nome) {
@@ -909,6 +922,7 @@ const COMO_SUBIR = `<pre>${CONFIG.raiz}/
    RENDER
    ============================================================ */
 function renderTudo() {
+  $('#ordem').value = E.ordem;
   renderStats();
   renderChips();
   renderCrumbs();
@@ -1033,8 +1047,8 @@ function renderConteudo() {
   if (sub.length) {
     const ordenadas = [...sub].sort((a, b) => {
       if (E.ordem === 'nome-asc') return a.nome.localeCompare(b.nome, 'pt-BR', {numeric:true});
-      if (E.ordem === 'data-asc') return (a.publicado_em || '').localeCompare(b.publicado_em || '');
-      return (b.atualizado_em || '').localeCompare(a.atualizado_em || '') || a.nome.localeCompare(b.nome, 'pt-BR', {numeric:true});
+      if (E.ordem === 'data-asc') return (a.publicado_em || a.atualizado_em || '').localeCompare(b.publicado_em || b.atualizado_em || '');
+      return (b.atualizado_em || b.publicado_em || '').localeCompare(a.atualizado_em || a.publicado_em || '') || b.nome.localeCompare(a.nome, 'pt-BR', {numeric:true});
     });
     html += `<h2 class="secao-titulo">${E.rota ? 'Subpastas' : 'Aulas e materiais'} <span>${ordenadas.length}</span></h2>`;
     html += `<div class="grid-pastas">${ordenadas.map(cartaoPasta).join('')}</div>`;

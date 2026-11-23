@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 23 — Sistemas Operacionais: O Gerente do Computador",
+  "descricao": "Conceito e funções do SO, famílias e compatibilidade, processo de boot, processos e multitarefa, drivers, arquivos, usuários e prática de suporte.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 23"
+    },
+    "resumo-aula-23.pdf": {
+      "titulo": "Resumo da aula 23"
+    }
+  }
+}
