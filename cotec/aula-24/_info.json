@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 24 — Interface Gráfica, Arquivos e Programas",
+  "descricao": "Interface GUI x CLI, janelas e atalhos, diferença entre programa, arquivo e atalho, caminhos, extensões, cópia e movimentação, lixeira, pesquisa e projeto integrador.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 24"
+    },
+    "resumo-aula-24.pdf": {
+      "titulo": "Resumo da aula 24"
+    }
+  }
+}

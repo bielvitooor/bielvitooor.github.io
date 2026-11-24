@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 24 - Interface Gráfica, Arquivos e Programas | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.09);
+            --text-main: #ffffff;
+            --text-sec: #cbd5e1;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+            --alert: #f43f5e;
+            --warning: #facc15;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #000;
+        }
+
+        .blob {
+            position: absolute; filter: blur(85px); opacity: 0.48;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%; transition: width 0.4s ease-out; z-index: 100;
+        }
+
+        .slide-container {
+            width: 92%; max-width: 1320px; height: 82vh;
+            position: relative; perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); border-radius: 28px;
+            padding: 3rem 4.5rem; display: flex; flex-direction: column;
+            justify-content: center; opacity: 0; visibility: hidden;
+            transform: translateZ(-80px) rotateX(4deg); transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.55);
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: translateZ(0) rotateX(0); }
+        .slide > * { opacity: 0; transform: translateY(16px); transition: all 0.5s ease-out; }
+        .slide.active > * { opacity: 1; transform: translateY(0); }
+        .slide.active > *:nth-child(1) { transition-delay: 0.08s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.16s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.24s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.32s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.40s; }
+
+        h1 {
+            font-size: 3.9rem; font-weight: 800; background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; line-height: 1.12; letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.35rem; font-weight: 700; color: #fff;
+            margin-bottom: 1.15rem; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.6rem; letter-spacing: -0.5px;
+        }
+
+        h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+        p, li { font-size: 1.28rem; line-height: 1.52; color: var(--text-sec); }
+        
+        ul, ol { margin-top: 0.6rem; padding-left: 1.8rem; }
+        ul { list-style: none; }
+        ul li { margin-bottom: 0.6rem; position: relative; }
+        ul li::before {
+            content: ""; position: absolute; left: -1.35rem; top: 0.56rem;
+            width: 7px; height: 7px; background: var(--accent-1);
+            border-radius: 50%;
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 700; }
+        .highlight-2 { color: var(--accent-2); font-weight: 700; }
+        .highlight-3 { color: var(--accent-3); font-weight: 700; }
+        .alert { color: var(--alert); font-weight: 700; }
+        .warning { color: var(--warning); font-weight: 700; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; margin-top: 0.85rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.4rem; margin-top: 0.85rem; }
+        
+        .card {
+            background: rgba(0, 0, 0, 0.38); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 1.3rem;
+        }
+
+        .center { text-align: center; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 0.7rem; font-size: 1.12rem; color: #fff; }
+        th, td { padding: 0.52rem 0.85rem; text-align: left; border: 1px solid var(--glass-border); }
+        th { background: rgba(56, 189, 248, 0.18); color: var(--accent-1); font-weight: 700; }
+
+        .path-box {
+            background: rgba(0, 0, 0, 0.55); border: 1px solid var(--accent-1);
+            border-radius: 12px; padding: 0.85rem 1.2rem; font-family: monospace;
+            font-size: 1.35rem; color: #fff; text-align: center; margin: 0.7rem 0;
+        }
+
+        .tree-box {
+            background: rgba(0, 0, 0, 0.5); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 0.95rem 1.2rem; font-family: monospace;
+            font-size: 1.05rem; line-height: 1.5; color: #e2e8f0;
+        }
+
+        .footer {
+            position: fixed; bottom: 18px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 50px;
+            font-size: 0.95rem; color: #64748b; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute; bottom: 35px; left: 50%;
+            transform: translateX(-50%); font-size: 0.85rem; color: #64748b;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+/* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* tabelas largas precisam caber na tela sem rolar para o lado */
+            table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            th, td {
+                padding: 0.45rem 0.3rem;
+                font-size: 0.8em;
+                overflow-wrap: break-word;
+                hyphens: auto;
+            }
+
+            .tabela-especificacoes th:first-child,
+            .tabela-especificacoes td:first-child {
+                width: 28%;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+
+        /* Em telas muito estreitas, os cards de 3 colunas viram uma coluna. */
+        @media (max-width: 380px) {
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .flow-box {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+                font-size: 1.8rem;
+                line-height: 1;
+            }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .step-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.7rem;
+            }
+
+            .layer-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.15rem;
+            }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .path-box,
+            .tree-box,
+            code {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .tabela-extensoes th:first-child,
+            .tabela-extensoes td:first-child { width: 24%; }
+
+            .tabela-extensoes th:nth-child(2),
+            .tabela-extensoes td:nth-child(2) { width: 28%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 4.3rem;">Interface Gráfica, Arquivos e Programas</h1>
+            <p class="center" style="font-size: 1.85rem; color: var(--accent-1);">Navegação, Organização Hierárquica e Autonomia no Windows</p>
+            <p class="center" style="margin-top: 1.8rem; font-size: 1.28rem;">Aula 24 — Noções de Software (Qualificação Profissional em Operador de Computador)</p>
+            <div class="controls-hint">Use as setas do teclado ou clique nas laterais da tela</div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 1: INTERFACE GRÁFICA E NAVEGAÇÃO
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.5rem; color: var(--accent-1);">1. INTERFACE E NAVEGAÇÃO</h1>
+            <p class="center highlight-1" style="font-size: 1.9rem; margin-top: 0.8rem;">(Ambiente Gráfico do Windows, Janelas, Atalhos e Execução de Programas)</p>
+        </div>
+
+        <!-- Slide 3: Teoria - Interface Gráfica vs Linha de Comando -->
+        <div class="slide">
+            <h2>O Que é Interface? (GUI vs. CLI)</h2>
+            <p><strong>Interface</strong> é a camada que permite a comunicação entre o ser humano e o sistema operacional, sem exigir que o usuário conheça os circuitos eletrônicos da máquina.</p>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Interface Gráfica (GUI)</h3>
+                    <p style="font-size: 1.15rem;">Utiliza elementos visuais intuitivos: <strong>janelas, ícones, menus e ponteiro do mouse</strong> (Windows, macOS, Android).</p>
+                    <p style="font-size: 1.12rem; margin-top: 0.6rem; color: #fff;"><em>Analogia do Automóvel:</em> O motorista usa volante, pedais e painel para controlar o carro sem precisar manipular diretamente as peças internas do motor.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Linha de Comando (CLI)</h3>
+                    <p style="font-size: 1.15rem;">Interação por meio de comandos digitados em texto puro (ex: Prompt de Comando / Terminal com <code>dir</code>).</p>
+                    <p style="font-size: 1.12rem; margin-top: 0.6rem; color: var(--warning);"><strong>Autonomia Digital:</strong> Mesmo que o visual de uma versão do Windows mude, a pesquisa do Menu Iniciar localiza qualquer programa pelo nome.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Teoria - Elementos do Ambiente Gráfico -->
+        <div class="slide">
+            <h2>Elementos da Interface do Windows</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Componentes Visuais</h3>
+                    <ul style="font-size: 1.15rem;">
+                        <li><strong>Área de Trabalho:</strong> tela principal após o login, usada para acesso rápido.</li>
+                        <li><strong>Menu Iniciar:</strong> central de busca de programas, arquivos e configurações.</li>
+                        <li><strong>Barra de Tarefas:</strong> mostra aplicativos fixados e janelas abertas no momento.</li>
+                        <li><strong>Área de Notificação:</strong> relógio, volume, rede Wi-Fi, bateria e alertas do sistema.</li>
+                        <li><strong>Janelas e Ícones:</strong> molduras de exibição dos aplicativos e suas representações gráficas.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Analogia: A Mesa do Escritório</h3>
+                    <p style="font-size: 1.16rem;">A <strong>Área de Trabalho</strong> equivale ao tampo da mesa de um recepcionista: deve conter apenas o que é usado com frequência imediata.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.7rem; color: #fff;">Encher a Área de Trabalho com 80 documentos soltos não consome memória RAM por si só, mas transforma a mesa em bagunça e atrasa o atendimento ao cliente.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Teoria - Controle de Janelas e Atalhos -->
+        <div class="slide">
+            <h2>Gerenciamento de Janelas e Atalhos de Produtividade</h2>
+            <p><strong>Minimizar</strong> oculta a janela na Barra de Tarefas mantendo o programa ativo; <strong>Maximizar</strong> expande para a tela toda; <strong>Fechar</strong> encerra a janela.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 28%;">Atalho de Teclado</th>
+                        <th style="width: 72%;">Ação Executada no Windows</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Alt + Tab</strong></td><td>Alterna rapidamente entre as janelas abertas no momento.</td></tr>
+                    <tr><td><strong>Windows + D</strong></td><td>Minimiza tudo e exibe a Área de Trabalho (pressionar de novo restaura).</td></tr>
+                    <tr><td><strong>Windows + E</strong></td><td>Abre diretamente o <em>Explorador de Arquivos</em>.</td></tr>
+                    <tr><td><strong>Windows + &larr; ou &rarr;</strong></td><td>Encaixa a janela ativa na metade esquerda ou direita da tela (tela dividida).</td></tr>
+                    <tr><td><strong>Alt + F4</strong></td><td>Fecha a janela ou aplicativo ativo no momento.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 6: Teoria - Programa, Arquivo e Atalho -->
+        <div class="slide">
+            <h2>Diferença Entre Programa, Arquivo e Atalho</h2>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Programa</h3>
+                    <p style="font-size: 1.15rem;">É a ferramenta instalada no sistema para executar tarefas (ex: Bloco de Notas, Calculadora, Word, Chrome).</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Arquivo</h3>
+                    <p style="font-size: 1.15rem;">É o documento ou dado gerado e gravado no disco com um nome (ex: <code>orcamento.txt</code>, <code>foto.jpg</code>).</p>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Atalho (<code>.lnk</code>)</h3>
+                    <p style="font-size: 1.15rem;">É apenas um apontador (ícone com setinha no canto) que leva até o programa ou arquivo original.</p>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 1.18rem; color: #fff;"><strong>Analogia do Cartão de Endereço:</strong> Jogar fora o cartão com o endereço de uma loja não destrói a loja. Excluir um atalho da Área de Trabalho não apaga o arquivo original nem desinstala o programa.</p>
+        </div>
+
+        <!-- Slide 7: Prática 01 (PC Zerado) -->
+        <div class="slide">
+            <h2>Prática 01: Janelas Lado a Lado e Atalhos (PC Zerado)</h2>
+            <p><strong>Partindo do computador vazio, executem a sequência abaixo:</strong></p>
+            <div class="card" style="margin-top: 0.8rem; background: rgba(0,0,0,0.48);">
+                <ol style="font-size: 1.2rem; line-height: 1.75;">
+                    <li>Abram o <strong>Bloco de Notas</strong> e a <strong>Calculadora</strong>. Usem <strong>Win + &larr;</strong> e <strong>Win + &rarr;</strong> para posicioná-los lado a lado na tela.</li>
+                    <li>Calculem o total de cada item e digitem no Bloco de Notas: <strong>12 Canetas (R$ 2,50)</strong>, <strong>5 Cadernos (R$ 18,00)</strong>, <strong>8 Pastas (R$ 4,50)</strong> e o <strong>Total Geral</strong>.</li>
+                    <li>Salvem o arquivo dentro da pasta <strong>Documentos</strong> com o nome <code>Orcamento_Escritorio.txt</code> e fechem o Bloco de Notas.</li>
+                    <li>Abram o Explorador de Arquivos (<strong>Win + E</strong>), cliquem com o botão direito sobre o arquivo salvo &rarr; <em>Mais opções &rarr; Enviar para &rarr; Área de Trabalho (criar atalho)</em>.</li>
+                    <li>Abram o arquivo pelo atalho, depois <strong>excluam apenas o atalho</strong> e confirmem em <em>Documentos</em> que o arquivo original continua intacto.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 2: ARQUIVOS, PASTAS, CAMINHOS E EXTENSÕES
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.5rem; color: var(--accent-2);">2. PASTAS, CAMINHOS E EXTENSÕES</h1>
+            <p class="center highlight-2" style="font-size: 1.9rem; margin-top: 0.8rem;">(Estrutura Hierárquica, Endereçamento, Formatos e Segurança)</p>
+        </div>
+
+        <!-- Slide 9: Teoria - Estrutura Hierárquica e Caminho (Path) -->
+        <div class="slide">
+            <h2>Estrutura Hierárquica e Caminho de Arquivo (Path)</h2>
+            <p>O sistema organiza informações em níveis (Unidade &rarr; Pasta Principal &rarr; Subpasta &rarr; Arquivo), como armários e gavetas de uma empresa.</p>
+            <div class="path-box">C:\Empresa\Financeiro\2026\Relatorio.pdf</div>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Analogia do Endereço Residencial</h3>
+                    <p style="font-size: 1.15rem;">Informar apenas o número da casa não basta se houver várias ruas. O <strong>caminho completo</strong> garante que você abra o arquivo certo mesmo quando existem nomes iguais em setores distintos.</p>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Arquivos Homônimos em Pastas Diferentes</h3>
+                    <p style="font-size: 1.12rem;"><code>C:\Financeiro\Outubro\Relatorio.pdf</code> (Despesas)<br><code>C:\Comercial\Outubro\Relatorio.pdf</code> (Vendas)</p>
+                    <p style="font-size: 1.1rem; margin-top: 0.45rem; color: #fff;">Antes de enviar um documento, confira sempre a <strong>barra de endereços</strong> do Explorador de Arquivos.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Teoria - Extensões de Arquivo -->
+        <div class="slide">
+            <h2>Extensões de Arquivo e Associação de Programas</h2>
+            <p>A <strong>extensão</strong> (letras após o último ponto) indica o formato interno do arquivo e define qual aplicativo o Windows usará para abri-lo.</p>
+            <table class="tabela-extensoes">
+                <thead>
+                    <tr>
+                        <th>Extensão</th>
+                        <th>Tipo de Arquivo</th>
+                        <th>Uso Comum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>.txt</strong></td><td>Texto simples</td><td>Anotações sem formatação</td></tr>
+                    <tr><td><strong>.jpg / .png</strong></td><td>Imagem</td><td>Fotos e capturas de tela</td></tr>
+                    <tr><td><strong>.docx</strong></td><td>Documento Word</td><td>Contratos e relatórios</td></tr>
+                    <tr><td><strong>.mp3 / .mp4</strong></td><td>Áudio / Vídeo</td><td>Gravações e multimídia</td></tr>
+                    <tr><td><strong>.xlsx</strong></td><td>Planilha Excel</td><td>Cálculos e tabelas</td></tr>
+                    <tr><td><strong>.zip</strong></td><td>Compactado</td><td>Agrupamento de arquivos</td></tr>
+                    <tr><td><strong>.pdf</strong></td><td>Documento Portátil</td><td>Entrega final / leitura</td></tr>
+                    <tr><td><strong>.exe</strong></td><td>Executável</td><td>Programas e instaladores</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 0.8rem; font-size: 1.15rem; color: #fff;"><strong>Analogia da Etiqueta:</strong> Trocar o rótulo de uma garrafa de água para "suco" não muda o líquido. Renomear <code>Curriculo.docx</code> para <code>Curriculo.pdf</code> corrompe a leitura — é preciso usar <em>Salvar como</em> ou <em>Exportar para PDF</em>.</p>
+        </div>
+
+        <!-- Slide 11: Teoria - Segurança e Padronização de Nomes -->
+        <div class="slide">
+            <h2>Segurança nas Extensões e Padronização de Nomes</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Cuidado com Extensões Ocultas</h3>
+                    <p style="font-size: 1.15rem;">Por padrão, o Windows oculta extensões conhecidas. Um arquivo malicioso nomeado <code>Comprovante.pdf.exe</code> aparece na tela apenas como <code>Comprovante.pdf</code>.</p>
+                    <p style="font-size: 1.12rem; margin-top: 0.6rem; color: #fff;"><strong>Como ativar:</strong> No Explorador de Arquivos, clique em <em>Exibir &gt; Mostrar &gt; Extensões de nomes de arquivos</em>.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Convenção Profissional de Nomes</h3>
+                    <p style="font-size: 1.15rem;">Evite nomes genéricos como <code>novo.docx</code> ou <code>relatorio_final_agora_certo.docx</code>.</p>
+                    <p style="font-size: 1.15rem; margin-top: 0.6rem; color: #fff;"><strong>Padrão recomendado:</strong><br><code>Tipo_Assunto_AAAA-MM-DD_v01.ext</code><br>Ex: <code>Relatorio_Vendas_2026-11_v01.docx</code></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Prática 02 (PC Zerado) -->
+        <div class="slide">
+            <h2>Prática 02: Preservação de Modelo e Teste de Extensão (PC Zerado)</h2>
+            <p><strong>Criem o ambiente de teste do zero em Documentos e realizem as 4 etapas:</strong></p>
+            <div class="card" style="margin-top: 0.8rem; background: rgba(0,0,0,0.48);">
+                <ol style="font-size: 1.18rem; line-height: 1.75;">
+                    <li>Criem a pasta <code>Pratica_Extensoes</code> dentro de <strong>Documentos</strong> e ativem a exibição de extensões no menu <em>Exibir</em>.</li>
+                    <li>No Bloco de Notas, digitem um modelo vazio com os campos <em>Cliente, Serviço, Valor e Data</em> e salvem como <code>Modelo_Contrato.txt</code>.</li>
+                    <li>Preencham os dados do cliente <strong>Carlos Almeida (Pintura - R$ 800,00)</strong> e usem <strong>Arquivo &gt; Salvar como</strong> para salvar como <code>Contrato_Carlos_2026-11-24.txt</code>, garantindo que o <code>Modelo_Contrato.txt</code> continue vazio.</li>
+                    <li>Façam uma cópia do modelo, renomeiem a cópia para <code>Teste_Falso.jpg</code>, tentem abrir no visualizador de fotos para observar o erro e depois restaurem <code>.txt</code>.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 3: OPERAÇÕES, LIXEIRA E PESQUISA
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.5rem; color: var(--accent-3);">3. OPERAÇÕES E RECUPERAÇÃO</h1>
+            <p class="center highlight-3" style="font-size: 1.9rem; margin-top: 0.8rem;">(Copiar vs. Mover, Conflitos, Lixeira e Pesquisa Avançada)</p>
+        </div>
+
+        <!-- Slide 14: Teoria - Copiar vs Mover e Conflitos -->
+        <div class="slide">
+            <h2>Copiar vs. Mover e Controle de Conflitos</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Copiar (Ctrl + C) vs. Recortar (Ctrl + X)</h3>
+                    <ul style="font-size: 1.15rem;">
+                        <li><strong>Copiar + Colar (Ctrl + V):</strong> cria uma duplicata independente (como tirar uma fotocópia); o arquivo original permanece intacto no local de origem.</li>
+                        <li><strong>Recortar + Colar (Ctrl + V):</strong> transfere o arquivo de pasta (como mudar um dossiê de armário); ele deixa de existir na pasta antiga.</li>
+                        <li><strong>Seleção múltipla:</strong> <code>Ctrl + clique</code> (alternados) ou <code>Shift + clique</code> (sequência).</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Conflito de Nomes e Sobrescrita</h3>
+                    <p style="font-size: 1.15rem;">Ao colar um arquivo em uma pasta onde já existe outro com o mesmo nome, o Windows pergunta se deseja <strong>Substituir</strong>.</p>
+                    <p style="font-size: 1.14rem; margin-top: 0.6rem; color: #fff;"><strong>Regra de Ouro:</strong> Nunca substitua às cegas apenas pela data mais recente. Se houver dúvida sobre qual versão é oficial, mantenha ambas com nomes diferenciados até conferir o conteúdo.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Teoria - Exclusão, Lixeira e Pesquisa -->
+        <div class="slide">
+            <h2>Exclusão Segura, Lixeira e Pesquisa no Explorador</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Lixeira vs. Exclusão Permanente</h3>
+                    <ul style="font-size: 1.15rem;">
+                        <li><strong>Tecla Delete:</strong> envia arquivos do disco local para a <em>Lixeira</em>, permitindo restaurá-los ao local de origem.</li>
+                        <li><strong>Shift + Delete:</strong> apaga permanentemente sem passar pela Lixeira.</li>
+                        <li><strong>Atenção:</strong> Arquivos apagados de <em>pendrives</em> ou <em>pastas na rede</em> geralmente são excluídos direto, sem ir para a Lixeira.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Localizando Arquivos Sem Saber o Nome</h3>
+                    <ul style="font-size: 1.15rem;">
+                        <li><strong>Caractere curinga (<code>*</code>):</strong> pesquisar <code>*.pdf</code> lista todos os PDFs da pasta; <code>*Alfa*</code> busca qualquer arquivo com "Alfa" no nome.</li>
+                        <li><strong>Ordenação em Detalhes:</strong> clique no cabeçalho da coluna <em>Data de modificação</em> ou <em>Tipo</em> para agrupar os arquivos recentes.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Casos Reais de Escritório -->
+        <div class="slide">
+            <h2>Casos Reais de Escritório — Diagnóstico Técnico</h2>
+            <p>Analisem cada situação ocorrida no ambiente corporativo e definam a conduta adequada:</p>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Caso 1: Transferência</h3>
+                    <p style="font-size: 1.12rem;">Uma assistente precisava enviar 5 comprovantes ao Financeiro mantendo os originais no seu setor, mas usou <strong>Ctrl + X</strong>. No dia seguinte, os arquivos sumiram da pasta dela.</p>
+                    <p style="font-size: 1.08rem; margin-top: 0.6rem; color: #fff;"><strong>Como corrigir sem perder os comprovantes?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Caso 2: Estoque Divergente</h3>
+                    <p style="font-size: 1.12rem;">Existem dois arquivos <code>Estoque.txt</code>: o de João (50 canetas, ontem) e o de Maria (35 canetas, hoje, mas sem conferência final).</p>
+                    <p style="font-size: 1.08rem; margin-top: 0.6rem; color: #fff;"><strong>Por que não devemos simplesmente sobrescrever o de João?</strong></p>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Caso 3: Arquivo Perdido</h3>
+                    <p style="font-size: 1.12rem;">O gerente pediu o comprovante em PDF do fornecedor Alfa salvo esta semana, mas o funcionário não lembra o nome exato nem a subpasta.</p>
+                    <p style="font-size: 1.08rem; margin-top: 0.6rem; color: #fff;"><strong>Qual filtro usar na barra de pesquisa do Explorador?</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 4: PROJETO PRÁTICO INTEGRADOR
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.5rem; color: var(--warning);">4. PROJETO INTEGRADOR</h1>
+            <p class="center warning" style="font-size: 1.9rem; margin-top: 0.8rem;">(Implantação e Auditoria do Arquivo Digital de uma Empresa — PC Zerado)</p>
+        </div>
+
+        <!-- Slide 18: Prática Final (Parte 1/2 - Criação e Organização do Zero) -->
+        <div class="slide">
+            <h2>Atividade Final (1/2): Estruturando a Empresa do Zero</h2>
+            <p><strong>Como os computadores estão zerados, criem a pasta <code>Empresa_Alpha</code> em Documentos e produzam os 8 arquivos iniciais no Bloco de Notas antes de organizá-los:</strong></p>
+            <div class="grid-2">
+                <div class="card" style="background: rgba(0,0,0,0.48);">
+                    <h3 class="highlight-1">1. Arquivos a Criar (Nomes Bagunçados)</h3>
+                    <ul style="font-size: 1.08rem; line-height: 1.55;">
+                        <li><code>doc1.txt</code> (Despesas de Outubro)</li>
+                        <li><code>doc2.txt</code> (Despesas de Novembro)</li>
+                        <li><code>novo.txt</code> (Vendas de Outubro)</li>
+                        <li><code>vendas_ok.txt</code> (Vendas de Novembro)</li>
+                        <li><code>arq1.txt</code> e <code>arq2.txt</code> (Cadastros Clientes Alfa e Beta)</li>
+                        <li><code>contrato1.txt</code> (Contrato Cliente Alfa)</li>
+                        <li><code>modelo.txt</code> (Modelo vazio de contrato)</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">2. Regras de Reorganização</h3>
+                    <ol style="font-size: 1.12rem; line-height: 1.65;">
+                        <li>Criem subpastas separadas para os setores <strong>Financeiro</strong>, <strong>Comercial</strong> e <strong>Administrativo</strong>.</li>
+                        <li>Movam cada arquivo para seu setor correspondente e <strong>renomeiem</strong> seguindo um padrão claro (ex: <code>Despesas_2026-10.txt</code>).</li>
+                        <li>Mantenham o <strong>Modelo de Contrato</strong> vazio e bem identificado para uso futuro.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Prática Final (Parte 2/2 - Imprevistos e Auditoria) -->
+        <div class="slide">
+            <h2>Atividade Final (2/2): Imprevistos e Auditoria em Dupla</h2>
+            <p><strong>Com a estrutura pronta, resolvam os 3 imprevistos do expediente e façam a auditoria:</strong></p>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Imprevistos do Expediente</h3>
+                    <ol style="font-size: 1.14rem; line-height: 1.7;">
+                        <li><strong>Cópia Setorial:</strong> O Administrativo pediu uma cópia do relatório de <em>Vendas de Outubro</em>, mas o Comercial precisa manter o original.</li>
+                        <li><strong>Novo Contrato:</strong> Usem o modelo vazio para gerar o contrato do cliente <em>Gama (Manutenção - R$ 1.250,00)</em> sem alterar o modelo.</li>
+                        <li><strong>Exclusão Acidental:</strong> Excluam o cadastro do <em>Cliente Beta</em> (Delete) e recuperem o arquivo pela Lixeira.</li>
+                    </ol>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Auditoria Cruzada (Troca de Bancada)</h3>
+                    <p style="font-size: 1.15rem;">Troquem de computador com o colega ao lado (sem dar dicas verbais) e tentem localizar na pasta <code>Empresa_Alpha</code> dele:</p>
+                    <ul style="font-size: 1.14rem; margin-top: 0.6rem;">
+                        <li>As despesas de novembro;</li>
+                        <li>O modelo vazio de contrato;</li>
+                        <li>O contrato do cliente Gama.</li>
+                    </ul>
+                    <p style="font-size: 1.08rem; margin-top: 0.6rem; color: #fff;"><em>Uma boa organização permite que qualquer colega encontre os arquivos sem ajuda.</em></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Próxima Aula -->
+        <div class="slide">
+            <h2>Próxima Parada: Aula 25 de Software</h2>
+            <p>Hoje conquistamos autonomia na interface gráfica do Windows, na navegação por atalhos e na organização profissional de arquivos e pastas.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.12); border-color: var(--accent-1);">
+                <h3 class="highlight-1">Na Próxima Aula...</h3>
+                <p style="margin-top: 0.9rem;">Vamos avançar para os <strong>Softwares de Produtividade</strong>, iniciando com a criação, formatação e estruturação profissional de documentos em <strong>Editores de Texto</strong>.</p>
+            </div>
+            <p class="center highlight-2" style="margin-top: 2.2rem; font-weight: 700;">Excelente trabalho hoje e bom descanso!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 20</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>
