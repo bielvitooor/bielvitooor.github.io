@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "gerado_em": "2026-11-23T21:42:38+00:00",
+  "gerado_em": "2026-11-24T21:10:53+00:00",
   "raiz": "cotec",
-  "commit": "10532a7",
-  "total_arquivos": 43,
-  "total_pastas": 23,
+  "commit": "c673788",
+  "total_arquivos": 45,
+  "total_pastas": 24,
   "pastas": [
     {
       "caminho": "aula-1",
@@ -231,6 +231,20 @@
       "atualizado_em": "2026-11-23T18:42:23-03:00"
     },
     {
+      "caminho": "aula-24",
+      "nome": "aula-24",
+      "pai": "",
+      "titulo": "Aula 24 — Interface Gráfica, Arquivos e Programas",
+      "descricao": "Interface GUI x CLI, janelas e atalhos, diferença entre programa, arquivo e atalho, caminhos, extensões, cópia e movimentação, lixeira, pesquisa e projeto integrador.",
+      "data": null,
+      "ordem": null,
+      "destaque": false,
+      "qtd_arquivos": 2,
+      "bytes": 316169,
+      "publicado_em": "2026-11-24T18:10:41-03:00",
+      "atualizado_em": "2026-11-24T18:10:41-03:00"
+    },
+    {
       "caminho": "aula-3",
       "nome": "aula-3",
       "pai": "",
@@ -330,6 +344,30 @@
     }
   ],
   "arquivos": [
+    {
+      "caminho": "aula-24/resumo-aula-24.pdf",
+      "nome": "resumo-aula-24.pdf",
+      "pasta": "aula-24",
+      "ext": "pdf",
+      "bytes": 275388,
+      "publicado_em": "2026-11-24T18:10:41-03:00",
+      "atualizado_em": "2026-11-24T18:10:41-03:00",
+      "versionado": true,
+      "titulo": "Resumo da aula 24",
+      "descricao": null
+    },
+    {
+      "caminho": "aula-24/index.html",
+      "nome": "index.html",
+      "pasta": "aula-24",
+      "ext": "html",
+      "bytes": 40781,
+      "publicado_em": "2026-11-24T18:10:41-03:00",
+      "atualizado_em": "2026-11-24T18:10:41-03:00",
+      "versionado": true,
+      "titulo": "Slide da aula 24",
+      "descricao": null
+    },
     {
       "caminho": "aula-23/resumo-aula-23.pdf",
       "nome": "resumo-aula-23.pdf",
