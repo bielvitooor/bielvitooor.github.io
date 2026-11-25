@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 25 - Softwares de Produtividade | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.09);
+            --text-main: #ffffff;
+            --text-sec: #cbd5e1;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+            --alert: #f43f5e;
+            --warning: #facc15;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #000;
+        }
+
+        .blob {
+            position: absolute; filter: blur(85px); opacity: 0.48;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%; transition: width 0.4s ease-out; z-index: 100;
+        }
+
+        .slide-container {
+            width: 92%; max-width: 1320px; height: 82vh;
+            position: relative; perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); border-radius: 28px;
+            padding: 2.8rem 4.4rem; display: flex; flex-direction: column;
+            justify-content: center; opacity: 0; visibility: hidden;
+            transform: translateZ(-80px) rotateX(4deg); transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.55);
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: translateZ(0) rotateX(0); }
+        .slide > * { opacity: 0; transform: translateY(16px); transition: all 0.5s ease-out; }
+        .slide.active > * { opacity: 1; transform: translateY(0); }
+        .slide.active > *:nth-child(1) { transition-delay: 0.08s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.16s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.24s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.32s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.40s; }
+
+        h1 {
+            font-size: 3.9rem; font-weight: 800; background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; line-height: 1.12; letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.3rem; font-weight: 700; color: #fff;
+            margin-bottom: 1.1rem; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.55rem; letter-spacing: -0.5px;
+        }
+
+        h3 { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.45rem; }
+
+        p, li { font-size: 1.24rem; line-height: 1.5; color: var(--text-sec); }
+        
+        ul, ol { margin-top: 0.55rem; padding-left: 1.8rem; }
+        ul { list-style: none; }
+        ul li { margin-bottom: 0.55rem; position: relative; }
+        ul li::before {
+            content: ""; position: absolute; left: -1.35rem; top: 0.55rem;
+            width: 7px; height: 7px; background: var(--accent-1);
+            border-radius: 50%;
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 700; }
+        .highlight-2 { color: var(--accent-2); font-weight: 700; }
+        .highlight-3 { color: var(--accent-3); font-weight: 700; }
+        .alert { color: var(--alert); font-weight: 700; }
+        .warning { color: var(--warning); font-weight: 700; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 0.8rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.3rem; margin-top: 0.8rem; }
+        
+        .card {
+            background: rgba(0, 0, 0, 0.38); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 1.25rem;
+        }
+
+        .center { text-align: center; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 0.65rem; font-size: 1.08rem; color: #fff; }
+        th, td { padding: 0.48rem 0.8rem; text-align: left; border: 1px solid var(--glass-border); }
+        th { background: rgba(56, 189, 248, 0.18); color: var(--accent-1); font-weight: 700; }
+
+        .quote-box {
+            background: rgba(0, 0, 0, 0.52); border-left: 4px solid var(--accent-2);
+            border-radius: 10px; padding: 0.9rem 1.2rem; font-size: 1.12rem;
+            color: #f8fafc; margin: 0.65rem 0; line-height: 1.5;
+        }
+
+        .footer {
+            position: fixed; bottom: 18px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 50px;
+            font-size: 0.95rem; color: #64748b; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute; bottom: 35px; left: 50%;
+            transform: translateX(-50%); font-size: 0.85rem; color: #64748b;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+/* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* tabelas largas precisam caber na tela sem rolar para o lado */
+            table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            th, td {
+                padding: 0.45rem 0.3rem;
+                font-size: 0.8em;
+                overflow-wrap: break-word;
+                hyphens: auto;
+            }
+
+            .tabela-especificacoes th:first-child,
+            .tabela-especificacoes td:first-child {
+                width: 28%;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+
+        .nowrap { white-space: nowrap; word-spacing: 0.22em; }
+
+        @media (max-width: 480px) {
+            .slide h1[style*="4.4rem"] { font-size: 3.4rem !important; }
+        }
+
+        /* Em telas muito estreitas, os cards de 3 colunas viram uma coluna. */
+        @media (max-width: 380px) {
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 340px) {
+            .slide h1[style*="4.4rem"] { font-size: 3rem !important; }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .flow-box {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+                font-size: 1.8rem;
+                line-height: 1;
+            }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .step-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.7rem;
+            }
+
+            .layer-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.15rem;
+            }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .path-box,
+            .tree-box,
+            code {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .tabela-extensoes th:first-child,
+            .tabela-extensoes td:first-child { width: 24%; }
+
+            .tabela-extensoes th:nth-child(2),
+            .tabela-extensoes td:nth-child(2) { width: 28%; }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .quote-box,
+            code {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .tabela-produtividade th:first-child,
+            .tabela-produtividade td:first-child { width: 27%; }
+
+            .tabela-produtividade th:nth-child(2),
+            .tabela-produtividade td:nth-child(2) { width: 33%; }
+
+            .tabela-produtividade th:nth-child(3),
+            .tabela-produtividade td:nth-child(3) { width: 40%; }
+
+            .tabela-orcamento th:first-child,
+            .tabela-orcamento td:first-child { width: 32%; }
+
+            .tabela-orcamento th:nth-child(2),
+            .tabela-orcamento td:nth-child(2) { width: 12%; }
+
+            .tabela-orcamento th:nth-child(3),
+            .tabela-orcamento td:nth-child(3) { width: 26%; }
+
+            .tabela-orcamento th:nth-child(4),
+            .tabela-orcamento td:nth-child(4) { width: 30%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 4.3rem;">Softwares de Produtividade</h1>
+            <p class="center" style="font-size: 1.85rem; color: var(--accent-1);">Edição, Formatação e Estruturação de Documentos no Microsoft Word</p>
+            <p class="center" style="margin-top: 1.8rem; font-size: 1.28rem;">Aula 25 — Noções de Software (Qualificação Profissional em Operador de Computador)</p>
+            <div class="controls-hint">Use as setas do teclado ou clique nas laterais da tela</div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 1: PRODUTIVIDADE E FUNDAMENTOS DO WORD
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.4rem; color: var(--accent-1);">1. PRODUTIVIDADE <span class="nowrap">E WORD</span></h1>
+            <p class="center highlight-1" style="font-size: 1.85rem; margin-top: 0.8rem;">(Categorias de Aplicativos, Suítes, Interface e Salvamento)</p>
+        </div>
+
+        <!-- Slide 3: Teoria - Categorias e Suítes de Produtividade -->
+        <div class="slide">
+            <h2>Softwares de Produtividade e Suítes de Escritório</h2>
+            <p><strong>Analogia da Caixa de Ferramentas:</strong> Cada ferramenta tem uma finalidade exata. Usar o programa certo evita retrabalho e garante acabamento profissional.</p>
+            <table class="tabela-produtividade">
+                <thead>
+                    <tr>
+                        <th style="width: 27%;">Categoria</th>
+                        <th style="width: 33%;">Finalidade Principal</th>
+                        <th style="width: 40%;">Suítes / Aplicativos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Editores de Texto</strong></td><td>Contratos, currículos, ofícios e relatórios</td><td>Microsoft Word<br>LibreOffice Writer<br>Google Docs</td></tr>
+                    <tr><td><strong>Planilhas Eletrônicas</strong></td><td>Cálculos automáticos, estoque e finanças</td><td>Microsoft Excel<br>LibreOffice Calc<br>Google Sheets</td></tr>
+                    <tr><td><strong>Apresentações</strong></td><td>Slides visuais para aulas e reuniões</td><td>Microsoft PowerPoint<br>LibreOffice Impress<br>Google Slides</td></tr>
+                    <tr><td><strong>Organização / Notas</strong></td><td>Listas de tarefas, pautas e anotações</td><td>Microsoft OneNote / To Do<br>Google Keep</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 0.8rem; font-size: 1.15rem; color: #fff;"><strong>Foco da Aula 25:</strong> Processadores de texto (Microsoft Word). Planilhas e apresentações serão aprofundadas na Aula 26.</p>
+        </div>
+
+        <!-- Slide 4: Teoria - Bloco de Notas vs Word e Guias -->
+        <div class="slide">
+            <h2>Processador de Textos e a Interface do Word</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Bloco de Notas vs. Microsoft Word</h3>
+                    <p style="font-size: 1.14rem;"><em>Analogia do Caderno e da Gráfica:</em> O Bloco de Notas funciona como um bloco de rascunho para texto puro (<code>.txt</code>).</p>
+                    <p style="font-size: 1.14rem; margin-top: 0.6rem; color: #fff;">O <strong>Word</strong> é um processador completo: permite formatação rica, margens A4, tabelas, imagens, cabeçalhos e exportação em PDF.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Faixa de Opções (Ribbon) por Setores</h3>
+                    <ul style="font-size: 1.12rem;">
+                        <li><strong>Arquivo:</strong> salvar, abrir, imprimir e exportar PDF.</li>
+                        <li><strong>Página Inicial:</strong> fontes, parágrafos, listas e estilos.</li>
+                        <li><strong>Inserir:</strong> tabelas, imagens, formas e numeração.</li>
+                        <li><strong>Layout:</strong> margens, orientação e tamanho de página.</li>
+                        <li><strong>Revisão:</strong> ortografia, comentários e alterações.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Teoria - Criação, Edição, Formatação e Formatos -->
+        <div class="slide">
+            <h2>Ciclo do Documento e Formatos de Salvamento</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-3">Construção vs. Pintura</h3>
+                    <ul style="font-size: 1.14rem;">
+                        <li><strong>Criação:</strong> abrir um documento em branco.</li>
+                        <li><strong>Edição:</strong> digitar, apagar (<em>Backspace</em> apaga à esquerda; <em>Delete</em> à direita), copiar e mover trechos.</li>
+                        <li><strong>Formatação:</strong> aplicar aparência visual (cor, tamanho, alinhamento) sem alterar o sentido do texto.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Projeto Editável vs. Entrega Final</h3>
+                    <ul style="font-size: 1.14rem;">
+                        <li><strong><code>.docx</code> (Padrão Word):</strong> arquivo editável de trabalho, como a planta baixa de uma obra.</li>
+                        <li><strong><code>.odt</code> / <code>.rtf</code>:</strong> formatos compatíveis com outros editores.</li>
+                        <li><strong><code>.pdf</code>:</strong> formato travado para envio e impressão, preservando o visual em qualquer tela.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Prática 01 (Documento em branco) -->
+        <div class="slide">
+            <h2>Prática 01: Primeiro Documento e Salvamento Organizado</h2>
+            <p><strong>Abram o Microsoft Word em um documento em branco e executem:</strong></p>
+            <div class="quote-box">
+                A tecnologia está presente em diferentes atividades do cotidiano. A utilização de computadores permite organizar informações, desenvolver documentos e realizar tarefas profissionais com maior eficiência.<br>
+                O conhecimento das ferramentas digitais contribui para o desenvolvimento pessoal e profissional, facilitando a comunicação e a realização de atividades no ambiente de trabalho.
+            </div>
+            <div class="card" style="background: rgba(0,0,0,0.48);">
+                <ol style="font-size: 1.14rem; line-height: 1.65;">
+                    <li>Digitem os dois parágrafos acima e acrescentem no topo o título: <strong>A importância da tecnologia</strong>.</li>
+                    <li>Substituam a palavra <em>"computadores"</em> por <strong>"recursos computacionais"</strong> e acrescentem uma 3ª frase escrita por vocês sobre informática no trabalho.</li>
+                    <li>Cliquem em <strong>Arquivo &gt; Salvar como</strong>, criem a pasta <code>Aula_25_Word</code> em <em>Documentos</em> e salvem como <code>01_Tecnologia.docx</code>.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 2: FORMATAÇÃO DE TEXTO, PARÁGRAFO E ESTILOS
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.4rem; color: var(--accent-2);">2. FORMATAÇÃO <span class="nowrap">E HIERARQUIA</span></h1>
+            <p class="center highlight-2" style="font-size: 1.85rem; margin-top: 0.8rem;">(Fontes, Parágrafos, Marcas Ocultas, Listas e Estilos)</p>
+        </div>
+
+        <!-- Slide 8: Teoria - Formatação de Fonte e Hierarquia -->
+        <div class="slide">
+            <h2>Formatação de Caracteres e Hierarquia Visual</h2>
+            <p><strong>Analogia das Placas de Trânsito:</strong> Se todas as palavras estiverem em negrito, coloridas e gigantes, nada recebe destaque real. A formatação deve guiar a leitura.</p>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Grupo Fonte (Página Inicial)</h3>
+                    <ul style="font-size: 1.14rem;">
+                        <li><strong>Família e Tamanho:</strong> fontes sem serifa (Calibri, Arial, Segoe UI) facilitam a leitura em tela; corpo de texto costuma usar 11 pt ou 12 pt.</li>
+                        <li><strong>Ênfase:</strong> <strong>Negrito</strong> (<code>Ctrl+N</code>), <em>Itálico</em> (<code>Ctrl+I</code>) e <u>Sublinhado</u> (<code>Ctrl+S</code>).</li>
+                        <li><strong>Recursos Especiais:</strong> Cor da fonte, Realce, Sobrescrito (<code>x²</code>) e Subscrito (<code>H₂O</code>).</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Produtividade com Estilos</h3>
+                    <p style="font-size: 1.14rem;">Em vez de formatar cada título manualmente, aplique <strong>Título 1</strong> e <strong>Título 2</strong> no grupo <em>Estilos</em>.</p>
+                    <p style="font-size: 1.12rem; margin-top: 0.6rem; color: #fff;"><strong>Vantagem:</strong> Ao alterar a cor ou fonte do estilo, todos os títulos do documento atualizam juntos e habilitam o <em>Painel de Navegação</em>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Teoria - Parágrafos, Marcas e Listas -->
+        <div class="slide">
+            <h2>Parágrafos, Marcas de Formatação e Listas</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-2">Alinhamento, Espaçamento e Recuos</h3>
+                    <ul style="font-size: 1.12rem;">
+                        <li><strong>Alinhamentos:</strong> Esquerda (padrão), Centralizado (títulos), Direita (datas/assinaturas) e Justificado (blocos formais).</li>
+                        <li><strong>Espaçamentos:</strong> <em>Entre linhas</em> (ex: 1,15 ou 1,5) define o respiro dentro do parágrafo; <em>Antes/Depois</em> separa um parágrafo do outro.</li>
+                        <li><strong>Listas:</strong> <em>Marcadores</em> para itens sem ordem fixa; <em>Numeração</em> para passos sequenciais.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Erros de Iniciante e o Botão Mostrar Tudo (&para;)</h3>
+                    <p style="font-size: 1.13rem;">O botão <strong>&para;</strong> revela espaços, tabulações e quebras ocultas atrás do texto:</p>
+                    <ul style="font-size: 1.12rem; margin-top: 0.45rem;">
+                        <li>Nunca aperte <em>Espaço</em> 20 vezes para centralizar um título.</li>
+                        <li>Nunca aperte <em>Enter</em> várias vezes para afastar parágrafos.</li>
+                        <li>Use sempre as ferramentas de alinhamento e recuo da régua.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Prática 02 (Comunicado Profissional) -->
+        <div class="slide">
+            <h2>Prática 02: Estruturando um Comunicado Profissional</h2>
+            <p><strong>Criem um novo documento em branco e transformem o texto bruto abaixo em um comunicado corporativo organizado:</strong></p>
+            <div class="quote-box">
+                Reunião geral de funcionários dia 27 de novembro de 2026 às 14 horas na sala de reuniões. Todos os setores deverão participar. Serão discutidos os resultados do mês, a organização das atividades e o planejamento do próximo período. Os funcionários deverão levar suas anotações e apresentar sugestões de melhorias.
+            </div>
+            <div class="card" style="background: rgba(0,0,0,0.48);">
+                <ol style="font-size: 1.14rem; line-height: 1.65;">
+                    <li>Inserir título centralizado (<strong>COMUNICADO INTERNO — Departamento Administrativo</strong>) em negrito e tamanho maior.</li>
+                    <li>Destacar em linhas próprias e negrito a <strong>Data</strong>, o <strong>Horário</strong> e o <strong>Local</strong> da reunião.</li>
+                    <li>Converter os três assuntos da pauta em uma <strong>lista com marcadores</strong> e aplicar espaçamento entre linhas de <strong>1,15</strong>.</li>
+                    <li>Finalizar com assinatura alinhada à direita ou à esquerda e salvar na pasta da aula como <code>02_Comunicado.docx</code>.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 3: LAYOUT, TABELAS, IMAGENS E CABEÇALHOS
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.4rem; color: var(--accent-3);">3. LAYOUT, TABELAS <span class="nowrap">E ELEMENTOS</span></h1>
+            <p class="center highlight-3" style="font-size: 1.85rem; margin-top: 0.8rem;">(Configuração de Página, Quebras, Tabelas, Imagens e Cabeçalho/Rodapé)</p>
+        </div>
+
+        <!-- Slide 12: Teoria - Configuração de Página e Quebras -->
+        <div class="slide">
+            <h2>Configuração de Página e Quebras Estruturais</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Guia Layout: Dimensões da Folha</h3>
+                    <ul style="font-size: 1.14rem;">
+                        <li><strong>Tamanho do Papel:</strong> padrão brasileiro é <strong>A4</strong> (210 &times; 297 mm).</li>
+                        <li><strong>Orientação:</strong> <em>Retrato</em> (vertical, para cartas e relatórios) ou <em>Paisagem</em> (horizontal, para tabelas largas).</li>
+                        <li><strong>Margens:</strong> delimitam a área útil entre a borda do papel e o texto.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Quebra de Página (Ctrl + Enter)</h3>
+                    <p style="font-size: 1.14rem;">Para iniciar um capítulo na página seguinte, <strong>nunca pressione Enter 15 vezes</strong>.</p>
+                    <p style="font-size: 1.13rem; margin-top: 0.6rem; color: #fff;">Se você adicionar linhas na página 1 depois, todo o documento desalinha. O comando <strong>Ctrl + Enter</strong> força o início exato no topo da próxima folha.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Teoria - Tabelas, Imagens e Cabeçalhos -->
+        <div class="slide">
+            <h2>Tabelas, Imagens e Papel Timbrado (Cabeçalho/Rodapé)</h2>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Tabelas no Word</h3>
+                    <p style="font-size: 1.12rem;">Organizam dados em <strong>linhas, colunas e células</strong> (ex: orçamentos e cronogramas). Permite mesclar células, aplicar bordas e sombreamento.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Imagens e Quebra de Texto</h3>
+                    <p style="font-size: 1.12rem;"><em>Analogia da Pedra no Rio:</em> A opção <strong>Quebra Automática de Texto</strong> (Quadrado, Superior/Inferior, Atrás) define como o texto contorna a imagem.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Cabeçalho e Rodapé</h3>
+                    <p style="font-size: 1.12rem;">Funcionam como papel timbrado: repetem automaticamente logotipo, título e <strong>numeração automática de páginas</strong> em todas as folhas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Prática 03 (Orçamento com Tabela, Logotipo e Cabeçalho) -->
+        <div class="slide">
+            <h2>Prática 03: Orçamento Comercial Completo (PC Zerado)</h2>
+            <div class="grid-2">
+                <div>
+                    <p style="font-size: 1.15rem;"><strong>1. Crie o logotipo no Paint:</strong> desenhe um símbolo simples, salve como <code>Logotipo.png</code> na pasta <code>Aula_25_Word</code> e insira no <strong>Cabeçalho</strong> de um novo documento Word.</p>
+                    <table class="tabela-orcamento">
+                        <thead>
+                            <tr><th>Produto</th><th>Qtd</th><th>Unitário</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Teclado USB</td><td>2</td><td>R$ 75,00</td><td>R$ 150,00</td></tr>
+                            <tr><td>Mouse Óptico</td><td>3</td><td>R$ 35,00</td><td>R$ 105,00</td></tr>
+                            <tr><td>Monitor 24"</td><td>1</td><td>R$ 650,00</td><td>R$ 650,00</td></tr>
+                            <tr><td>Cabo HDMI</td><td>2</td><td>R$ 25,00</td><td>R$ 50,00</td></tr>
+                            <tr><td colspan="3"><strong>Total Geral</strong></td><td><strong>R$ 955,00</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.48);">
+                    <h3 class="highlight-2">2. Montagem no Word</h3>
+                    <ol style="font-size: 1.12rem; line-height: 1.65;">
+                        <li>Crie o título <strong>Orçamento de Equipamentos</strong> e insira a tabela ao lado (4 colunas &times; 6 linhas).</li>
+                        <li>Formate o cabeçalho da tabela com cor de preenchimento e <strong>mescle as 3 primeiras células</strong> da linha do <em>Total Geral</em>.</li>
+                        <li>Insira <strong>numeração de página</strong> no Rodapé, pressione <strong>Ctrl + Enter</strong> para gerar uma 2ª página e confira a repetição automática.</li>
+                        <li>Salve como <code>03_Orcamento.docx</code>.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 4: PRODUTIVIDADE, REVISÃO E PDF
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.4rem; color: var(--warning);">4. PRODUTIVIDADE <span class="nowrap">E ENTREGA</span></h1>
+            <p class="center warning" style="font-size: 1.85rem; margin-top: 0.8rem;">(Localizar/Substituir, Pincel, Revisão Ortográfica e Exportação PDF)</p>
+        </div>
+
+        <!-- Slide 16: Teoria - Ferramentas de Produtividade e Revisão -->
+        <div class="slide">
+            <h2>Produtividade Rápida e Limites da Revisão Automática</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Aceleradores de Trabalho</h3>
+                    <ul style="font-size: 1.13rem;">
+                        <li><strong>Localizar e Substituir (Ctrl + U):</strong> troca nomes, datas ou termos repetidos em dezenas de páginas com um clique.</li>
+                        <li><strong>Pincel de Formatação:</strong> copia apenas o visual (fonte, cor, tamanho) de um trecho e aplica em outro como um molde.</li>
+                        <li><strong>Atalhos úteis:</strong> <code>Ctrl + Backspace</code> (apaga palavra inteira), <code>Ctrl + Home/End</code> (início/fim do texto).</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Revisão Ortográfica e Leitura Humana</h3>
+                    <p style="font-size: 1.13rem;">A guia <strong>Revisão</strong> aponta erros de digitação e concordância, além de oferecer <em>Comentários</em> e <em>Controle de Alterações</em>.</p>
+                    <p style="font-size: 1.12rem; margin-top: 0.6rem; color: #fff;"><strong>Atenção:</strong> Se você digitar <em>"A reunião será às 16h"</em> quando o certo era <em>14h</em>, o Word não acusa erro. A conferência final dos dados é sempre humana.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Prática 04 (Declaração Institucional e Exportação PDF) -->
+        <div class="slide">
+            <h2>Prática 04: Declaração Formal e Exportação em PDF</h2>
+            <p><strong>Em um novo documento em branco, elaborem uma declaração institucional aplicando os recursos da aula:</strong></p>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Dados do Documento</h3>
+                    <ul style="font-size: 1.12rem;">
+                        <li><strong>Instituição:</strong> Centro de Capacitação Profissional</li>
+                        <li><strong>Título:</strong> DECLARAÇÃO (centralizado, negrito)</li>
+                        <li><strong>Participante:</strong> João da Silva</li>
+                        <li><strong>Curso:</strong> Introdução às Ferramentas Digitais</li>
+                        <li><strong>Data e Carga:</strong> 25 de novembro de 2026 — 4 horas</li>
+                        <li><strong>Assinatura:</strong> Coordenação de Ensino</li>
+                    </ul>
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.48);">
+                    <h3 class="warning">Execução e Entrega</h3>
+                    <ol style="font-size: 1.12rem; line-height: 1.65;">
+                        <li>Redija o texto formal em parágrafo <strong>Justificado</strong>, espaçamento <strong>1,5</strong> e destaque os dados principais em negrito.</li>
+                        <li>Use <strong>Localizar e Substituir</strong> para trocar o nome do participante por <strong>Maria Oliveira</strong>.</li>
+                        <li>Salve o editável como <code>04_Declaracao.docx</code>.</li>
+                        <li>Exporte uma cópia final via <strong>Arquivo &gt; Exportar &gt; Criar PDF</strong> (<code>04_Declaracao.pdf</code>) e abra o PDF para conferir o visual.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Síntese de Boas Práticas -->
+        <div class="slide">
+            <h2>Boas Práticas Profissionais no Microsoft Word</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 48%;">Hábito Inadequado (Amador)</th>
+                        <th style="width: 52%;">Recurso Profissional (Produtivo)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Pressionar Barra de Espaço várias vezes para centralizar</td><td>Usar botão <strong>Alinhamento Centralizado (Ctrl + E)</strong></td></tr>
+                    <tr><td>Pressionar Enter 15 vezes para mudar de página</td><td>Inserir <strong>Quebra de Página (Ctrl + Enter)</strong></td></tr>
+                    <tr><td>Criar linhas em branco para separar parágrafos</td><td>Configurar <strong>Espaçamento Depois do Parágrafo</strong></td></tr>
+                    <tr><td>Formatar títulos grandes manualmente um por um</td><td>Aplicar <strong>Estilos (Título 1, Título 2)</strong></td></tr>
+                    <tr><td>Renomear arquivo <code>.docx</code> para <code>.pdf</code> na pasta</td><td>Usar <strong>Arquivo &gt; Exportar / Salvar como PDF</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Slide 19: Próxima Aula -->
+        <div class="slide">
+            <h2>Próxima Parada: Aula 26 de Software</h2>
+            <p>Hoje dominamos a produção, formatação, estruturação visual e exportação profissional de documentos textuais no Microsoft Word.</p>
+            <div class="card center" style="margin-top: 2rem; background: rgba(56, 189, 248, 0.12); border-color: var(--accent-1);">
+                <h3 class="highlight-1">Na Próxima Aula...</h3>
+                <p style="margin-top: 0.9rem;">Continuaremos nos <strong>Softwares de Produtividade</strong> explorando <strong>Planilhas Eletrônicas (Microsoft Excel)</strong> para cálculos e controles, além de <strong>Apresentações Digitais (PowerPoint)</strong>.</p>
+            </div>
+            <p class="center highlight-2" style="margin-top: 2.2rem; font-weight: 700;">Excelente trabalho hoje e bom descanso!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 19</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>
