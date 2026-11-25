@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "gerado_em": "2026-11-24T21:10:53+00:00",
+  "gerado_em": "2026-11-25T21:47:51+00:00",
   "raiz": "cotec",
-  "commit": "c673788",
-  "total_arquivos": 45,
-  "total_pastas": 24,
+  "commit": "dd0cc9b",
+  "total_arquivos": 47,
+  "total_pastas": 25,
   "pastas": [
     {
       "caminho": "aula-1",
@@ -245,6 +245,20 @@
       "atualizado_em": "2026-11-24T18:10:41-03:00"
     },
     {
+      "caminho": "aula-25",
+      "nome": "aula-25",
+      "pai": "",
+      "titulo": "Aula 25 — Softwares de Produtividade: Microsoft Word",
+      "descricao": "Suítes de escritório, interface do Word, ciclo do documento, formatação, parágrafos e estilos, layout, tabelas, imagens, cabeçalho e rodapé, revisão e exportação em PDF.",
+      "data": null,
+      "ordem": null,
+      "destaque": false,
+      "qtd_arquivos": 2,
+      "bytes": 292585,
+      "publicado_em": "2026-11-25T18:47:40-03:00",
+      "atualizado_em": "2026-11-25T18:47:40-03:00"
+    },
+    {
       "caminho": "aula-3",
       "nome": "aula-3",
       "pai": "",
@@ -344,6 +358,30 @@
     }
   ],
   "arquivos": [
+    {
+      "caminho": "aula-25/resumo-aula-25.pdf",
+      "nome": "resumo-aula-25.pdf",
+      "pasta": "aula-25",
+      "ext": "pdf",
+      "bytes": 252177,
+      "publicado_em": "2026-11-25T18:47:40-03:00",
+      "atualizado_em": "2026-11-25T18:47:40-03:00",
+      "versionado": true,
+      "titulo": "Resumo da aula 25",
+      "descricao": null
+    },
+    {
+      "caminho": "aula-25/index.html",
+      "nome": "index.html",
+      "pasta": "aula-25",
+      "ext": "html",
+      "bytes": 40408,
+      "publicado_em": "2026-11-25T18:47:40-03:00",
+      "atualizado_em": "2026-11-25T18:47:40-03:00",
+      "versionado": true,
+      "titulo": "Slide da aula 25",
+      "descricao": null
+    },
     {
       "caminho": "aula-24/resumo-aula-24.pdf",
       "nome": "resumo-aula-24.pdf",
