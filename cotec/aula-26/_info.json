@@ -1,0 +1,12 @@
+{
+  "titulo": "Aula 26 — Planilhas e Apresentações (Excel e PowerPoint)",
+  "descricao": "Excel: estrutura, tipos de dados, fórmulas, funções, referências absolutas, função SE, filtros e gráficos. PowerPoint: layouts, comunicação visual, SmartArt, transições, animações e integração com o Excel.",
+  "arquivos": {
+    "index.html": {
+      "titulo": "Slide da aula 26"
+    },
+    "resumo-aula-26.pdf": {
+      "titulo": "Resumo da aula 26"
+    }
+  }
+}

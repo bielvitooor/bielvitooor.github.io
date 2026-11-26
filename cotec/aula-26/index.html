@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 26 - Planilhas e Apresentações | Prof. Gabriel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 22, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.09);
+            --text-main: #ffffff;
+            --text-sec: #cbd5e1;
+            --accent-1: #38bdf8;
+            --accent-2: #34d399;
+            --accent-3: #818cf8;
+            --alert: #f43f5e;
+            --warning: #facc15;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .ambient-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #000;
+        }
+
+        .blob {
+            position: absolute; filter: blur(85px); opacity: 0.48;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(56, 189, 248, 0.15); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(52, 211, 153, 0.15); animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(129, 140, 248, 0.15); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 10%) scale(1.1); }
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            width: 0%; transition: width 0.4s ease-out; z-index: 100;
+        }
+
+        .slide-container {
+            width: 92%; max-width: 1320px; height: 82vh;
+            position: relative; perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border); border-radius: 28px;
+            padding: 2.6rem 4.2rem; display: flex; flex-direction: column;
+            justify-content: center; opacity: 0; visibility: hidden;
+            transform: translateZ(-80px) rotateX(4deg); transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.55);
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: translateZ(0) rotateX(0); }
+        .slide > * { opacity: 0; transform: translateY(16px); transition: all 0.5s ease-out; }
+        .slide.active > * { opacity: 1; transform: translateY(0); }
+        .slide.active > *:nth-child(1) { transition-delay: 0.08s; }
+        .slide.active > *:nth-child(2) { transition-delay: 0.16s; }
+        .slide.active > *:nth-child(3) { transition-delay: 0.24s; }
+        .slide.active > *:nth-child(4) { transition-delay: 0.32s; }
+        .slide.active > *:nth-child(5) { transition-delay: 0.40s; }
+
+        h1 {
+            font-size: 3.9rem; font-weight: 800; background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem; line-height: 1.12; letter-spacing: -1.5px;
+        }
+
+        h2 {
+            font-size: 2.2rem; font-weight: 700; color: #fff;
+            margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem; letter-spacing: -0.5px;
+        }
+
+        h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem; }
+
+        p, li { font-size: 1.2rem; line-height: 1.48; color: var(--text-sec); }
+        
+        ul, ol { margin-top: 0.5rem; padding-left: 1.8rem; }
+        ul { list-style: none; }
+        ul li { margin-bottom: 0.5rem; position: relative; }
+        ul li::before {
+            content: ""; position: absolute; left: -1.35rem; top: 0.52rem;
+            width: 7px; height: 7px; background: var(--accent-1);
+            border-radius: 50%;
+        }
+
+        .highlight-1 { color: var(--accent-1); font-weight: 700; }
+        .highlight-2 { color: var(--accent-2); font-weight: 700; }
+        .highlight-3 { color: var(--accent-3); font-weight: 700; }
+        .alert { color: var(--alert); font-weight: 700; }
+        .warning { color: var(--warning); font-weight: 700; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 0.75rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin-top: 0.75rem; }
+        
+        .card {
+            background: rgba(0, 0, 0, 0.38); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 1.15rem;
+        }
+
+        .center { text-align: center; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 1.04rem; color: #fff; }
+        th, td { padding: 0.44rem 0.75rem; text-align: left; border: 1px solid var(--glass-border); }
+        th { background: rgba(56, 189, 248, 0.18); color: var(--accent-1); font-weight: 700; }
+
+        code {
+            background: rgba(255, 255, 255, 0.1); padding: 0.12rem 0.42rem;
+            border-radius: 6px; font-family: monospace; color: #f8fafc; font-size: 0.95em;
+        }
+
+        .footer {
+            position: fixed; bottom: 18px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 50px;
+            font-size: 0.95rem; color: #64748b; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; z-index: 10;
+        }
+
+        .controls-hint {
+            position: absolute; bottom: 35px; left: 50%;
+            transform: translateX(-50%); font-size: 0.85rem; color: #64748b;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+/* ---------- Celular ---------- */
+        /* Todo tamanho do slide esta em rem, entao encolher a raiz encolhe o
+           slide inteiro — inclusive os tamanhos escritos direto no HTML. */
+        /* vale para celular em pe e tambem para qualquer tela baixa demais
+           para o slide inteiro — celular deitado, por exemplo */
+        @media (max-width: 820px), (max-height: 520px) {
+            /* a raiz acompanha a menor medida da tela: 9.5px no celular
+               pequeno, 13px num tablet */
+            html {
+                font-size: clamp(9.5px, min(2.6vw, 2.4vh), 13px);
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                height: 100vh;
+                height: 100dvh;
+                padding: 0.8rem 0.8rem 3rem;
+            }
+
+            .slide-container {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                perspective: none;
+            }
+
+            .slide {
+                padding: 1.8rem 1.5rem;
+                border-radius: 20px;
+                justify-content: flex-start;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                overflow-wrap: break-word;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            }
+
+            h2 { margin-bottom: 1.2rem; }
+
+            ul, ol {
+                margin-top: 1rem;
+                padding-left: 1.6rem;
+            }
+
+            li { margin-bottom: 1rem; }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .card { padding: 1.4rem; }
+
+            /* tabelas largas precisam caber na tela sem rolar para o lado */
+            table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            th, td {
+                padding: 0.45rem 0.3rem;
+                font-size: 0.8em;
+                overflow-wrap: break-word;
+                hyphens: auto;
+            }
+
+            .tabela-especificacoes th:first-child,
+            .tabela-especificacoes td:first-child {
+                width: 28%;
+            }
+
+            /* no celular a dica entra no fim do texto, nao flutuando sobre ele */
+            .controls-hint {
+                position: static;
+                transform: none;
+                margin-top: 1.5rem;
+                text-align: center;
+            }
+
+            .footer {
+                bottom: 10px;
+                padding: 0 1.2rem;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+                gap: 1rem;
+            }
+        }
+
+        .nowrap { white-space: nowrap; word-spacing: 0.22em; }
+
+        @media (max-width: 480px) {
+            .slide h1[style*="4.4rem"] { font-size: 3.4rem !important; }
+        }
+
+        /* Em telas muito estreitas, os cards de 3 colunas viram uma coluna. */
+        @media (max-width: 380px) {
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 340px) {
+            .slide h1[style*="4.4rem"] { font-size: 3rem !important; }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .flow-box {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+                font-size: 1.8rem;
+                line-height: 1;
+            }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .step-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.7rem;
+            }
+
+            .layer-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.15rem;
+            }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .path-box,
+            .tree-box,
+            code {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .tabela-extensoes th:first-child,
+            .tabela-extensoes td:first-child { width: 24%; }
+
+            .tabela-extensoes th:nth-child(2),
+            .tabela-extensoes td:nth-child(2) { width: 28%; }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .quote-box,
+            code {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .tabela-produtividade th:first-child,
+            .tabela-produtividade td:first-child { width: 27%; }
+
+            .tabela-produtividade th:nth-child(2),
+            .tabela-produtividade td:nth-child(2) { width: 33%; }
+
+            .tabela-produtividade th:nth-child(3),
+            .tabela-produtividade td:nth-child(3) { width: 40%; }
+
+            .tabela-orcamento th:first-child,
+            .tabela-orcamento td:first-child { width: 32%; }
+
+            .tabela-orcamento th:nth-child(2),
+            .tabela-orcamento td:nth-child(2) { width: 12%; }
+
+            .tabela-orcamento th:nth-child(3),
+            .tabela-orcamento td:nth-child(3) { width: 26%; }
+
+            .tabela-orcamento th:nth-child(4),
+            .tabela-orcamento td:nth-child(4) { width: 30%; }
+        }
+
+        @media (max-width: 480px) {
+            .slide h1[style*="4.3rem"] { font-size: 3.4rem !important; }
+        }
+
+        @media (max-width: 380px) {
+            .slide h1[style*="4.2rem"] { font-size: 3.2rem !important; }
+        }
+
+        @media (max-width: 340px) {
+            .slide h1[style*="4.3rem"] { font-size: 3rem !important; }
+            .slide h1[style*="4.2rem"] { font-size: 3rem !important; }
+        }
+
+        @media (max-width: 820px), (max-height: 520px) {
+            .tabela-vendas th:first-child,
+            .tabela-vendas td:first-child { width: 12%; }
+
+            .tabela-vendas th:nth-child(2),
+            .tabela-vendas td:nth-child(2) { width: 26%; }
+
+            .tabela-vendas th:nth-child(3),
+            .tabela-vendas td:nth-child(3) { width: 11%; }
+
+            .tabela-vendas th:nth-child(4),
+            .tabela-vendas td:nth-child(4) { width: 22%; }
+
+            .tabela-vendas th:nth-child(5),
+            .tabela-vendas td:nth-child(5) { width: 29%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container">
+        
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <h1 class="center" style="font-size: 4.2rem;">Planilhas e Apresentações</h1>
+            <p class="center" style="font-size: 1.8rem; color: var(--accent-1);">Processamento de Dados no Excel e Comunicação Visual no PowerPoint</p>
+            <p class="center" style="margin-top: 1.8rem; font-size: 1.25rem;">Aula 26 — Noções de Software (Qualificação Profissional em Operador de Computador)</p>
+            <div class="controls-hint">Use as setas do teclado ou clique nas laterais da tela</div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 1: FUNDAMENTOS DO EXCEL E FÓRMULAS BÁSICAS
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.3rem; color: var(--accent-2);">1. FUNDAMENTOS DO EXCEL</h1>
+            <p class="center highlight-2" style="font-size: 1.8rem; margin-top: 0.8rem;">(Estrutura de Planilhas, Células, Tipos de Dados e Operações)</p>
+        </div>
+
+        <!-- Slide 3: Teoria - O que são Planilhas Eletrônicas -->
+        <div class="slide">
+            <h2>Planilhas Eletrônicas: Dados em Informação</h2>
+            <p><strong>Analogia do Caderno da Mercearia:</strong> Em um caderno comum, errar um preço obriga a apagar e recalcular tudo na mão. A planilha eletrônica estabelece <strong>regras dinâmicas</strong> que recalculam os totais automaticamente.</p>
+            <div class="grid-3">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Entrada de Dados</h3>
+                    <p style="font-size: 1.1rem;">Valores brutos registrados: <code>5</code> produtos a <code>R$ 20,00</code> cada.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Processamento</h3>
+                    <p style="font-size: 1.1rem;">Fórmula automática: <code>Quantidade &times; Preço</code>.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Informação Resultante</h3>
+                    <p style="font-size: 1.1rem;">Resultado útil: <code>R$ 100,00</code> de faturamento.</p>
+                </div>
+            </div>
+            <p style="margin-top: 0.85rem; font-size: 1.12rem;"><strong>Principais Ferramentas:</strong> Microsoft Excel (padrão corporativo), LibreOffice Calc (código aberto) e Google Planilhas (colaboração na nuvem).</p>
+        </div>
+
+        <!-- Slide 4: Teoria - Interface, Pasta de Trabalho e Células -->
+        <div class="slide">
+            <h2>Estrutura: Pasta de Trabalho, Planilhas e Células</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Analogia do Fichário com Divisórias</h3>
+                    <ul style="font-size: 1.12rem;">
+                        <li><strong>Pasta de Trabalho (<code>.xlsx</code>):</strong> é o fichário inteiro (o arquivo salvo).</li>
+                        <li><strong>Planilhas (abas inferiores):</strong> são as divisórias internas (ex: <em>Vendas</em>, <em>Estoque</em>, <em>Despesas</em>).</li>
+                        <li><strong>Barra de Fórmulas e Caixa de Nome:</strong> mostram o endereço e o cálculo real por trás da célula.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Assentos de Cinema (Endereços e Intervalos)</h3>
+                    <ul style="font-size: 1.12rem;">
+                        <li><strong>Colunas:</strong> verticais, identificadas por <strong>letras</strong> (A, B, C...).</li>
+                        <li><strong>Linhas:</strong> horizontais, identificadas por <strong>números</strong> (1, 2, 3...).</li>
+                        <li><strong>Célula (<code>C4</code>):</strong> encontro da coluna C com a linha 4.</li>
+                        <li><strong>Intervalos:</strong> <code>A1:A5</code> (vertical), <code>A1:D1</code> (horizontal) ou <code>A1:C4</code> (bloco retangular).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Teoria - Tipos de Dados, Formatação e Fórmulas -->
+        <div class="slide">
+            <h2>Tipos de Dados, Formatação e Fórmulas</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-3">Valor Armazenado vs. Apresentação</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Etiquetas de Produto:</strong> o número <code>100</code> pode ser preço (<code>R$ 100,00</code>) ou código (<code>'00100</code> como Texto para não perder zeros).</li>
+                        <li><strong>Porcentagem:</strong> digitar <code>0,15</code> e formatar como Porcentagem exibe <code>15%</code> sem alterar o valor matemático.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Fórmulas Matemáticas (Sempre com =)</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Operadores:</strong> <code>+</code> (soma), <code>-</code> (subtração), <code>*</code> (multiplicação), <code>/</code> (divisão), <code>^</code> (potência) e <code>%</code>.</li>
+                        <li><strong>Precedência:</strong> <code>=10+5*2</code> dá <code>20</code>; <code>=(10+5)*2</code> dá <code>30</code>.</li>
+                        <li><strong>Receita do Bolo (Referências):</strong> usar <code>=B2*C2</code> em vez de <code>=3*75</code> atualiza o total sempre que os dados mudam.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Prática 01 (Controle de Vendas) -->
+        <div class="slide">
+            <h2>Prática 01: Planilha de Controle de Vendas (PC Zerado)</h2>
+            <div class="grid-2">
+                <div>
+                    <p style="font-size: 1.12rem;">Abram o <strong>Excel em branco</strong> e digitem os dados abaixo:</p>
+                    <table class="tabela-vendas">
+                        <thead>
+                            <tr><th>Linha</th><th>A — Produto</th><th>B — Qtd</th><th>C — Preço Unit.</th><th>D — Total</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>2</strong></td><td>Teclado</td><td>3</td><td>75,00</td><td><code>=B2*C2</code></td></tr>
+                            <tr><td><strong>3</strong></td><td>Mouse</td><td>5</td><td>35,00</td><td><em>Calcular</em></td></tr>
+                            <tr><td><strong>4</strong></td><td>Monitor</td><td>2</td><td>650,00</td><td><em>Calcular</em></td></tr>
+                            <tr><td><strong>5</strong></td><td>Cabo HDMI</td><td>4</td><td>25,00</td><td><em>Calcular</em></td></tr>
+                            <tr><td><strong>6</strong></td><td>Pendrive</td><td>6</td><td>40,00</td><td><em>Calcular</em></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.48);">
+                    <h3 class="highlight-2">Passo a Passo</h3>
+                    <ol style="font-size: 1.1rem; line-height: 1.62;">
+                        <li>Formate as colunas C e D como <strong>Moeda (R$)</strong>.</li>
+                        <li>Insira <code>=B2*C2</code> em <strong>D2</strong> e calcule as demais linhas.</li>
+                        <li><strong>Teste dinâmico:</strong> mude a quantidade de Teclados para <code>10</code>, veja o total mudar sozinho e volte para <code>3</code>.</li>
+                        <li>Crie a pasta <code>Aula_26_Produtividade</code> e salve como <code>01_Controle_de_Vendas.xlsx</code>.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 2: FUNÇÕES, REFERÊNCIAS, FILTROS E GRÁFICOS
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.3rem; color: var(--accent-1);">2. FUNÇÕES E ANÁLISE NO EXCEL</h1>
+            <p class="center highlight-1" style="font-size: 1.8rem; margin-top: 0.8rem;">(Funções Básicas, Referência Absoluta, Função SE, Filtros e Gráficos)</p>
+        </div>
+
+        <!-- Slide 8: Teoria - Funções Básicas e Preenchimento Automático -->
+        <div class="slide">
+            <h2>Funções Básicas e Alça de Preenchimento</h2>
+            <p><strong>Analogia da Calculadora Científica:</strong> Funções são operações prontas que substituem fórmulas longas e evitam trabalho repetitivo em planilhas extensas.</p>
+            <table>
+                <thead>
+                    <tr><th style="width: 22%;">Função</th><th style="width: 44%;">Finalidade</th><th style="width: 34%;">Exemplo na Planilha</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>SOMA</code></td><td>Soma todos os números de um intervalo</td><td><code>=SOMA(D2:D6)</code> &rarr; R$ 2.040,00</td></tr>
+                    <tr><td><code>MÉDIA</code></td><td>Calcula a média aritmética dos valores</td><td><code>=MÉDIA(D2:D6)</code> &rarr; R$ 408,00</td></tr>
+                    <tr><td><code>MÁXIMO</code> / <code>MÍNIMO</code></td><td>Encontra o maior ou menor valor</td><td><code>=MÁXIMO(D2:D6)</code> &rarr; R$ 1.300,00</td></tr>
+                    <tr><td><code>CONT.VALORES</code></td><td>Conta células preenchidas (texto ou número)</td><td><code>=CONT.VALORES(A2:A6)</code> &rarr; 5</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 0.75rem; font-size: 1.12rem;"><strong>Alça de Preenchimento:</strong> Arrastar o quadradinho no canto inferior direito da célula copia fórmulas ajustando as linhas e completa sequências (<em>1, 2, 3...</em> ou <em>Jan, Fev...</em>).</p>
+        </div>
+
+        <!-- Slide 9: Teoria - Referências Absolutas e Função SE -->
+        <div class="slide">
+            <h2>Referências Absolutas ($) e Decisão Lógica (SE)</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Tabela Fixa de Descontos ($H$2)</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Relativa (<code>D2</code>):</strong> muda para <code>D3, D4...</code> ao arrastar a fórmula.</li>
+                        <li><strong>Absoluta (<code>$H$2</code>):</strong> o cifrão <code>$</code> trava coluna e linha (tecla <code>F4</code>) para que todas as linhas consultem a mesma taxa fixa.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">A Catraca de Acesso: Função SE</h3>
+                    <p style="font-size: 1.08rem;">Testa uma condição usando <code>=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code> ou <code>&lt;&gt;</code>:</p>
+                    <p style="font-size: 1.05rem; margin-top: 0.45rem;"><code>=SE(B2&lt;C2;"Comprar";"Estoque suficiente")</code></p>
+                    <p style="font-size: 1.04rem; margin-top: 0.35rem; color: #fff;">Se o estoque atual (<code>B2</code>) for menor que o mínimo (<code>C2</code>), exibe <em>"Comprar"</em>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Teoria - Classificação, Filtros, Condicional e Gráficos -->
+        <div class="slide">
+            <h2>Organização Visual e Gráficos (O Placar do Campeonato)</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="highlight-1">Classificar, Filtrar e Alertar</h3>
+                    <ul style="font-size: 1.08rem;">
+                        <li><strong>Classificação:</strong> ordena A-Z ou maior/menor. <em>Cuidado:</em> selecione toda a tabela para não embaralhar preços entre produtos.</li>
+                        <li><strong>Filtro:</strong> oculta temporariamente linhas fora do critério sem apagá-las.</li>
+                        <li><strong>Formatação Condicional:</strong> aciona alertas visuais (como luz no painel) destacando células com <em>"Comprar"</em>.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Escolhendo o Gráfico Certo</h3>
+                    <ul style="font-size: 1.08rem;">
+                        <li><strong>Colunas / Barras:</strong> comparar categorias (ex: vendas por produto).</li>
+                        <li><strong>Linhas:</strong> mostrar evolução ao longo do tempo (meses/anos).</li>
+                        <li><strong>Setores (Pizza):</strong> proporção de partes em um total (100%).</li>
+                        <li><strong>Erros comuns:</strong> <code>#DIV/0!</code> (divisão por zero), <code>#VALOR!</code> (texto em conta), <code>#NOME?</code> (função digitada errada) e <code>#####</code> (coluna estreita).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Prática 02 (Funções, Desconto, Estoque e Gráfico) -->
+        <div class="slide">
+            <h2>Prática 02: Indicadores, Desconto, Estoque e Gráfico</h2>
+            <div class="grid-2">
+                <div class="card" style="background: rgba(0,0,0,0.48);">
+                    <h3 class="highlight-2">1. Na planilha Controle de Vendas</h3>
+                    <ol style="font-size: 1.06rem; line-height: 1.58;">
+                        <li>Abaixo da tabela, calcule <code>SOMA</code>, <code>MÉDIA</code>, <code>MÁXIMO</code> e <code>MÍNIMO</code> de <code>D2:D6</code>.</li>
+                        <li>Coloque <code>10%</code> em <strong>H2</strong> e crie as colunas <strong>Desconto</strong> (<code>=D2*$H$2</code>) e <strong>Total Final</strong> (<code>=D2-E2</code>), usando a alça de preenchimento.</li>
+                        <li>Selecione <strong>Produtos</strong> e <strong>Totais</strong> e insira um <strong>Gráfico de Colunas</strong> (<em>"Vendas por produto"</em>).</li>
+                    </ol>
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.48);">
+                    <h3 class="highlight-1">2. Nova Aba: Estoque</h3>
+                    <ol style="font-size: 1.06rem; line-height: 1.58;">
+                        <li>Crie uma 2ª planilha chamada <strong>Estoque</strong> com os mesmos 5 produtos, <em>Estoque Atual</em> (8, 3, 2, 20, 4) e <em>Mínimo</em> (5, 10, 3, 10, 4).</li>
+                        <li>Na coluna <strong>Situação</strong>, aplique <code>=SE(B2&lt;=C2;"Comprar";"Estoque suficiente")</code>.</li>
+                        <li>Ative <strong>Filtros</strong> na guia <em>Dados</em> e aplique <strong>Formatação Condicional</strong> vermelha para <em>"Comprar"</em>. Salve o arquivo.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 3: FUNDAMENTOS DO POWERPOINT E COMUNICAÇÃO VISUAL
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.3rem; color: var(--accent-3);">3. FUNDAMENTOS DO POWERPOINT</h1>
+            <p class="center highlight-3" style="font-size: 1.8rem; margin-top: 0.8rem;">(Estrutura de Slides, Temas, Layouts e Princípios de Comunicação Visual)</p>
+        </div>
+
+        <!-- Slide 13: Teoria - Finalidade, Interface e Estrutura -->
+        <div class="slide">
+            <h2>Apresentações Digitais: Exposição em Museu</h2>
+            <p><strong>Analogia da Exposição:</strong> Em vez de colar um texto gigante em uma única parede, cada <strong>slide</strong> funciona como uma sala que conduz o raciocínio do público passo a passo.</p>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Papel de Cada Software</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Word:</strong> documenta detalhes para leitura individual.</li>
+                        <li><strong>Excel:</strong> processa dados e calcula indicadores.</li>
+                        <li><strong>PowerPoint:</strong> sintetiza e comunica resultados visualmente.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Analogia da Casa Decorada</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Layout:</strong> planta dos cômodos (posição de título, texto e imagens).</li>
+                        <li><strong>Tema:</strong> paleta de cores, fontes e estilo visual da casa.</li>
+                        <li><strong>Modelo:</strong> estrutura pré-montada pronta para preencher.</li>
+                        <li><strong>Proporção padrão:</strong> <code>16:9</code> (Widescreen) para telas modernas.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Teoria - Comunicação Visual (Placa vs Manual) -->
+        <div class="slide">
+            <h2>Comunicação Visual: Placa de Trânsito vs. Manual</h2>
+            <p>O slide apoia a fala do apresentador — nunca deve ser uma parede de texto para ser lida palavra por palavra.</p>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--alert);">
+                    <h3 class="alert">Evite no Slide (Vitrine Poluída)</h3>
+                    <ul style="font-size: 1.08rem;">
+                        <li>Parágrafos longos copiados direto do Word.</li>
+                        <li>Baixo contraste (texto claro em fundo claro).</li>
+                        <li>Fontes minúsculas abaixo de 16 pt.</li>
+                        <li>Excesso de cores e fontes diferentes sem padrão.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Boas Práticas Visuais</h3>
+                    <ul style="font-size: 1.08rem;">
+                        <li><strong>Hierarquia:</strong> título grande (28–36 pt) e tópicos objetivos (20–28 pt).</li>
+                        <li><strong>Contraste e Respiro:</strong> espaços vazios facilitam a leitura rápida.</li>
+                        <li><strong>Alinhamento e Proximidade:</strong> agrupar itens relacionados e manter consistência entre slides.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Prática 03 (Criando a Apresentação) -->
+        <div class="slide">
+            <h2>Prática 03: Apresentação de 4 Slides (PC Zerado)</h2>
+            <p>Abram o <strong>Microsoft PowerPoint em branco</strong>, escolham um <strong>Tema</strong> na guia <em>Design</em> e criem 4 slides objetivos sobre <strong>Softwares de Produtividade</strong>:</p>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <ul style="font-size: 1.1rem; line-height: 1.62;">
+                        <li><strong>Slide 1 (Capa):</strong> <em>Softwares de Produtividade</em> / Subtítulo: <em>Aplicações no Ambiente Profissional</em>.</li>
+                        <li><strong>Slide 2 (Layout Título e Conteúdo):</strong> <em>Microsoft Word</em> — tópicos curtos sobre documentos, relatórios e comunicados.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <ul style="font-size: 1.1rem; line-height: 1.62;">
+                        <li><strong>Slide 3 (Layout Título e Conteúdo):</strong> <em>Microsoft Excel</em> — tópicos sobre dados, cálculos e controle de informações.</li>
+                        <li><strong>Slide 4 (Layout Título e Conteúdo):</strong> <em>Microsoft PowerPoint</em> — tópicos sobre comunicação visual, reuniões e resultados.</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 1.12rem; color: #fff;">Salvem na pasta da aula como <code>02_Softwares_de_Produtividade.pptx</code>.</p>
+        </div>
+
+        <!-- =========================================================
+             BLOCO 4: RECURSOS GRÁFICOS, INTEGRAÇÃO E ENTREGA
+             ========================================================= -->
+        <div class="slide">
+            <h1 class="center" style="font-size: 4.3rem; color: var(--warning);">4. RECURSOS GRÁFICOS E INTEGRAÇÃO</h1>
+            <p class="center warning" style="font-size: 1.8rem; margin-top: 0.8rem;">(Objetos, SmartArt, Transições, Animações, Excel + PowerPoint e PDF)</p>
+        </div>
+
+        <!-- Slide 17: Teoria - Elementos Gráficos, Camadas e SmartArt -->
+        <div class="slide">
+            <h2>Elementos Gráficos, Camadas e Diagramas SmartArt</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Cartaz Digital e Folhas Transparentes</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Objetos livres:</strong> caixas de texto, formas, ícones, imagens (nunca deformar pelas laterais; use os cantos) e tabelas.</li>
+                        <li><strong>Camadas:</strong> <em>Trazer para Frente</em> e <em>Enviar para Trás</em> controlam o que fica sobreposto.</li>
+                        <li><strong>Precisão:</strong> use <em>Alinhar</em>, <em>Distribuir</em> e <em>Agrupar</em> em vez de ajustar só no olho.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Diagramas SmartArt</h3>
+                    <p style="font-size: 1.1rem;">Transforma listas textuais em fluxos visuais de processo, ciclo ou hierarquia.</p>
+                    <p style="font-size: 1.12rem; margin-top: 0.65rem; color: #fff;"><strong>Exemplo de Fluxo:</strong><br><code>Coletar dados &rarr; Processar &rarr; Analisar &rarr; Apresentar</code></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Teoria - Transições, Animações e Integração -->
+        <div class="slide">
+            <h2>Transições, Animações e Integração com o Excel</h2>
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--warning);">
+                    <h3 class="warning">Analogia do Filme no Cinema</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Transição:</strong> troca entre uma cena e outra (passagem de um slide para o próximo).</li>
+                        <li><strong>Animação:</strong> movimento dentro da cena (Entrada, Ênfase, Saída ou Trajetória de um objeto).</li>
+                        <li><strong>Regra de ouro:</strong> use efeitos discretos e apenas para guiar a atenção.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Gráfico do Excel no Slide</h3>
+                    <ul style="font-size: 1.1rem;">
+                        <li><strong>Colar como Imagem (Fotografia):</strong> mantém o gráfico fixo exatamente como estava no momento da cópia.</li>
+                        <li><strong>Incorporado / Vinculado (Câmera ao Vivo):</strong> permite editar dados ou atualizar automaticamente se o arquivo Excel mudar (exige manter o arquivo no mesmo local).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Prática 04 (Integração Excel + PowerPoint, Animações e PDF) -->
+        <div class="slide">
+            <h2>Prática 04: Slide de Resultados, Efeitos e Exportação</h2>
+            <div class="card" style="background: rgba(0,0,0,0.48);">
+                <ol style="font-size: 1.12rem; line-height: 1.68;">
+                    <li>Na apresentação <code>02_Softwares_de_Produtividade.pptx</code>, insira um <strong>5º slide</strong> (<em>Ctrl + M</em>) com o título: <strong>Exemplo de Análise de Vendas</strong>.</li>
+                    <li>Copie o gráfico criado no Excel (<code>01_Controle_de_Vendas.xlsx</code>) e cole no 5º slide (como imagem ou incorporado), adicionando um destaque curto: <em>Receita Total: R$ 2.040,00 | Maior receita: Monitor</em>.</li>
+                    <li>Aplique uma <strong>Transição</strong> discreta (ex: <em>Esmaecer</em>) aos slides e uma <strong>Animação de Entrada</strong> no gráfico.</li>
+                    <li>Adicione uma <strong>Anotação do Apresentador</strong> no rodapé do slide, teste a exibição com <strong>F5</strong>, salve o <code>.pptx</code> e exporte como <code>02_Softwares_de_Produtividade.pdf</code>.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Slide 20: Encerramento do Bloco de Produtividade -->
+        <div class="slide">
+            <h2>Síntese dos Softwares de Produtividade e Próxima Aula</h2>
+            <div class="grid-3">
+                <div class="card center" style="border-color: var(--accent-1);">
+                    <h3 class="highlight-1">Microsoft Word</h3>
+                    <p style="font-size: 1.12rem; margin-top: 0.5rem;"><strong>Produzir e Documentar</strong><br>Textos, ofícios e relatórios.</p>
+                </div>
+                <div class="card center" style="border-color: var(--accent-2);">
+                    <h3 class="highlight-2">Microsoft Excel</h3>
+                    <p style="font-size: 1.12rem; margin-top: 0.5rem;"><strong>Processar e Analisar</strong><br>Fórmulas, funções e gráficos.</p>
+                </div>
+                <div class="card center" style="border-color: var(--accent-3);">
+                    <h3 class="highlight-3">Microsoft PowerPoint</h3>
+                    <p style="font-size: 1.12rem; margin-top: 0.5rem;"><strong>Comunicar e Apresentar</strong><br>Síntese visual e resultados.</p>
+                </div>
+            </div>
+            <div class="card center" style="margin-top: 1.3rem; background: rgba(56, 189, 248, 0.12); border-color: var(--accent-1);">
+                <p style="font-size: 1.15rem; color: #fff;"><strong>Na Próxima Aula (Aula 27):</strong> Estudaremos os procedimentos de <strong>instalação, configuração e atualização de softwares</strong> no sistema operacional.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <span>Prof. Gabriel | COTEC</span>
+        <span id="slideCounter">1 / 20</span>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+
+        function updateUI() {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if(i === currentSlide) slide.classList.add('active');
+            });
+
+            const progress = ((currentSlide) / (slides.length - 1)) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.innerText = (currentSlide + 1) + " / " + slides.length;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateUI(); }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) { currentSlide--; updateUI(); }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        let isTouch = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('click', (e) => {
+            if (isTouch) return;
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Navegação por toque: arrastar para o lado troca de slide, e um toque
+        // rápido vale como clique. Rolar o slide com o dedo não avança nada.
+        document.addEventListener('touchstart', e => {
+            isTouch = true;
+            const touch = e.changedTouches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            const parado = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10;
+
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) nextSlide(); else prevSlide();
+            } else if (parado && Date.now() - touchStartTime < 500) {
+                if (touch.clientX > window.innerWidth / 2) nextSlide(); else prevSlide();
+            }
+
+            // o clique sintético do navegador chega depois do toque; ignora ele
+            setTimeout(() => { isTouch = false; }, 500);
+        }, { passive: true });
+
+        updateUI();
+    </script>
+</body>
+</html>
