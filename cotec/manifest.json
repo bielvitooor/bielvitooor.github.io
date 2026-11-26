@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "gerado_em": "2026-11-25T21:47:51+00:00",
+  "gerado_em": "2026-11-26T21:29:43+00:00",
   "raiz": "cotec",
-  "commit": "dd0cc9b",
-  "total_arquivos": 47,
-  "total_pastas": 25,
+  "commit": "a9b1b0f",
+  "total_arquivos": 49,
+  "total_pastas": 26,
   "pastas": [
     {
       "caminho": "aula-1",
@@ -259,6 +259,20 @@
       "atualizado_em": "2026-11-25T18:47:40-03:00"
     },
     {
+      "caminho": "aula-26",
+      "nome": "aula-26",
+      "pai": "",
+      "titulo": "Aula 26 — Planilhas e Apresentações (Excel e PowerPoint)",
+      "descricao": "Excel: estrutura, tipos de dados, fórmulas, funções, referências absolutas, função SE, filtros e gráficos. PowerPoint: layouts, comunicação visual, SmartArt, transições, animações e integração com o Excel.",
+      "data": null,
+      "ordem": null,
+      "destaque": false,
+      "qtd_arquivos": 2,
+      "bytes": 319605,
+      "publicado_em": "2026-11-26T18:29:33-03:00",
+      "atualizado_em": "2026-11-26T18:29:33-03:00"
+    },
+    {
       "caminho": "aula-3",
       "nome": "aula-3",
       "pai": "",
@@ -358,6 +372,30 @@
     }
   ],
   "arquivos": [
+    {
+      "caminho": "aula-26/resumo-aula-26.pdf",
+      "nome": "resumo-aula-26.pdf",
+      "pasta": "aula-26",
+      "ext": "pdf",
+      "bytes": 276118,
+      "publicado_em": "2026-11-26T18:29:33-03:00",
+      "atualizado_em": "2026-11-26T18:29:33-03:00",
+      "versionado": true,
+      "titulo": "Resumo da aula 26",
+      "descricao": null
+    },
+    {
+      "caminho": "aula-26/index.html",
+      "nome": "index.html",
+      "pasta": "aula-26",
+      "ext": "html",
+      "bytes": 43487,
+      "publicado_em": "2026-11-26T18:29:33-03:00",
+      "atualizado_em": "2026-11-26T18:29:33-03:00",
+      "versionado": true,
+      "titulo": "Slide da aula 26",
+      "descricao": null
+    },
     {
       "caminho": "aula-25/resumo-aula-25.pdf",
       "nome": "resumo-aula-25.pdf",
